@@ -1,0 +1,281 @@
+{%- comment -%}
+  AEONAE page hero (artifact .phero), used at the top of The Science,
+  Results and Ritual and Our Story.
+  Optional back link, logo mark, eyebrow, H1, lede and actions, centered,
+  with the staggered .aeo-rise entrance (only runs when <html> has .aeo-motion).
+  The H1 falls back to the page title when the heading is empty.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign heading = section.settings.heading
+  if heading == blank and page != blank
+    assign heading = page.title | escape
+  endif
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign use_gradient = false
+  if section.settings.artifact_gradient and on_dark == false
+    assign use_gradient = true
+  endif
+
+  assign back_url = section.settings.back_url
+  if back_url == blank
+    assign back_url = routes.root_url
+  endif
+
+  assign mark_height = section.settings.mark_height | divided_by: 10.0
+-%}
+
+<div
+  class="aeo-pg aeo-phero aeo-section color-{{ section.settings.color_scheme }} gradient{% if use_gradient %} aeo-phero--artifact-bg{% endif %}{% if section.settings.show_divider %} aeo-phero--divider{% endif %}{% if on_dark %} aeo-on-dark{% endif %}"
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  {%- if section.settings.show_back and section.settings.back_label != blank -%}
+    <div class="aeo-wrap aeo-phero__bar">
+      <a class="aeo-phero__back" href="{{ back_url }}">{{ section.settings.back_label | escape }}</a>
+    </div>
+  {%- endif -%}
+
+  <div class="aeo-wrap aeo-phero__inner">
+    {%- if section.settings.show_mark -%}
+      {%- if section.settings.mark_image != blank -%}
+        {%- assign mark = section.settings.mark_image -%}
+        <img
+          class="aeo-phero__mark aeo-rise"
+          style="--aeo-delay: .05s; --aeo-mark-h: {{ mark_height }}rem;"
+          src="{{ mark | image_url: height: 160 }}"
+          srcset="{{ mark | image_url: height: 80 }} 1x, {{ mark | image_url: height: 160 }} 2x, {{ mark | image_url: height: 240 }} 3x"
+          width="{{ mark.width }}"
+          height="{{ mark.height }}"
+          alt=""
+          loading="eager"
+        >
+      {%- else -%}
+        <img
+          class="aeo-phero__mark aeo-rise"
+          style="--aeo-delay: .05s; --aeo-mark-h: {{ mark_height }}rem;"
+          src="{{ 'aeonae-logo-mark.png' | asset_url }}"
+          width="242"
+          height="265"
+          alt=""
+          loading="eager"
+        >
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="aeo-eyebrow aeo-phero__eyebrow aeo-rise" style="--aeo-delay: .14s;">
+        {{- section.settings.eyebrow | escape -}}
+      </p>
+    {%- endif -%}
+
+    {%- if heading != blank -%}
+      <h1 class="aeo-h1 aeo-phero__heading aeo-rise" style="--aeo-delay: .24s;">
+        {{- heading -}}
+      </h1>
+    {%- endif -%}
+
+    {%- if section.settings.text != blank -%}
+      <p class="aeo-lede aeo-phero__lede aeo-rise" style="--aeo-delay: .36s;">
+        {{- section.settings.text -}}
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank or section.settings.link_label != blank -%}
+      <div class="aeo-btn-row aeo-phero__actions aeo-rise" style="--aeo-delay: .48s;">
+        {%- if section.settings.button_label != blank -%}
+          <a
+            class="button aeo-phero__button"
+            {% if section.settings.button_link != blank %}
+              href="{{ section.settings.button_link }}"
+            {% else %}
+              role="link" aria-disabled="true"
+            {% endif %}
+          >
+            {{- section.settings.button_label | escape -}}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.link_label != blank -%}
+          <a
+            class="aeo-tlink aeo-pg__tlink"
+            {% if section.settings.link_url != blank %}
+              href="{{ section.settings.link_url }}"
+            {% else %}
+              role="link" aria-disabled="true"
+            {% endif %}
+          >
+            {{- section.settings.link_label | escape -}}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page hero",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "checkbox",
+      "id": "artifact_gradient",
+      "label": "Use the AEONAE cream gradient background",
+      "info": "Soft cream-to-sand gradient from the brand design. Applies only to light color schemes.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show bottom hairline",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Back link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_back",
+      "label": "Show back link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "back_label",
+      "label": "Back link label",
+      "default": "Back to home"
+    },
+    {
+      "type": "url",
+      "id": "back_url",
+      "label": "Back link",
+      "info": "Leave empty to link to the home page."
+    },
+    {
+      "type": "header",
+      "content": "Logo mark"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mark",
+      "label": "Show logo mark",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "mark_image",
+      "label": "Custom mark",
+      "info": "Leave empty to use the AEONAE DNA mark. Transparent PNG or SVG, at least 240 px tall. It is decorative, so alt text is not announced."
+    },
+    {
+      "type": "range",
+      "id": "mark_height",
+      "min": 24,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "label": "Mark height",
+      "default": 44
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The Formula"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Shown as the page's main heading (H1). Leave empty to use the page title.",
+      "default": "A closer look at what is in the bottle."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "The peptide at the heart of the serum, the actives that support it, and every ingredient printed in the open."
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "info": "Leave empty to hide the button.",
+      "default": "Shop the serum"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Text link label",
+      "info": "Leave empty to hide the text link.",
+      "default": "See results"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Text link"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page hero"
+    }
+  ]
+}
+{% endschema %}

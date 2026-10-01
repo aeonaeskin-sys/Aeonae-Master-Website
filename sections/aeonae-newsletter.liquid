@@ -1,0 +1,312 @@
+{%- comment -%}
+  AEONAE newsletter signup (artifact "news" section).
+  Signup provider:
+  - shopify: Shopify customer form, tags the customer "newsletter" (Customers > Email subscribers).
+  - klaviyo: Klaviyo embedded form <div class="klaviyo-form-ID">. Needs the Klaviyo app embed.
+  - app: renders only the app blocks added to this section.
+  When Klaviyo or app is chosen but not set up yet, shoppers get the Shopify form,
+  so the signup never disappears. Pop-ups belong to Klaviyo, not to this section.
+{%- endcomment -%}
+
+{{ 'aeonae-newsletter.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign provider = section.settings.provider
+  assign klaviyo_id = section.settings.klaviyo_form_id | strip | remove: 'klaviyo-form-' | remove: ' ' | remove: '"' | remove: '<' | remove: '>'
+
+  assign app_block_count = 0
+  for block in section.blocks
+    if block.type == '@app'
+      assign app_block_count = app_block_count | plus: 1
+    endif
+  endfor
+
+  assign editor_hint = ''
+  assign render_shopify_form = false
+  if provider == 'klaviyo'
+    if klaviyo_id == blank
+      assign render_shopify_form = true
+      assign editor_hint = 'Add your Klaviyo embedded form ID to show the Klaviyo form here, and turn on the Klaviyo app embed (Customize > App embeds). Until then, shoppers see the Shopify signup form.'
+    endif
+  elsif provider == 'app'
+    if app_block_count == 0
+      assign render_shopify_form = true
+      assign editor_hint = 'Add an app block to this section (for example a Klaviyo signup form). Until then, shoppers see the Shopify signup form.'
+    endif
+  else
+    assign render_shopify_form = true
+  endif
+
+  assign form_id = 'AeoNewsletter-' | append: section.id
+  assign anim_order = 0
+-%}
+
+<div
+  class="aeo-news aeo-section color-{{ section.settings.color_scheme }} gradient"
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap aeo-news__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <p
+        class="aeo-eyebrow aeo-news__eyebrow{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if settings.animations_reveal_on_scroll %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {{ section.settings.eyebrow | escape }}
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <h2
+        class="aeo-h2 aeo-news__heading{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if settings.animations_reveal_on_scroll %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.settings.text != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <div
+        class="aeo-news__text aeo-soft aeo-rte{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if settings.animations_reveal_on_scroll %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {{ section.settings.text }}
+      </div>
+    {%- endif -%}
+
+    {%- assign anim_order = anim_order | plus: 1 -%}
+    <div
+      class="aeo-news__signup{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+      {% if settings.animations_reveal_on_scroll %}
+        data-cascade
+        style="--animation-order: {{ anim_order }};"
+      {% endif %}
+    >
+      {%- if provider == 'klaviyo' and klaviyo_id != blank -%}
+        <div class="aeo-news__klaviyo klaviyo-form-{{ klaviyo_id | escape }}"></div>
+        {%- if request.design_mode -%}
+          <p class="aeo-news__hint">
+            Klaviyo form {{ klaviyo_id | escape }} appears here when the Klaviyo app embed is on (Customize &gt;
+            App embeds). This note is only visible in the theme editor.
+          </p>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if render_shopify_form -%}
+        <div class="aeo-news__form-wrap">
+          {%- form 'customer', id: form_id, class: 'aeo-news__form' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            {%- if form.posted_successfully? -%}
+              <p
+                class="aeo-news__msg aeo-news__msg--success"
+                id="AeoNewsletterSuccess-{{ section.id }}"
+                tabindex="-1"
+                autofocus
+              >
+                {{ section.settings.success_text | escape }}
+              </p>
+            {%- else -%}
+              <div class="aeo-news__field">
+                <label class="aeo-visually-hidden" for="AeoNewsletterEmail-{{ section.id }}">
+                  {{- 'newsletter.label' | t -}}
+                </label>
+                <input
+                  id="AeoNewsletterEmail-{{ section.id }}"
+                  class="aeo-news__input"
+                  type="email"
+                  name="contact[email]"
+                  value="{{ form.email | escape }}"
+                  placeholder="{{ section.settings.placeholder | escape }}"
+                  autocomplete="email"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  required
+                  aria-required="true"
+                  {% if form.errors %}
+                    autofocus
+                    aria-invalid="true"
+                    aria-describedby="AeoNewsletterError-{{ section.id }}"
+                  {% endif %}
+                >
+                <button type="submit" class="button aeo-news__button" name="commit">
+                  {{- section.settings.button_label | default: 'Join' | escape -}}
+                </button>
+              </div>
+              {%- if form.errors -%}
+                <div class="aeo-news__msg aeo-news__msg--error" id="AeoNewsletterError-{{ section.id }}">
+                  {%- if form.errors contains 'email' -%}
+                    {{ form.errors.translated_fields.email | capitalize }}
+                    {{ form.errors.messages.email }}
+                  {%- else -%}
+                    {{ form.errors | default_errors }}
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+      {%- endif -%}
+
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            <div class="aeo-news__app" {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+
+      {%- if request.design_mode and editor_hint != blank -%}
+        <p class="aeo-news__hint">{{ editor_hint }} This note is only visible in the theme editor.</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.fine_print != blank -%}
+      <div class="aeo-news__fine aeo-rte">{{ section.settings.fine_print }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "tag": "section",
+  "class": "section aeo-news-section",
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-5"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Join the list"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Only promise an offer that exists. Create the discount and a welcome email that sends it before publishing.",
+      "default": "Take 10% off your first bottle."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Join the list for a code, plus early access to new editions. No noise, leave any time.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Signup form"
+    },
+    {
+      "type": "select",
+      "id": "provider",
+      "label": "Signup provider",
+      "options": [
+        {
+          "value": "shopify",
+          "label": "Shopify customer list"
+        },
+        {
+          "value": "klaviyo",
+          "label": "Klaviyo embedded form"
+        },
+        {
+          "value": "app",
+          "label": "App block only"
+        }
+      ],
+      "default": "shopify",
+      "info": "Shopify adds subscribers to Customers with the tag \"newsletter\". Klaviyo pop-ups are set up in Klaviyo and need no section."
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_form_id",
+      "label": "Klaviyo embedded form ID",
+      "info": "In Klaviyo, open Sign-up forms, create an Embed form and copy its form ID (for example AbC123). Requires the Klaviyo app embed.",
+      "visible_if": "{{ section.settings.provider == 'klaviyo' }}"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email placeholder",
+      "default": "name@email.com",
+      "visible_if": "{{ section.settings.provider != 'klaviyo' }}"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Join",
+      "visible_if": "{{ section.settings.provider != 'klaviyo' }}"
+    },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Success message",
+      "info": "Shown after signing up with the Shopify form. Do not put a discount code here.",
+      "default": "Thank you. You are on the list.",
+      "visible_if": "{{ section.settings.provider != 'klaviyo' }}"
+    },
+    {
+      "type": "richtext",
+      "id": "fine_print",
+      "label": "Consent or fine print",
+      "info": "Optional, for example a link to your privacy policy."
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

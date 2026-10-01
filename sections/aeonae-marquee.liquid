@@ -1,0 +1,218 @@
+{%- comment -%}
+  AEONAE announcement ticker (artifact .ticker).
+
+  - One "Message" block per announcement, optionally linked.
+  - The first list is the real content; the second is an aria-hidden copy that
+    makes the loop seamless (aeonae-header.js adds more copies on very wide screens).
+  - A visible pause/play button satisfies WCAG 2.2.2. The ticker also pauses on
+    hover and while a link inside it has keyboard focus.
+  - Under prefers-reduced-motion (or with "Scroll messages" off) it becomes a
+    static, centered row that shows as many whole messages as fit on one line.
+{%- endcomment -%}
+
+{{ 'aeonae-header.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'aeonae-header.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign message_count = 0
+  for block in section.blocks
+    if block.type == 'message' and block.settings.text != blank
+      assign message_count = message_count | plus: 1
+    endif
+  endfor
+
+  assign separator = section.settings.separator | default: '✦'
+  assign duration = message_count | times: section.settings.speed
+  assign animate = section.settings.animate
+  if message_count < 2
+    assign animate = false
+  endif
+-%}
+
+{%- if message_count > 0 -%}
+  <aeo-marquee
+    class="aeo-marquee color-{{ section.settings.color_scheme }} gradient{% unless animate %} aeo-marquee--static{% endunless %}"
+    style="--aeo-marquee-duration: {{ duration }}s; --aeo-marquee-pad: {{ section.settings.padding | divided_by: 10.0 }}rem;"
+    role="region"
+    aria-label="Announcements"
+  >
+    <div class="aeo-marquee__viewport">
+      <div class="aeo-marquee__track">
+        <ul class="aeo-marquee__group" role="list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'message' and block.settings.text != blank -%}
+              <li class="aeo-marquee__item" {{ block.shopify_attributes }}>
+                <span class="aeo-marquee__sep" aria-hidden="true">{{ separator | escape }}</span>
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}" class="aeo-marquee__text aeo-marquee__link">
+                    {{- block.settings.text | escape -}}
+                  </a>
+                {%- else -%}
+                  <span class="aeo-marquee__text">{{ block.settings.text | escape }}</span>
+                {%- endif -%}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+
+        {%- if animate -%}
+          {%- comment -%} Decorative copy for the seamless loop: hidden from assistive tech and not focusable. {%- endcomment -%}
+          <ul class="aeo-marquee__group" role="list" aria-hidden="true" data-aeo-clone>
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'message' and block.settings.text != blank -%}
+                <li class="aeo-marquee__item">
+                  <span class="aeo-marquee__sep">{{ separator | escape }}</span>
+                  {%- if block.settings.link != blank -%}
+                    <a href="{{ block.settings.link }}" class="aeo-marquee__text aeo-marquee__link" tabindex="-1">
+                      {{- block.settings.text | escape -}}
+                    </a>
+                  {%- else -%}
+                    <span class="aeo-marquee__text">{{ block.settings.text | escape }}</span>
+                  {%- endif -%}
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if animate -%}
+      <button
+        type="button"
+        class="aeo-marquee__toggle"
+        aria-label="Pause announcements"
+        data-pause-label="Pause announcements"
+        data-play-label="Play announcements"
+      >
+        <span class="svg-wrapper aeo-marquee__icon aeo-marquee__icon--pause" aria-hidden="true">
+          {{- 'icon-pause.svg' | inline_asset_content -}}
+        </span>
+        <span class="svg-wrapper aeo-marquee__icon aeo-marquee__icon--play" aria-hidden="true">
+          {{- 'icon-play.svg' | inline_asset_content -}}
+        </span>
+      </button>
+    {%- endif -%}
+  </aeo-marquee>
+{%- elsif request.design_mode -%}
+  <div class="aeo-marquee aeo-marquee--static color-{{ section.settings.color_scheme }} gradient">
+    <p class="aeo-marquee__empty">Add a message block to show the announcement ticker.</p>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "AEONAE ticker",
+  "tag": "div",
+  "class": "aeo-marquee-section",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-4"
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separator",
+      "default": "✦",
+      "info": "Short symbol shown between messages."
+    },
+    {
+      "type": "checkbox",
+      "id": "animate",
+      "label": "Scroll messages",
+      "default": true,
+      "info": "Shoppers can pause the ticker. It never scrolls for shoppers who have asked their device to reduce motion."
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Speed (seconds per message)",
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "default": 6,
+      "info": "Higher is slower."
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Vertical padding",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 9
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free US shipping"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AEONAE ticker",
+      "blocks": [
+        {
+          "type": "message",
+          "settings": {
+            "text": "Free US shipping"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "10% off your first order"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "First Edition, an edition of 12"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "Every ingredient disclosed"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "14 day returns"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "Made in the USA"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

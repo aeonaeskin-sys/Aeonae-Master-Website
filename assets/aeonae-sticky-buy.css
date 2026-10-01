@@ -1,0 +1,142 @@
+/*
+  AEONAE mobile buy bar (sections/aeonae-sticky-buy.liquid).
+  Reference: artifact .mbar. 1rem = 10px (artifact rem x 1.6).
+  --aeo-sbuy-h (bar height) is set on <html> by assets/aeonae-sticky-buy.js.
+*/
+
+aeo-sticky-buy {
+  display: block;
+}
+
+/* Spacer at the end of the page so the bar never covers the footer's legal text.
+   display is explicit because Dawn hides div:empty. */
+.aeo-sbuy .aeo-sbuy__spacer {
+  display: block;
+  height: 0;
+}
+
+.aeo-sbuy.is-visible .aeo-sbuy__spacer {
+  height: var(--aeo-sbuy-h, 7rem);
+}
+
+.aeo-sbuy .aeo-sbuy__bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.4rem;
+  padding: 1.1rem max(1.8rem, env(safe-area-inset-right, 0px)) calc(1.1rem + env(safe-area-inset-bottom, 0px))
+    max(1.8rem, env(safe-area-inset-left, 0px));
+  background: rgba(var(--color-background), 0.96);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: rgb(var(--color-foreground));
+  border-top: 0.1rem solid var(--aeo-line);
+  box-shadow: 0 -0.6rem 2.4rem rgba(42, 36, 29, 0.06);
+  transform: translateY(120%);
+  visibility: hidden;
+  transition: transform 0.38s var(--aeo-ease-drawer), visibility 0s linear 0.38s;
+}
+
+.aeo-sbuy.is-visible .aeo-sbuy__bar {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.38s var(--aeo-ease-drawer), visibility 0s;
+}
+
+/* Tucked away (drawer open, keyboard up) but still focusable for focus return */
+.aeo-sbuy.is-visible.is-blocked .aeo-sbuy__bar {
+  transform: translateY(120%);
+  box-shadow: none;
+}
+
+.aeo-sbuy__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 1.28rem;
+  line-height: 1.3;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-sbuy__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.aeo-sbuy__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.6rem;
+}
+
+.aeo-sbuy__price[hidden] {
+  display: none;
+}
+
+.aeo-sbuy__amount {
+  font-size: 1.57rem;
+  font-weight: 700;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-sbuy__compare {
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.aeo-sbuy__compare[hidden] {
+  display: none;
+}
+
+.aeo-sbuy .aeo-sbuy__button.button {
+  flex-shrink: 0;
+  min-width: 0;
+  min-height: 4.4rem;
+  padding: 1.2rem 2.2rem;
+  white-space: nowrap;
+}
+
+.aeo-sbuy-hint {
+  margin: 0;
+  padding: 1rem 1.6rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  text-align: center;
+  color: #2b2620;
+  background: #fcf8f1;
+  border-top: 0.1rem dashed rgba(42, 36, 29, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aeo-sbuy .aeo-sbuy__bar,
+  .aeo-sbuy.is-visible .aeo-sbuy__bar {
+    transition: none;
+  }
+}
+
+/* Keep keyboard focus from landing behind the bar */
+@media screen and (max-width: 989px) {
+  html.aeo-sbuy-on {
+    scroll-padding-bottom: calc(var(--aeo-sbuy-h, 7rem) + 1.6rem);
+  }
+}
+
+/* Mobile and tablet only */
+@media screen and (min-width: 990px) {
+  aeo-sticky-buy.aeo-sbuy {
+    display: none;
+  }
+}
+
+@media print {
+  aeo-sticky-buy.aeo-sbuy {
+    display: none;
+  }
+}

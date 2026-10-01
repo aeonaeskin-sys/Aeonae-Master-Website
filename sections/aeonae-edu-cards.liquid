@@ -1,0 +1,251 @@
+{%- comment -%}
+  AEONAE explainer cards (artifact "Copper peptides, explained" .edu / .educard).
+  Centered intro and up to six text cards, three columns from 760px.
+  The reveal runs on the list item so the card's hover lift stays free.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign card_count = 0
+  for block in section.blocks
+    if block.type == 'card'
+      assign card_count = card_count | plus: 1
+    endif
+  endfor
+  assign columns = section.settings.columns_desktop | plus: 0
+  if card_count < columns
+    assign columns = card_count
+  endif
+-%}
+
+<div
+  class="aeo-pg aeo-edu aeo-section color-{{ section.settings.color_scheme }} gradient{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-intro aeo-pg__intro aeo-edu__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-pg__heading aeo-edu__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte rte aeo-pg__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if card_count > 0 -%}
+      <ul class="aeo-edu__grid" role="list" style="--aeo-cols: {{ columns }};">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'card' -%}
+            {%- assign anim_order = anim_order | plus: 1 -%}
+            <li
+              class="aeo-edu__item{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if motion %}
+                data-cascade
+                style="--animation-order: {{ anim_order }};"
+              {% endif %}
+            >
+              <div class="aeo-edu__card aeo-card aeo-card--lift color-{{ section.settings.card_color_scheme }}">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="aeo-edu__title">{{ block.settings.title | escape }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="aeo-edu__text aeo-rte rte">{{ block.settings.text }}</div>
+                {%- endif -%}
+              </div>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-pg__empty">Add card blocks to this section.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Explainer cards",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Section color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "card_color_scheme",
+      "label": "Card color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here. Letters, numbers and dashes only."
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Copper peptides, explained"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Everything worth knowing before you try it."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "What GHK-Cu is"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>A small copper peptide, naturally present in skin, used in skin care for the look of firmer, smoother, more resilient looking skin. We use it at a disclosed 1%.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Explainer cards",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "title": "What GHK-Cu is",
+            "text": "<p>A small copper peptide, naturally present in skin, used in skin care for the look of firmer, smoother, more resilient looking skin. We use it at a disclosed 1%.</p>"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Who it is for",
+            "text": "<p>Anyone who wants the appearance of firmer, more even skin and prefers a short, honest routine. It suits most skin types, including sensitive skin looking for a gentle daily step.</p>"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "How to layer it",
+            "text": "<p>Apply to clean skin, then seal with moisturizer. It plays well with hydrating steps like hyaluronic acid. If you use strong acids or vitamin C, use them at a different time of day.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

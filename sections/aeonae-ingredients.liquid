@@ -1,0 +1,246 @@
+{%- comment -%}
+  AEONAE ingredient rows (artifact #science .inside / .act-row).
+  Two columns from 860px: intro (eyebrow, heading, text) and a list of
+  ingredient rows. Each row is a block and reveals in a soft stagger.
+  Rows are a description list: the name is the term, the copy its description.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign row_count = 0
+  for block in section.blocks
+    if block.type == 'ingredient' and block.settings.name != blank
+      assign row_count = row_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-pg aeo-ingr aeo-section color-{{ section.settings.color_scheme }} gradient{% if section.settings.intro_position == 'right' %} aeo-ingr--intro-right{% endif %}{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap aeo-ingr__grid">
+    <div class="aeo-ingr__intro">
+      {%- if section.settings.eyebrow != blank -%}
+        {%- assign anim_order = anim_order | plus: 1 -%}
+        <p
+          class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+          {% if motion %}
+            data-cascade
+            style="--animation-order: {{ anim_order }};"
+          {% endif %}
+        >
+          {{- section.settings.eyebrow | escape -}}
+        </p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        {%- assign anim_order = anim_order | plus: 1 -%}
+        <h2
+          class="aeo-h2 aeo-pg__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+          {% if motion %}
+            data-cascade
+            style="--animation-order: {{ anim_order }};"
+          {% endif %}
+        >
+          {{- section.settings.heading -}}
+        </h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        {%- assign anim_order = anim_order | plus: 1 -%}
+        <div
+          class="aeo-soft aeo-rte rte aeo-pg__text aeo-ingr__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+          {% if motion %}
+            data-cascade
+            style="--animation-order: {{ anim_order }};"
+          {% endif %}
+        >
+          {{- section.settings.text -}}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if row_count > 0 -%}
+      {%- assign row_order = 0 -%}
+      <dl class="aeo-ingr__list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'ingredient' and block.settings.name != blank -%}
+            {%- assign row_order = row_order | plus: 1 -%}
+            <div
+              class="aeo-ingr__row{% if motion %} aeo-reveal aeo-reveal--row scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if motion %}
+                data-cascade
+                style="--animation-order: {{ row_order }};"
+              {% endif %}
+            >
+              <dt class="aeo-ingr__name">{{ block.settings.name | escape }}</dt>
+              {%- if block.settings.description != blank -%}
+                <dd class="aeo-ingr__desc">{{ block.settings.description }}</dd>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </dl>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-pg__empty">Add ingredient blocks to this section.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Ingredient rows",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /pages/science#science. Letters, numbers and dashes only."
+    },
+    {
+      "type": "select",
+      "id": "intro_position",
+      "label": "Intro position on desktop",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The Science"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Built on one of the most studied peptides in skin care."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>GHK-Cu, also called copper tripeptide-1, has been researched in skin science for decades. We formulate around it at a disclosed 1%, and we let the ingredient speak plainly rather than dress it in claims we cannot make.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient",
+      "name": "Ingredient",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "GHK-Cu"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "description",
+          "label": "Description",
+          "info": "Describe how skin looks or feels. Avoid treatment claims.",
+          "default": "The copper peptide at the heart of the formula, for the look of firmer, smoother skin."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Ingredient rows",
+      "blocks": [
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "GHK-Cu",
+            "description": "The copper peptide at the heart of the formula, for the look of firmer, smoother skin."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Niacinamide",
+            "description": "For the appearance of a more even, balanced complexion."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Hyaluronate",
+            "description": "Draws in moisture for a plumper, more hydrated look."
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "name": "Aloe Vera",
+            "description": "Helps skin look calm, soft, and comfortable."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

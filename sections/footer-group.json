@@ -2,27 +2,75 @@
   "name": "t:sections.footer.name",
   "type": "footer",
   "sections": {
-    "footer": {
-      "type": "footer",
-      "blocks": {},
-      "block_order": [],
+    "aeonae_footer": {
+      "type": "aeonae-footer",
+      "blocks": {
+        "menu_shop": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop",
+            "menu": "footer",
+            "show_contact_email": false,
+            "contact_label": "Contact Us"
+          }
+        },
+        "menu_explore": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Explore",
+            "menu": "footer",
+            "show_contact_email": false,
+            "contact_label": "Contact Us"
+          }
+        },
+        "menu_help": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Help",
+            "menu": "footer",
+            "show_contact_email": true,
+            "contact_label": "Contact Us"
+          }
+        }
+      },
+      "block_order": [
+        "menu_shop",
+        "menu_explore",
+        "menu_help"
+      ],
       "settings": {
-        "color_scheme": "scheme-1",
-        "newsletter_enable": true,
-        "newsletter_heading": "Subscribe to our emails",
-        "enable_follow_on_shop": true,
+        "color_scheme": "scheme-3",
+        "show_border": true,
+        "logo_height": 62,
+        "tagline": "Skin longevity, in full disclosure.",
         "show_social": true,
+        "show_payment": true,
+        "address": "AEONAE, 10 Woodmint Terrace, Box 2, Sterling, VA 20164. support@aeonae.com",
+        "disclaimer": "<p>This product is a cosmetic. These statements have not been evaluated by the FDA and are not intended to diagnose, treat, cure, or prevent any disease. Contains royal jelly.</p>",
+        "copyright_name": "AEONAE",
+        "copyright_note": "All rights reserved.",
+        "show_policy": true,
+        "show_powered_by": false,
         "enable_country_selector": true,
         "enable_language_selector": true,
-        "payment_enable": true,
-        "show_policy": true,
-        "margin_top": 0,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "padding_top": 82,
+        "padding_bottom": 40
+      }
+    },
+    "aeonae_sticky_buy": {
+      "type": "aeonae-sticky-buy",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "show_on_product": true,
+        "label": "Copper Peptide Serum",
+        "link_label": "Shop now",
+        "other_pages": "all",
+        "scroll_threshold": 90
       }
     }
   },
   "order": [
-    "footer"
+    "aeonae_footer",
+    "aeonae_sticky_buy"
   ]
 }

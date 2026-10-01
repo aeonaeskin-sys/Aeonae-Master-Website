@@ -1,0 +1,350 @@
+{%- comment -%}
+  AEONAE tabs (artifact #standard .tabs / .panel).
+  Centered intro and up to six tabs. Each tab block holds a method eyebrow,
+  title, text and a "why it matters" note.
+
+  Progressive enhancement: the server renders every panel, visible and in
+  order, with the tab list hidden. assets/aeonae-tabs.js upgrades
+  <aeo-tabs> to the WAI-ARIA tabs pattern (roles, roving tabindex,
+  Left/Right/Home/End). Without JavaScript all panels simply stay visible.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'aeonae-tabs.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+  assign uid = section.id | handleize
+  assign heading_id = 'AeoTabsHeading-' | append: uid
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign tab_count = 0
+  for block in section.blocks
+    if block.type == 'tab'
+      assign tab_count = tab_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-pg aeo-tabs aeo-section color-{{ section.settings.color_scheme }} gradient{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-intro aeo-pg__intro aeo-tabs__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            id="{{ heading_id }}"
+            class="aeo-h2 aeo-pg__heading aeo-tabs__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte rte aeo-pg__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if tab_count > 0 -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <div
+        class="aeo-tabs__ui{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        <aeo-tabs
+          class="aeo-tabs__widget"
+          {% if section.settings.heading != blank %}
+            data-labelledby="{{ heading_id }}"
+          {% endif %}
+        >
+          {%- if tab_count > 1 -%}
+            <div class="aeo-tabs__list" data-aeo-tablist hidden>
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'tab' -%}
+                  {%- assign bid = block.id | handleize -%}
+                  <button
+                    type="button"
+                    class="aeo-tabs__tab"
+                    id="AeoTab-{{ uid }}-{{ bid }}"
+                    data-aeo-tab
+                  >
+                    {{- block.settings.label | default: block.settings.title | escape -}}
+                  </button>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <div class="aeo-tabs__panels">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'tab' -%}
+                {%- liquid
+                  assign bid = block.id | handleize
+                  assign has_main = false
+                  if block.settings.method != blank or block.settings.title != blank or block.settings.text != blank
+                    assign has_main = true
+                  endif
+                  assign has_why = false
+                  if block.settings.why_title != blank or block.settings.why_text != blank
+                    assign has_why = true
+                  endif
+                -%}
+                <div
+                  class="aeo-tabs__panel{% unless has_main and has_why %} aeo-tabs__panel--single{% endunless %}"
+                  id="AeoPanel-{{ uid }}-{{ bid }}"
+                  data-aeo-panel
+                  {{ block.shopify_attributes }}
+                >
+                  {%- if has_main -%}
+                    <div class="aeo-tabs__main">
+                      {%- if block.settings.method != blank -%}
+                        <p class="aeo-tabs__method">{{ block.settings.method | escape }}</p>
+                      {%- endif -%}
+                      {%- if block.settings.title != blank -%}
+                        <h3 class="aeo-h3 aeo-tabs__title">{{ block.settings.title | escape }}</h3>
+                      {%- endif -%}
+                      {%- if block.settings.text != blank -%}
+                        <div class="aeo-soft aeo-rte rte aeo-tabs__body">{{ block.settings.text }}</div>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  {%- if has_why -%}
+                    <div class="aeo-tabs__why color-{{ section.settings.card_color_scheme }}">
+                      {%- if block.settings.why_title != blank -%}
+                        <p class="aeo-tabs__why-title">{{ block.settings.why_title | escape }}</p>
+                      {%- endif -%}
+                      {%- if block.settings.why_text != blank -%}
+                        <div class="aeo-rte rte aeo-tabs__why-text">{{ block.settings.why_text }}</div>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </aeo-tabs>
+      </div>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-pg__empty">Add tab blocks to this section.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Tabs",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Section color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "color_scheme",
+      "id": "card_color_scheme",
+      "label": "Note box color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /pages/our-story#standard. Letters, numbers and dashes only.",
+      "default": "standard"
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Our Standard"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "A standard we refuse to lower."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>The questions a serum should answer before you ever put it on your skin, answered in the open.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Tab label",
+          "default": "Disclosure"
+        },
+        {
+          "type": "text",
+          "id": "method",
+          "label": "Eyebrow",
+          "default": "The full formula"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Nothing hidden behind a blend"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Every ingredient and the amounts that matter are printed on the product page, never buried in a proprietary blend or the fine print.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Why it matters"
+        },
+        {
+          "type": "text",
+          "id": "why_title",
+          "label": "Note title",
+          "default": "Why it matters"
+        },
+        {
+          "type": "richtext",
+          "id": "why_text",
+          "label": "Note text",
+          "default": "<p>You can read exactly what you are putting on your skin, and check it against anything you avoid, before you decide to buy.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Tabs",
+      "blocks": [
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Disclosure",
+            "method": "The full formula",
+            "title": "Nothing hidden behind a blend",
+            "text": "<p>Every ingredient and the amounts that matter are printed on the product page, never buried in a proprietary blend or the fine print.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>You can read exactly what you are putting on your skin, and check it against anything you avoid, before you decide to buy.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Claims",
+            "method": "Honest language",
+            "title": "Only what is true",
+            "text": "<p>We describe how skin looks. We do not claim to treat, heal, or change anything we cannot stand behind.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>Honest language is the whole point. If we cannot say it plainly and truthfully, we would rather not say it at all.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Sourcing",
+            "method": "Made in the USA",
+            "title": "Small, controlled batches",
+            "text": "<p>Formulated and filled domestically in small runs, each one prepared with care rather than mass produced.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>Smaller batches mean tighter control and fresher product reaching your hands.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "label": "Edition",
+            "method": "Kept intentionally small",
+            "title": "A First Edition of twelve",
+            "text": "<p>One serum, done properly, before we ever add a second. Our First Edition is a run of twelve bottles.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>When the edition sells out it moves to a waitlist, so what you receive is always current.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

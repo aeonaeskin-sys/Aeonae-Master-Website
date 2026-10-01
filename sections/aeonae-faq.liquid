@@ -1,0 +1,321 @@
+{%- comment -%}
+  AEONAE FAQ (artifact #faq). Used on the home page and on page.faq.
+  Native <details>/<summary> accordion. All items share one name attribute,
+  so opening a question closes the others (exclusive accordion) in browsers
+  that support it; older browsers simply allow several open at once.
+{%- endcomment -%}
+
+{{ 'aeonae-faq.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign group_name = 'aeo-faq-' | append: section.id
+  assign support_email = settings.aeo_support_email | strip
+  assign anim_order = 0
+
+  assign item_count = 0
+  for block in section.blocks
+    if block.type == 'question' and block.settings.question != blank
+      assign item_count = item_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-faq aeo-section color-{{ section.settings.color_scheme }} gradient"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-intro aeo-faq__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-faq__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-faq__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte aeo-faq__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if item_count > 0 -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <div
+        class="aeo-faq__list aeo-acc{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {%- assign first_rendered = true -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'question' and block.settings.question != blank -%}
+            <details
+              class="aeo-acc__item aeo-faq__item"
+              name="{{ group_name }}"
+              {% if first_rendered and section.settings.open_first %}
+                open
+              {% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <summary class="aeo-acc__summary aeo-faq__question">
+                <span class="aeo-faq__question-text">{{ block.settings.question | escape }}</span>
+                <span class="aeo-acc__icon" aria-hidden="true">+</span>
+              </summary>
+              {%- if block.settings.answer != blank -%}
+                <div class="aeo-acc__body aeo-rte aeo-faq__answer">
+                  {{- block.settings.answer -}}
+                </div>
+              {%- endif -%}
+            </details>
+            {%- assign first_rendered = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-faq__empty">Add questions to this section.</p>
+    {%- endif -%}
+
+    {%- if section.settings.contact_text != blank and support_email != blank -%}
+      <p class="aeo-faq__contact">
+        {{ section.settings.contact_text | escape }}
+        <a class="aeo-faq__email" href="mailto:{{ support_email | escape }}">{{ support_email | escape }}</a>
+      </p>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if section.settings.enable_schema and item_count > 0 -%}
+  {%- assign first_entity = true -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'question' and block.settings.question != blank and block.settings.answer != blank -%}
+            {%- unless first_entity %},{% endunless %}
+            {
+              "@type": "Question",
+              "name": {{ block.settings.question | strip_html | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ block.settings.answer | json }}
+              }
+            }
+            {%- assign first_entity = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "section aeo-faq-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /#faq. Letters, numbers and dashes only.",
+      "default": "faq"
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Questions, answered"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Questions"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open the first question",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "Opening a question closes the others. Keep shipping, return and subscription answers identical to your store policies and apps."
+    },
+    {
+      "type": "header",
+      "content": "Contact line"
+    },
+    {
+      "type": "text",
+      "id": "contact_text",
+      "label": "Lead-in text",
+      "info": "Followed by the support email from Theme settings > AEONAE brand. Leave empty to hide the line.",
+      "default": "Still have a question? Email us at"
+    },
+    {
+      "type": "header",
+      "content": "Search engines"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_schema",
+      "label": "Add FAQ structured data",
+      "info": "Outputs FAQPage JSON-LD from these questions. Use it on one page only, usually the FAQ page.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What does the serum do?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>It is a cosmetic serum made to support the look of firmer, smoother, more even skin. It is designed to improve the appearance of your skin, not to treat any medical condition.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 30,
+  "presets": [
+    {
+      "name": "FAQ",
+      "blocks": [
+        {
+          "type": "question",
+          "settings": {
+            "question": "What does the serum do?",
+            "answer": "<p>It is a cosmetic serum made to support the look of firmer, smoother, more even skin. It is designed to improve the appearance of your skin, not to treat any medical condition.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "How do I use it?",
+            "answer": "<p>Apply three to four drops to clean skin morning or evening, then follow with moisturizer. Use sunscreen during the day.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Is it safe for me?",
+            "answer": "<p>The full ingredient list is on the product page so you can check it against anything you avoid. The serum contains royal jelly, so if you are allergic to bee products, do not use it.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "When will my order arrive?",
+            "answer": "<p>First Edition orders ship within one to three business days as each batch is prepared. You will get a confirmation and tracking the moment yours is on the way.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Unopened bottles can be returned within 14 days of delivery for a refund. For hygiene and safety, once a bottle has been opened or used it cannot be returned. If your order arrives damaged, send us a photo within 48 hours and we will replace it.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Can I cancel my subscription?",
+            "answer": "<p>Yes, any time. Change your delivery schedule or cancel from your account whenever you like.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

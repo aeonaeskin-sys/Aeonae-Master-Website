@@ -1,0 +1,204 @@
+{%- comment -%}
+  AEONAE closing call to action (artifact .subCTA).
+  Centered heading, short text, a primary button and an optional text link,
+  on the dark scheme by default.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+-%}
+
+<div
+  class="aeo-pg aeo-cta aeo-section color-{{ section.settings.color_scheme }} gradient{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap aeo-center">
+    {%- if section.settings.eyebrow != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <p
+        class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {{- section.settings.eyebrow | escape -}}
+      </p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <h2
+        class="aeo-h2 aeo-pg__heading aeo-cta__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {{- section.settings.heading -}}
+      </h2>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <div
+        class="aeo-soft aeo-rte rte aeo-cta__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {{- section.settings.text -}}
+      </div>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank or section.settings.link_label != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <div
+        class="aeo-btn-row aeo-cta__actions{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {%- if section.settings.button_label != blank -%}
+          <a
+            class="button aeo-cta__button"
+            {% if section.settings.button_link != blank %}
+              href="{{ section.settings.button_link }}"
+            {% else %}
+              role="link" aria-disabled="true"
+            {% endif %}
+          >
+            {{- section.settings.button_label | escape -}}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.link_label != blank -%}
+          <a
+            class="aeo-tlink aeo-pg__tlink"
+            {% if section.settings.link_url != blank %}
+              href="{{ section.settings.link_url }}"
+            {% else %}
+              role="link" aria-disabled="true"
+            {% endif %}
+          >
+            {{- section.settings.link_label | escape -}}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Call to action band",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-4"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Letters, numbers and dashes only."
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Read every ingredient before you buy."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>No proprietary blends and no fine print. Just the formula, in full.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "info": "Leave empty to hide the button.",
+      "default": "Shop the serum"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Text link label",
+      "info": "Optional. Leave empty to hide the text link."
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Text link"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "presets": [
+    {
+      "name": "Call to action band"
+    }
+  ]
+}
+{% endschema %}

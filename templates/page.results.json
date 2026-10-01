@@ -1,0 +1,256 @@
+{
+  "sections": {
+    "hero": {
+      "type": "aeonae-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "artifact_gradient": true,
+        "show_divider": true,
+        "show_back": true,
+        "back_label": "Back to home",
+        "show_mark": true,
+        "mark_height": 44,
+        "eyebrow": "Results and Ritual",
+        "heading": "What to expect, and how to use it.",
+        "text": "The texture, the daily ritual, an honest timeline, and real customer photos, never stock or generated.",
+        "button_label": "Shop the serum",
+        "button_link": "/products/copper-peptide-serum",
+        "link_label": "The Science",
+        "link_url": "/pages/science",
+        "padding_top": 20,
+        "padding_bottom": 80
+      }
+    },
+    "texture": {
+      "type": "aeonae-media-grid",
+      "blocks": {
+        "shot-texture": {
+          "type": "shot",
+          "settings": {
+            "tag": "Texture macro",
+            "caption": "A clear, lightweight fluid that spreads easily."
+          }
+        },
+        "shot-dropper": {
+          "type": "shot",
+          "settings": {
+            "tag": "The dropper",
+            "caption": "A precise glass dropper. Three to four drops per use."
+          }
+        },
+        "shot-skin": {
+          "type": "shot",
+          "settings": {
+            "tag": "On the skin",
+            "caption": "Sinks in fast, with no greasy film."
+          }
+        },
+        "shot-finish": {
+          "type": "shot",
+          "settings": {
+            "tag": "The finish",
+            "caption": "A soft, comfortable base, ready for moisturizer."
+          }
+        }
+      },
+      "block_order": [
+        "shot-texture",
+        "shot-dropper",
+        "shot-skin",
+        "shot-finish"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "card_color_scheme": "scheme-2",
+        "anchor_id": "texture",
+        "columns_desktop": "4",
+        "tag_on_photos": true,
+        "eyebrow": "Texture and feel",
+        "heading": "Lightweight, fast absorbing, barely there.",
+        "text": "<p>A clear, water light serum that sinks in without tack or residue. Here is exactly what to expect, from the drop to the skin.</p>",
+        "note": "<p>Real photography will fill these frames. They are placeholders for real, unretouched product shots, never stock or generated images.</p>",
+        "note_auto_hide": true,
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "results": {
+      "type": "aeonae-timeline",
+      "blocks": {
+        "milestone-1": {
+          "type": "milestone",
+          "settings": {
+            "label": "First two weeks",
+            "text": "Skin feels comfortable, calm, and hydrated."
+          }
+        },
+        "milestone-2": {
+          "type": "milestone",
+          "settings": {
+            "label": "Weeks four to eight",
+            "text": "The look of a smoother, more even surface."
+          }
+        },
+        "milestone-3": {
+          "type": "milestone",
+          "settings": {
+            "label": "Weeks eight to twelve",
+            "text": "Firmer, more radiant looking skin for many people."
+          }
+        }
+      },
+      "block_order": [
+        "milestone-1",
+        "milestone-2",
+        "milestone-3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "anchor_id": "results",
+        "eyebrow": "Results",
+        "heading": "Real skin, shown honestly.",
+        "text": "<p>These frames are reserved for real customers. As our First Edition ships, we will show verified, unretouched photos here so you can see how the serum looks over time.</p>",
+        "padding_top": 124,
+        "padding_bottom": 0
+      }
+    },
+    "before_after": {
+      "type": "aeonae-before-after",
+      "blocks": {
+        "result-week-4": {
+          "type": "result",
+          "settings": {
+            "label": "Customer, week 4",
+            "caption": "How skin looks after four weeks of daily use."
+          }
+        },
+        "result-week-8": {
+          "type": "result",
+          "settings": {
+            "label": "Customer, week 8",
+            "caption": "The look of a smoother, more even tone."
+          }
+        },
+        "result-week-12": {
+          "type": "result",
+          "settings": {
+            "label": "Customer, week 12",
+            "caption": "A firmer, more radiant looking finish."
+          }
+        }
+      },
+      "block_order": [
+        "result-week-4",
+        "result-week-8",
+        "result-week-12"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "card_color_scheme": "scheme-2",
+        "hide_empty": false,
+        "before_label": "Before",
+        "after_label": "After",
+        "note": "<p>Photos will be from real customers and unretouched. This is a cosmetic, so results describe the appearance of skin, and individual experiences vary.</p>",
+        "padding_top": 56,
+        "padding_bottom": 0
+      }
+    },
+    "customer_photos": {
+      "type": "aeonae-photo-grid",
+      "blocks": {
+        "photo-1": {
+          "type": "photo",
+          "settings": {}
+        },
+        "photo-2": {
+          "type": "photo",
+          "settings": {}
+        },
+        "photo-3": {
+          "type": "photo",
+          "settings": {}
+        },
+        "photo-4": {
+          "type": "photo",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "photo-1",
+        "photo-2",
+        "photo-3",
+        "photo-4"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "alignment": "left",
+        "heading": "From our customers",
+        "text": "<p>Real, verified customer photos will appear here as our First Edition ships. We never use stock or generated images.</p>",
+        "placeholder_text": "Customer photo",
+        "hide_empty": false,
+        "padding_top": 44,
+        "padding_bottom": 124
+      }
+    },
+    "ritual": {
+      "type": "aeonae-steps",
+      "blocks": {
+        "step-cleanse": {
+          "type": "step",
+          "settings": {
+            "title": "Cleanse",
+            "text": "Begin with clean, dry skin, morning or night."
+          }
+        },
+        "step-apply": {
+          "type": "step",
+          "settings": {
+            "title": "Apply",
+            "text": "Press three to four drops over face and neck. Pause as it absorbs."
+          }
+        },
+        "step-seal": {
+          "type": "step",
+          "settings": {
+            "title": "Seal",
+            "text": "Follow with moisturizer. Add sunscreen to your morning."
+          }
+        }
+      },
+      "block_order": [
+        "step-cleanse",
+        "step-apply",
+        "step-seal"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "anchor_id": "ritual",
+        "heading": "A quiet daily ritual.",
+        "text": "<p>One considered step, repeated. With consistent use, many people find their skin looks smoother and more radiant over time.</p>",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "cta": {
+      "type": "aeonae-cta-band",
+      "settings": {
+        "color_scheme": "scheme-4",
+        "heading": "Begin the ritual.",
+        "text": "<p>One considered step, repeated. Free US shipping and a 14 day promise.</p>",
+        "button_label": "Shop the serum",
+        "button_link": "/products/copper-peptide-serum",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "texture",
+    "results",
+    "before_after",
+    "customer_photos",
+    "ritual",
+    "cta"
+  ]
+}

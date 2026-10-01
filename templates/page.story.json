@@ -1,0 +1,149 @@
+{
+  "sections": {
+    "hero": {
+      "type": "aeonae-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "artifact_gradient": true,
+        "show_divider": true,
+        "show_back": true,
+        "back_label": "Back to home",
+        "show_mark": true,
+        "mark_height": 44,
+        "eyebrow": "Our Story",
+        "heading": "Honesty, printed on the label.",
+        "text": "Why we built AEONAE, one serum done properly, and the standard we refuse to lower.",
+        "button_label": "Shop the serum",
+        "button_link": "/products/copper-peptide-serum",
+        "link_label": "The Science",
+        "link_url": "/pages/science",
+        "padding_top": 20,
+        "padding_bottom": 80
+      }
+    },
+    "about": {
+      "type": "aeonae-letter",
+      "blocks": {
+        "principle-disclosure": {
+          "type": "principle",
+          "settings": {
+            "title": "Disclosure, not adjectives",
+            "text": "The full ingredient list and the amounts that matter sit on the page. If we cannot state something honestly, the page stays quiet instead."
+          }
+        },
+        "principle-one-serum": {
+          "type": "principle",
+          "settings": {
+            "title": "One serum, done properly",
+            "text": "We would rather perfect a single formula we can stand behind than fill a shelf with products we cannot."
+          }
+        },
+        "principle-people": {
+          "type": "principle",
+          "settings": {
+            "title": "Real people, straight answers",
+            "text": "Email a question and you will hear back from the people who made it, usually the same day."
+          }
+        }
+      },
+      "block_order": [
+        "principle-disclosure",
+        "principle-one-serum",
+        "principle-people"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "anchor_id": "about",
+        "eyebrow": "About AEONAE",
+        "heading": "We were tired of not knowing what was in the bottle.",
+        "letter": "<p>Tired of promises that sounded impressive and meant very little. Tired of paying for hope instead of honesty. When we could not find a brand that told us exactly what was inside, and exactly how much, we decided to build one ourselves.</p><p>Every ingredient printed in full. Every amount that matters, disclosed. If we cannot say something honestly, we do not say it at all. We are a small brand at the very beginning, and what we have is a standard we refuse to lower.</p>",
+        "signature": "With care,\nThe AEONAE team",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "standard": {
+      "type": "aeonae-tabs",
+      "blocks": {
+        "tab-disclosure": {
+          "type": "tab",
+          "settings": {
+            "label": "Disclosure",
+            "method": "The full formula",
+            "title": "Nothing hidden behind a blend",
+            "text": "<p>Every ingredient and the amounts that matter are printed on the product page, never buried in a proprietary blend or the fine print.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>You can read exactly what you are putting on your skin, and check it against anything you avoid, before you decide to buy.</p>"
+          }
+        },
+        "tab-claims": {
+          "type": "tab",
+          "settings": {
+            "label": "Claims",
+            "method": "Honest language",
+            "title": "Only what is true",
+            "text": "<p>We describe how skin looks. We do not claim to treat, heal, or change anything we cannot stand behind.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>Honest language is the whole point. If we cannot say it plainly and truthfully, we would rather not say it at all.</p>"
+          }
+        },
+        "tab-sourcing": {
+          "type": "tab",
+          "settings": {
+            "label": "Sourcing",
+            "method": "Made in the USA",
+            "title": "Small, controlled batches",
+            "text": "<p>Formulated and filled domestically in small runs, each one prepared with care rather than mass produced.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>Smaller batches mean tighter control and fresher product reaching your hands.</p>"
+          }
+        },
+        "tab-edition": {
+          "type": "tab",
+          "settings": {
+            "label": "Edition",
+            "method": "Kept intentionally small",
+            "title": "A First Edition of twelve",
+            "text": "<p>One serum, done properly, before we ever add a second. Our First Edition is a run of twelve bottles.</p>",
+            "why_title": "Why it matters",
+            "why_text": "<p>When the edition sells out it moves to a waitlist, so what you receive is always current.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "tab-disclosure",
+        "tab-claims",
+        "tab-sourcing",
+        "tab-edition"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "card_color_scheme": "scheme-2",
+        "anchor_id": "standard",
+        "eyebrow": "Our Standard",
+        "heading": "A standard we refuse to lower.",
+        "text": "<p>The questions a serum should answer before you ever put it on your skin, answered in the open.</p>",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "cta": {
+      "type": "aeonae-cta-band",
+      "settings": {
+        "color_scheme": "scheme-4",
+        "heading": "A serum with nothing to hide.",
+        "text": "<p>Every ingredient and the amounts that matter, printed in the open.</p>",
+        "button_label": "Shop the serum",
+        "button_link": "/products/copper-peptide-serum",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "about",
+    "standard",
+    "cta"
+  ]
+}

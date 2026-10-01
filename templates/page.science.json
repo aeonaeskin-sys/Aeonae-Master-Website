@@ -1,0 +1,170 @@
+{
+  "sections": {
+    "hero": {
+      "type": "aeonae-page-hero",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "artifact_gradient": true,
+        "show_divider": true,
+        "show_back": true,
+        "back_label": "Back to home",
+        "show_mark": true,
+        "mark_height": 44,
+        "eyebrow": "The Formula",
+        "heading": "A closer look at what is in the bottle.",
+        "text": "The peptide at the heart of the serum, the actives that support it, and every ingredient printed in the open.",
+        "button_label": "Shop the serum",
+        "button_link": "/products/copper-peptide-serum",
+        "link_label": "See results",
+        "link_url": "/pages/results",
+        "padding_top": 20,
+        "padding_bottom": 80
+      }
+    },
+    "ingredients": {
+      "type": "aeonae-ingredients",
+      "blocks": {
+        "ingredient-ghk-cu": {
+          "type": "ingredient",
+          "settings": {
+            "name": "GHK-Cu",
+            "description": "The copper peptide at the heart of the formula, for the look of firmer, smoother skin."
+          }
+        },
+        "ingredient-niacinamide": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Niacinamide",
+            "description": "For the appearance of a more even, balanced complexion."
+          }
+        },
+        "ingredient-hyaluronate": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Hyaluronate",
+            "description": "Draws in moisture for a plumper, more hydrated look."
+          }
+        },
+        "ingredient-aloe": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Aloe Vera",
+            "description": "Helps skin look calm, soft, and comfortable."
+          }
+        }
+      },
+      "block_order": [
+        "ingredient-ghk-cu",
+        "ingredient-niacinamide",
+        "ingredient-hyaluronate",
+        "ingredient-aloe"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "anchor_id": "science",
+        "intro_position": "left",
+        "eyebrow": "The Science",
+        "heading": "Built on one of the most studied peptides in skin care.",
+        "text": "<p>GHK-Cu, also called copper tripeptide-1, has been researched in skin science for decades. We formulate around it at a disclosed 1%, and we let the ingredient speak plainly rather than dress it in claims we cannot make.</p>",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "explained": {
+      "type": "aeonae-edu-cards",
+      "blocks": {
+        "card-what": {
+          "type": "card",
+          "settings": {
+            "title": "What GHK-Cu is",
+            "text": "<p>A small copper peptide, naturally present in skin, used in skin care for the look of firmer, smoother, more resilient looking skin. We use it at a disclosed 1%.</p>"
+          }
+        },
+        "card-who": {
+          "type": "card",
+          "settings": {
+            "title": "Who it is for",
+            "text": "<p>Anyone who wants the appearance of firmer, more even skin and prefers a short, honest routine. It suits most skin types, including sensitive skin looking for a gentle daily step.</p>"
+          }
+        },
+        "card-layer": {
+          "type": "card",
+          "settings": {
+            "title": "How to layer it",
+            "text": "<p>Apply to clean skin, then seal with moisturizer. It plays well with hydrating steps like hyaluronic acid. If you use strong acids or vitamin C, use them at a different time of day.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "card-what",
+        "card-who",
+        "card-layer"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "card_color_scheme": "scheme-2",
+        "anchor_id": "explained",
+        "columns_desktop": "3",
+        "eyebrow": "Copper peptides, explained",
+        "heading": "Everything worth knowing before you try it.",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "label": {
+      "type": "aeonae-label-card",
+      "blocks": {
+        "fact-active": {
+          "type": "fact",
+          "settings": {
+            "text": "Hero active disclosed at 1% GHK-Cu"
+          }
+        },
+        "fact-royal-jelly": {
+          "type": "fact",
+          "settings": {
+            "text": "Contains royal jelly"
+          }
+        }
+      },
+      "block_order": [
+        "fact-active",
+        "fact-royal-jelly"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "card_color_scheme": "scheme-2",
+        "anchor_id": "ingredients",
+        "show_mark": true,
+        "mark_height": 46,
+        "eyebrow": "Nothing hidden",
+        "heading": "The entire formula, in the open.",
+        "text": "<p>No proprietary blends and no fine print. Here is every ingredient in the bottle, in order, exactly as it appears on the label.</p>",
+        "label_heading": "Ingredients, INCI",
+        "inci": "<p>Aqua (Water), <em>Niacinamide</em>, Aloe barbadensis (Aloe Vera) Leaf Juice, Glycerin, Lactobacillus/Ganoderma Lucidum (Reishi Mushroom) Extract /Lentinus Edodes (Shiitake Mushroom) Extract Ferment Filtrate, Lactobacillus Ferment Lysate, Lactococcus Ferment Lysate, <em>Copper Tripeptide-1</em>, Saccharomyces/Capsicum Annuum Fruit Ferment Filtrate, Royal Jelly, Sodium Hyaluronate, Chamomilla Recutita (Matricaria) Flower Extract, Citrus Aurantium Dulcis Callus Culture Extract, Fructooligosaccharides, Beta Vulgaris (Beet) Root Extract, Centella Asiatica Extract, Hydrolyzed Ganoderma (Mushroom) Lucidum Extract, Leuconostoc Ferment Filtrate, <em>Palmitoyl Tripeptide-5</em>, <em>Acetyl Hexapeptide-8</em>, Xanthan Gum, Beta Glucan, Phenoxyethanol, Sodium Hydroxide.</p>",
+        "inci_metafield": "custom.inci",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "cta": {
+      "type": "aeonae-cta-band",
+      "settings": {
+        "color_scheme": "scheme-4",
+        "heading": "Read every ingredient before you buy.",
+        "text": "<p>No proprietary blends and no fine print. Just the formula, in full.</p>",
+        "button_label": "Shop the serum",
+        "button_link": "/products/copper-peptide-serum",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "ingredients",
+    "explained",
+    "label",
+    "cta"
+  ]
+}

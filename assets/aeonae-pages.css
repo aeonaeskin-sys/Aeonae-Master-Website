@@ -1,0 +1,1153 @@
+/*
+  AEONAE content pages: The Science, Results and Ritual, Our Story.
+  sections/aeonae-page-hero, -ingredients, -edu-cards, -label-card, -cta-band,
+  -media-grid, -timeline, -before-after, -photo-grid, -steps, -letter, -tabs.
+  Reference: artifact .phero, .inside/.act-row, .edu/.educard, .labelcard,
+  .subCTA, .shotgrid/.shot, .timeline/.tl, .resgrid/.rescard, .ugc,
+  .steps/.step, .aboutGrid/.letter/.principle, .tabs/.panel.
+  1rem = 10px here (artifact rem x 1.6). Shared primitives live in aeonae.css.
+  Every section wrapper carries .aeo-pg, so nothing here leaks into other sections.
+*/
+
+/* ---------- Reveal timing (artifact .sub-reveal: 30px, .85s; ingredient rows: 16px, .7s, .09s stagger) ----------
+   Dawn's reveal is a keyframe animation, so the timing is set on the animation itself.
+   Design mode and reduced motion keep Dawn's behaviour (no animation). */
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-pg .aeo-reveal.scroll-trigger.animate--slide-in:not(.scroll-trigger--offscreen):not(.scroll-trigger--design-mode):not(.scroll-trigger--cancel) {
+    animation: aeo-pg-rise 0.85s var(--aeo-ease) both;
+    animation-delay: calc(var(--animation-order, 0) * 90ms);
+  }
+
+  .aeo-pg .aeo-reveal--row.scroll-trigger.animate--slide-in:not(.scroll-trigger--offscreen):not(.scroll-trigger--design-mode):not(.scroll-trigger--cancel) {
+    animation-name: aeo-pg-rise-sm;
+    animation-duration: 0.7s;
+  }
+}
+
+@keyframes aeo-pg-rise {
+  from {
+    opacity: 0.01;
+    transform: translateY(3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes aeo-pg-rise-sm {
+  from {
+    opacity: 0.01;
+    transform: translateY(1.6rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Shared ---------- */
+
+/* flow-root keeps child margins inside the section when its padding is 0,
+   so stacked sections with the same scheme join without a seam */
+.aeo-pg {
+  position: relative;
+  display: flow-root;
+}
+
+.aeo-pg.aeo-on-dark .aeo-h1,
+.aeo-pg.aeo-on-dark .aeo-h2,
+.aeo-pg.aeo-on-dark .aeo-h3 {
+  color: #fff;
+}
+
+.aeo-pg__intro > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Center narrow headings in centered intros (kept explicit for page sections) */
+.aeo-pg .aeo-intro > * {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.aeo-pg .aeo-eyebrow + .aeo-pg__heading {
+  margin-top: 1.4rem;
+}
+
+.aeo-pg__text {
+  margin-top: 1.6rem;
+}
+
+.aeo-pg__intro > .aeo-pg__text:first-child,
+.aeo-ingr__intro > .aeo-pg__text:first-child {
+  margin-top: 0;
+}
+
+/* Thin text link: keep the underline look, give it a 44px tap target */
+.aeo-pg__tlink {
+  position: relative;
+}
+
+.aeo-pg__tlink::after {
+  content: '';
+  position: absolute;
+  inset: -1.2rem -0.8rem;
+}
+
+.aeo-pg a[aria-disabled='true'] {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* Theme editor only messages */
+.aeo-pg__empty,
+.aeo-pg__editor-note {
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: #2a241d;
+  background: rgba(252, 248, 241, 0.94);
+  border: 0.1rem dashed rgba(42, 36, 29, 0.35);
+  border-radius: 0.8rem;
+  padding: 1rem 1.4rem;
+  margin: 0 0 2.4rem;
+  max-width: 74ch;
+}
+
+.aeo-pg__empty {
+  margin: 2.4rem auto 0;
+  text-align: center;
+}
+
+/* ---------- Page hero (artifact .phero) ---------- */
+
+.aeo-phero {
+  overflow: hidden;
+}
+
+.aeo-phero.aeo-phero--artifact-bg {
+  background: linear-gradient(180deg, #fcf8f1 0%, #f1e9da 100%);
+  background-attachment: scroll;
+}
+
+.aeo-phero--divider {
+  border-bottom: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-phero__back {
+  position: relative;
+  display: inline-block;
+  font-size: 1.38rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: rgba(var(--color-foreground), 0.8);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.aeo-phero__back::after {
+  content: '';
+  position: absolute;
+  inset: -1.2rem -0.8rem;
+}
+
+.aeo-phero__back:hover {
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-phero__inner {
+  padding-top: clamp(1.8rem, 3vw, 3.8rem);
+  text-align: center;
+}
+
+.aeo-phero__mark,
+.aeo-label__mark {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: var(--aeo-mark-h, 4.4rem);
+  margin: 0 auto 1.8rem;
+}
+
+.aeo-phero__eyebrow {
+  margin: 0;
+}
+
+.aeo-phero__heading {
+  max-width: 18ch;
+  margin: 1.6rem auto 0;
+}
+
+.aeo-phero__inner > .aeo-phero__heading:first-child {
+  margin-top: 0;
+}
+
+.aeo-phero__lede {
+  max-width: 54ch;
+  margin: 1.8rem auto 0;
+}
+
+.aeo-phero__actions {
+  margin-top: 3.2rem;
+  gap: 1.6rem;
+  justify-content: center;
+}
+
+/* ---------- Ingredient rows (artifact .inside / .act-row) ---------- */
+
+.aeo-ingr__grid {
+  display: grid;
+  gap: clamp(3.4rem, 5vw, 6rem);
+  align-items: center;
+}
+
+.aeo-ingr__intro,
+.aeo-ingr__list {
+  min-width: 0;
+}
+
+.aeo-ingr__intro > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.aeo-ingr__intro .aeo-pg__text {
+  margin-top: 1.8rem;
+}
+
+.aeo-ingr__list {
+  margin: 0;
+}
+
+.aeo-ingr__row {
+  display: flex;
+  gap: 1.8rem;
+  padding: 1.8rem 0;
+  border-bottom: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-ingr__name {
+  flex: 0 1 auto;
+  min-width: 8.5ch;
+  max-width: 45%;
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: 1.68rem;
+  line-height: 1.5;
+  color: rgb(var(--color-foreground));
+  overflow-wrap: break-word;
+}
+
+.aeo-ingr__desc {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.44rem;
+  line-height: 1.55;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+@media screen and (min-width: 860px) {
+  .aeo-ingr__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aeo-ingr--intro-right .aeo-ingr__intro {
+    order: 2;
+  }
+}
+
+/* ---------- Explainer cards (artifact .edu / .educard) ---------- */
+
+.aeo-edu__heading {
+  max-width: 22ch;
+}
+
+.aeo-edu__grid {
+  list-style: none;
+  margin: 5.2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2.2rem;
+}
+
+.aeo-edu__intro + .aeo-edu__grid {
+  margin-top: 5.2rem;
+}
+
+.aeo-wrap > .aeo-edu__grid:first-child {
+  margin-top: 0;
+}
+
+.aeo-edu__item {
+  display: flex;
+  min-width: 0;
+}
+
+.aeo-edu__card {
+  flex: 1;
+  padding: 2.8rem 2.6rem;
+}
+
+.aeo-edu__title {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-edu__text {
+  margin-top: 1rem;
+  font-size: 1.47rem;
+  line-height: 1.6;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-edu__title + .aeo-edu__text {
+  margin-top: 1rem;
+}
+
+.aeo-edu__card > .aeo-edu__text:first-child {
+  margin-top: 0;
+}
+
+@media screen and (min-width: 760px) {
+  .aeo-edu__grid {
+    grid-template-columns: repeat(var(--aeo-cols, 3), minmax(0, 1fr));
+  }
+}
+
+/* ---------- Ingredient label (artifact .discMark / .labelcard) ---------- */
+
+.aeo-label__mark {
+  height: var(--aeo-mark-h, 4.6rem);
+}
+
+.aeo-label .aeo-eyebrow + .aeo-pg__heading {
+  margin-top: 1.2rem;
+}
+
+.aeo-label__text p {
+  max-width: 52ch;
+}
+
+.aeo-label__card {
+  max-width: 86rem;
+  margin: 4.6rem auto 0;
+  padding: clamp(2.6rem, 4vw, 4.2rem);
+  border: 0.1rem solid rgb(var(--color-foreground));
+  border-radius: 0.5rem;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-wrap > .aeo-label__card:first-child {
+  margin-top: 0;
+}
+
+.aeo-label__heading {
+  margin: 0 0 1.8rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 0.1rem solid var(--aeo-line);
+  font-family: var(--font-body-family);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-label__list {
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: clamp(1.84rem, 2.7vw, 2.72rem);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  color: rgb(var(--color-foreground));
+  overflow-wrap: break-word;
+}
+
+.aeo-label__list p,
+.aeo-label__list ul,
+.aeo-label__list ol {
+  margin: 0;
+  max-width: none;
+}
+
+.aeo-label__list > * + * {
+  margin-top: 1em;
+}
+
+/* Italic marks the actives: shown upright in the accent color (artifact .labelcard .list em) */
+.aeo-label__list em,
+.aeo-label__list i {
+  font-style: normal;
+  color: var(--aeo-accent);
+}
+
+.aeo-label__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 2.6rem;
+  list-style: none;
+  margin: 2.4rem 0 0;
+  padding: 1.6rem 0 0;
+  border-top: 0.1rem solid var(--aeo-line);
+  font-size: 1.22rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-label__card > .aeo-label__facts:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* ---------- Call to action band (artifact .subCTA) ---------- */
+
+.aeo-cta .aeo-eyebrow {
+  margin: 0 0 1.4rem;
+}
+
+.aeo-cta .aeo-eyebrow + .aeo-pg__heading {
+  margin-top: 0;
+}
+
+.aeo-cta__heading {
+  max-width: 22ch;
+  margin: 0 auto;
+}
+
+.aeo-cta__text {
+  margin: 1.4rem auto 0;
+}
+
+.aeo-cta__text p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.aeo-cta__actions {
+  margin-top: 2.6rem;
+  justify-content: center;
+}
+
+.aeo-cta .aeo-center > :first-child {
+  margin-top: 0;
+}
+
+/* ---------- Captioned media grid (artifact .shotgrid / .shot) ---------- */
+
+.aeo-shots__heading {
+  max-width: 20ch;
+}
+
+.aeo-shots__text p {
+  max-width: 56ch;
+}
+
+.aeo-shots__grid {
+  list-style: none;
+  margin: 4.8rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2.2rem;
+}
+
+.aeo-wrap > .aeo-shots__grid:first-child {
+  margin-top: 0;
+}
+
+.aeo-shots__item {
+  display: flex;
+  min-width: 0;
+}
+
+.aeo-shot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.aeo-shot__frame {
+  position: relative;
+}
+
+.aeo-shot__frame .aeo-ph__tag {
+  z-index: 1;
+}
+
+.aeo-shot__cap {
+  padding: 1.5rem 1.8rem;
+  font-size: 1.41rem;
+  line-height: 1.55;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-shots__note,
+.aeo-ba__note {
+  margin-top: 2.6rem;
+}
+
+.aeo-wrap > .aeo-shots__note:first-child,
+.aeo-wrap > .aeo-ba__note:first-child {
+  margin-top: 0;
+}
+
+@media screen and (min-width: 680px) {
+  .aeo-shots__grid:not(.aeo-shots__grid--1) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .aeo-shots__grid.aeo-shots__grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .aeo-shots__grid.aeo-shots__grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.aeo-shots__grid--1 {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------- Timeline (artifact .timeline / .tl) ---------- */
+
+.aeo-tl__heading {
+  max-width: 20ch;
+}
+
+.aeo-tl__text p {
+  max-width: 56ch;
+}
+
+.aeo-tl__list {
+  list-style: none;
+  margin: 3.6rem 0 0.6rem;
+  padding: 0;
+  display: grid;
+  gap: 2rem;
+}
+
+.aeo-wrap > .aeo-tl__list:first-child {
+  margin-top: 0;
+}
+
+.aeo-tl__item {
+  min-width: 0;
+  padding-top: 1.5rem;
+  border-top: 0.2rem solid var(--aeo-copper);
+}
+
+.aeo-tl__label {
+  margin: 0;
+  font-family: var(--font-body-family);
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--aeo-copper-text);
+}
+
+/* Raw copper is too dark for small text on the dark scheme: lighten it */
+.aeo-on-dark .aeo-tl__label {
+  color: #d1a07c;
+  color: color-mix(in srgb, var(--aeo-copper) 70%, #fff);
+}
+
+.aeo-tl__desc {
+  margin: 0.8rem 0 0;
+  font-size: 1.52rem;
+  line-height: 1.6;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-tl__item > .aeo-tl__desc:first-child {
+  margin-top: 0;
+}
+
+@media screen and (min-width: 760px) {
+  .aeo-tl__list {
+    grid-template-columns: repeat(var(--aeo-cols, 3), minmax(0, 1fr));
+  }
+}
+
+/* ---------- Before and after (artifact .resgrid / .rescard) ---------- */
+
+.aeo-ba .aeo-pg__editor-note {
+  margin-bottom: 2.4rem;
+}
+
+.aeo-ba__heading {
+  max-width: 20ch;
+}
+
+.aeo-ba__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2.2rem;
+}
+
+.aeo-ba__intro + .aeo-ba__grid {
+  margin-top: 5.2rem;
+}
+
+.aeo-ba__item {
+  display: flex;
+  min-width: 0;
+}
+
+.aeo-ba__item--held {
+  opacity: 0.55;
+}
+
+.aeo-ba__card {
+  position: relative;
+  flex: 1;
+  margin: 0;
+}
+
+.aeo-ba__held {
+  position: absolute;
+  top: 50%;
+  left: 1.2rem;
+  right: 1.2rem;
+  z-index: 3;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  color: #2a241d;
+  background: rgba(252, 248, 241, 0.94);
+  border: 0.1rem dashed rgba(42, 36, 29, 0.35);
+  border-radius: 0.8rem;
+  padding: 0.6rem 0.9rem;
+}
+
+.aeo-ba__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.aeo-ba__ph {
+  position: relative;
+  min-width: 0;
+}
+
+.aeo-ba__ph:first-child {
+  border-right: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-ba .aeo-ph {
+  background: linear-gradient(160deg, #f3ece0, #e4d8c6);
+}
+
+/* Before / After chips use the accent, like the artifact's .rescard .tag */
+.aeo-ba .aeo-ph__tag {
+  z-index: 1;
+  color: var(--aeo-accent);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.aeo-ba__cap {
+  padding: 1.8rem 2rem;
+}
+
+.aeo-ba__label {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.aeo-ba__text {
+  margin: 0.6rem 0 0;
+  font-size: 1.44rem;
+  line-height: 1.55;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-ba__cap > .aeo-ba__text:first-child {
+  margin-top: 0;
+}
+
+/* Cards keep a third of the row; fewer cards are centered instead of stretched */
+@media screen and (min-width: 760px) {
+  .aeo-ba__grid {
+    grid-template-columns: repeat(var(--aeo-cols, 3), minmax(0, calc((100% - 4.4rem) / 3)));
+    justify-content: center;
+  }
+}
+
+/* ---------- Customer photos (artifact .ugcwrap / .ugc) ---------- */
+
+.aeo-ugc__head > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.aeo-ugc__heading {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: 2.08rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-on-dark .aeo-ugc__heading {
+  color: #fff;
+}
+
+.aeo-ugc__text {
+  font-size: 1.44rem;
+}
+
+.aeo-ugc__text p {
+  max-width: 56ch;
+}
+
+.aeo-ugc--center .aeo-ugc__head {
+  text-align: center;
+}
+
+.aeo-ugc--center .aeo-ugc__text p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.aeo-ugc__grid {
+  list-style: none;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.aeo-wrap > .aeo-ugc__grid:first-child {
+  margin-top: 0;
+}
+
+.aeo-ugc__item {
+  min-width: 0;
+}
+
+.aeo-ugc__media {
+  border: 0.1rem solid var(--aeo-line);
+  border-radius: 1.2rem;
+  overflow: hidden;
+}
+
+.aeo-ugc .aeo-ph {
+  background: linear-gradient(160deg, #f5efe6, #e9dfd0);
+}
+
+/* The empty frame reads "Customer photo", like the artifact */
+.aeo-ugc .aeo-ph__icon {
+  padding: 0 1rem;
+  font-family: var(--font-body-family);
+  font-size: 1.06rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #b9ab95;
+}
+
+.aeo-ugc__apps {
+  margin-top: 1.6rem;
+}
+
+@media screen and (min-width: 680px) {
+  .aeo-ugc__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Steps (artifact .steps / .step) ---------- */
+
+.aeo-steps__heading {
+  max-width: 14ch;
+}
+
+.aeo-steps__text p {
+  max-width: 46ch;
+}
+
+.aeo-steps__list {
+  list-style: none;
+  margin: 5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(2.6rem, 4vw, 4.4rem);
+  text-align: left;
+}
+
+.aeo-wrap > .aeo-steps__list:first-child {
+  margin-top: 0;
+}
+
+.aeo-steps__item {
+  min-width: 0;
+}
+
+.aeo-steps__title {
+  margin: 0;
+  font-family: var(--font-body-family);
+  font-weight: 600;
+  font-size: 1.76rem;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-steps__num {
+  display: block;
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: 3.2rem;
+  line-height: 1;
+  color: var(--aeo-accent);
+}
+
+.aeo-on-dark .aeo-steps__num {
+  color: #a8b888;
+}
+
+.aeo-steps__name {
+  display: block;
+  margin: 1.4rem 0 0.8rem;
+}
+
+.aeo-steps__desc {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+@media screen and (min-width: 760px) {
+  .aeo-steps__list--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .aeo-steps__list--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .aeo-steps__list--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .aeo-steps__list--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Letter and principles (artifact .aboutGrid / .letter / .principle) ---------- */
+
+.aeo-letter__eyebrow {
+  margin: 0 0 2.6rem;
+}
+
+.aeo-letter__grid {
+  display: grid;
+  gap: clamp(3rem, 5vw, 6rem);
+}
+
+.aeo-letter__main {
+  min-width: 0;
+  max-width: 64rem;
+}
+
+.aeo-letter__heading {
+  max-width: 18ch;
+  margin: 0 0 2.4rem;
+}
+
+.aeo-letter__body p {
+  margin: 2rem 0 0;
+  font-size: 1.68rem;
+  line-height: 1.8;
+  color: rgba(var(--color-foreground), 0.88);
+}
+
+.aeo-letter__body > p:first-child {
+  margin-top: 0;
+}
+
+.aeo-letter__sign {
+  margin: 2.8rem 0 0;
+  font-family: var(--font-heading-family);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.92rem;
+  line-height: 1.45;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-letter__main > :first-child {
+  margin-top: 0;
+}
+
+.aeo-letter__principles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(2.6rem, 4vw, 3.6rem);
+  align-content: start;
+  min-width: 0;
+}
+
+.aeo-letter__ptitle {
+  margin: 0;
+  font-family: var(--font-body-family);
+  font-weight: 600;
+  font-size: 1.79rem;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-letter__num {
+  display: block;
+  font-family: var(--font-heading-family);
+  font-weight: 500;
+  font-size: 1.76rem;
+  line-height: 1.4;
+  color: var(--aeo-accent);
+}
+
+.aeo-on-dark .aeo-letter__num {
+  color: #a8b888;
+}
+
+.aeo-letter__pname {
+  display: block;
+  margin: 0.8rem 0 0.6rem;
+}
+
+.aeo-letter__ptext {
+  margin: 0;
+  font-size: 1.47rem;
+  line-height: 1.6;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+@media screen and (min-width: 860px) {
+  .aeo-letter__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aeo-letter--single .aeo-letter__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Tabs (artifact .tabs / .panel) ---------- */
+
+.aeo-tabs__heading {
+  max-width: 20ch;
+}
+
+.aeo-tabs__ui {
+  margin-top: 4.4rem;
+}
+
+.aeo-wrap > .aeo-tabs__ui:first-child {
+  margin-top: 0;
+}
+
+aeo-tabs {
+  display: block;
+}
+
+.aeo-tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  border-bottom: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-tabs__list[hidden] {
+  display: none;
+}
+
+.aeo-tabs__tab {
+  position: relative;
+  min-height: 4.4rem;
+  margin: 0;
+  padding: 1.2rem 2rem;
+  border: 0;
+  background: none;
+  font-family: var(--font-body-family);
+  font-size: 1.44rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: rgba(var(--color-foreground), 0.72);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.aeo-tabs__tab:hover,
+.aeo-tabs__tab[aria-selected='true'] {
+  color: rgb(var(--color-foreground));
+}
+
+/* Selected indicator. The artifact used a pale sage line; the accent keeps a 3:1 contrast against the background. */
+.aeo-tabs__tab[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  left: 1.2rem;
+  right: 1.2rem;
+  bottom: -0.1rem;
+  height: 0.2rem;
+  border-radius: 0.2rem;
+  background: var(--aeo-accent);
+}
+
+.aeo-on-dark .aeo-tabs__tab[aria-selected='true']::after {
+  background: #a8b888;
+}
+
+.aeo-tabs__tab:focus-visible {
+  outline: 0.2rem solid var(--aeo-accent);
+  outline-offset: -0.2rem;
+  border-radius: 0.4rem;
+}
+
+.aeo-tabs__panel {
+  display: grid;
+  gap: clamp(2.8rem, 4vw, 5.6rem);
+  padding-top: 3.6rem;
+}
+
+.aeo-tabs__panel[hidden] {
+  display: none;
+}
+
+.aeo-tabs__panel:focus-visible {
+  outline: 0.2rem solid var(--aeo-accent);
+  outline-offset: 0.6rem;
+  border-radius: 0.4rem;
+}
+
+/* Without JavaScript every panel shows, separated by a hairline */
+aeo-tabs:not([data-enhanced]) .aeo-tabs__panel:first-child {
+  padding-top: 0;
+}
+
+aeo-tabs:not([data-enhanced]) .aeo-tabs__panel + .aeo-tabs__panel {
+  margin-top: 3.6rem;
+  border-top: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-tabs__main,
+.aeo-tabs__why {
+  min-width: 0;
+}
+
+.aeo-tabs__method {
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--aeo-accent);
+}
+
+.aeo-on-dark .aeo-tabs__method {
+  color: #a8b888;
+}
+
+.aeo-tabs__title {
+  margin: 1.2rem 0 0;
+}
+
+.aeo-tabs__body {
+  margin-top: 1.6rem;
+}
+
+.aeo-tabs__main > :first-child {
+  margin-top: 0;
+}
+
+.aeo-tabs__why {
+  padding: 2rem 2.2rem;
+  border: 0.1rem solid var(--aeo-line);
+  border-left: 0.3rem solid var(--aeo-accent);
+  border-radius: 0 1rem 1rem 0;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-tabs__why-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--aeo-accent);
+}
+
+.aeo-tabs__why-text {
+  margin-top: 0.8rem;
+  font-size: 1.54rem;
+  line-height: 1.7;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-tabs__why > :first-child {
+  margin-top: 0;
+}
+
+@media screen and (min-width: 820px) {
+  .aeo-tabs__panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aeo-tabs__panel--single {
+    grid-template-columns: minmax(0, 68rem);
+  }
+}
+
+/* ---------- Reduced motion: no hover lift transitions on these cards ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .aeo-pg .aeo-card--lift {
+    transition: none;
+  }
+}

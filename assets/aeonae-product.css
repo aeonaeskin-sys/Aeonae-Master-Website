@@ -1,0 +1,740 @@
+/*
+  AEONAE product page: styles Dawn's main-product section to match the reference
+  design and adds the AEONAE product blocks (edition band, benefits, spec chips,
+  purchase options, guarantee, reassurance, inline trust row, allergen notice).
+  Loaded only by sections/main-product.liquid. Everything is scoped to .aeo-pdp
+  (the .product grid) or to AEONAE block classes. 1rem = 10px.
+*/
+
+.aeo-pdp {
+  --aeo-card-bg: rgba(255, 255, 255, 0.6);
+  --aeo-tint: rgba(var(--color-foreground), 0.045);
+  --aeo-stage-gradient: linear-gradient(165deg, #f5efe6, #e7dccb);
+}
+
+.color-scheme-4 .aeo-pdp {
+  --aeo-card-bg: rgba(255, 255, 255, 0.06);
+  --aeo-tint: rgba(255, 255, 255, 0.07);
+  --aeo-line: rgba(250, 245, 236, 0.14);
+  --aeo-accent: #a8b888;
+}
+
+/* ---------- Layout ---------- */
+
+/* Align the product page with the AEONAE sections around it (.aeo-wrap). */
+.page-width:has(> .product.aeo-pdp) {
+  max-width: var(--aeo-wrap);
+  padding: 0 var(--aeo-gutter);
+}
+
+quick-add-modal .page-width:has(> .product.aeo-pdp) {
+  padding: 0;
+}
+
+@media screen and (min-width: 750px) {
+  .product.aeo-pdp:not(.product--right) .product__info-wrapper {
+    padding: 0 0 0 clamp(3.4rem, 5vw, 6rem);
+  }
+
+  .product.aeo-pdp.product--right .product__info-wrapper {
+    padding: 0 clamp(3.4rem, 5vw, 6rem) 0 0;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .aeo-pdp .product__column-sticky {
+    top: 9.6rem;
+  }
+}
+
+/* ---------- No-media stage (artifact .gmain) ---------- */
+
+.aeo-pdp-stage__frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(3.4rem, 5vw, 6rem);
+  border-radius: var(--aeo-radius-media);
+  background: var(--aeo-stage-gradient);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.aeo-pdp-stage__halo {
+  top: 52%;
+  width: 80%;
+  height: 74%;
+  background: radial-gradient(circle, rgba(var(--aeo-halo-rgb), 0.25), transparent 66%);
+  filter: blur(2.6rem);
+}
+
+.aeo-pdp-stage__bottle {
+  position: relative;
+  z-index: 2;
+  width: min(24rem, 58vw);
+}
+
+.aeo-pdp-stage__label {
+  z-index: 3;
+}
+
+@media screen and (max-width: 749px) {
+  .aeo-pdp--stage .product__media-wrapper {
+    margin-bottom: 3rem;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .aeo-pdp-stage--sticky {
+    position: sticky;
+    top: 9.6rem;
+  }
+}
+
+/* ---------- Dawn gallery with real media: soft frame + radius ---------- */
+
+.aeo-pdp .product__media-list .product-media-container {
+  --media-radius: 1.8rem;
+  background: var(--aeo-stage-gradient);
+}
+
+.aeo-pdp .product__media-list .product-media-container .media {
+  border-radius: calc(1.8rem - var(--media-border-width));
+}
+
+.aeo-pdp .thumbnail.global-media-settings {
+  --media-radius: 1.2rem;
+  background: var(--aeo-stage-gradient);
+  border-color: var(--aeo-line);
+}
+
+.aeo-pdp .thumbnail.global-media-settings img {
+  border-radius: calc(1.2rem - var(--media-border-width));
+}
+
+.aeo-pdp .thumbnail[aria-current] {
+  border-color: var(--aeo-accent);
+  box-shadow: 0 0 0 0.2rem rgba(var(--aeo-accent-rgb), 0.18);
+}
+
+/* ---------- Eyebrow, title, rating, price ---------- */
+
+.aeo-pdp .product__text.caption-with-letter-spacing {
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  color: var(--aeo-accent);
+}
+
+.color-scheme-4 .aeo-pdp .product__text.caption-with-letter-spacing {
+  color: #a8b888;
+}
+
+.aeo-pdp .product__info-container > .product__text.caption-with-letter-spacing + .product__title {
+  margin-top: 1rem;
+}
+
+.aeo-pdp .product__title {
+  margin-bottom: 0;
+}
+
+.aeo-pdp .product__title h1 {
+  font-size: clamp(3.04rem, 3.6vw, 4.16rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+}
+
+.aeo-pdp .product__info-container > .rating-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  font-size: 1.36rem;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-pdp .rating-star {
+  --color-rating-star: var(--aeo-accent);
+  --font-size: 1.5;
+  --letter-spacing: 0.2;
+}
+
+.aeo-pdp .rating-count {
+  font-size: 1.36rem;
+  letter-spacing: 0;
+}
+
+.aeo-pdp .price--large {
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+.aeo-pdp .price--large .price__container {
+  margin-bottom: 0;
+}
+
+.aeo-pdp .product__info-container .price--large .price__sale s.price-item--regular {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+/* ---------- Edition band (aeo_edition) ---------- */
+
+.aeo-pdp .product__info-container > .aeo-edition {
+  margin-top: 1.6rem;
+}
+
+.aeo-edition {
+  padding: 1.4rem 1.6rem;
+  border: 0.15rem solid var(--aeo-line);
+  border-radius: 1.1rem;
+  background: var(--aeo-card-bg);
+}
+
+.aeo-edition__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.4rem 1.2rem;
+}
+
+.aeo-edition__label {
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.aeo-edition__left {
+  font-size: 1.44rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--aeo-copper-text);
+  white-space: nowrap;
+}
+
+.color-scheme-4 .aeo-edition__left {
+  color: var(--aeo-copper);
+}
+
+.aeo-edition__bar {
+  height: 0.7rem;
+  margin: 1.1rem 0 0.9rem;
+  border-radius: 9.9rem;
+  background: rgba(var(--color-foreground), 0.08);
+  overflow: hidden;
+}
+
+.aeo-edition__fill {
+  display: block;
+  height: 100%;
+  width: var(--aeo-fill, 0%);
+  border-radius: 9.9rem;
+  background: var(--aeo-copper);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--aeo-copper) 82%, #fff), var(--aeo-copper));
+}
+
+@keyframes aeo-edition-fill {
+  from {
+    width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-edition__fill {
+    animation: aeo-edition-fill 1.1s var(--aeo-ease) 0.25s both;
+  }
+}
+
+.aeo-edition__note {
+  margin: 0.6rem 0 0;
+  font-size: 1.22rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-edition__bar + .aeo-edition__note {
+  margin-top: 0;
+}
+
+/* ---------- Benefits + spec chips ---------- */
+
+.aeo-pdp .product__info-container > .aeo-pdp-benefits {
+  margin-top: 2rem;
+}
+
+.aeo-pdp-benefits li {
+  font-size: 1.5rem;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-pdp .product__info-container > .aeo-pdp-specs {
+  margin-top: 2rem;
+}
+
+/* ---------- Purchase options (aeo_purchase_options) ---------- */
+
+.aeo-po {
+  display: block;
+  scroll-margin-top: 12rem;
+}
+
+.aeo-pdp .product__info-container > .aeo-po {
+  margin-top: 2.4rem;
+}
+
+.aeo-po__body[hidden],
+.aeo-po__plans[hidden],
+.aeo-po__save[hidden] {
+  display: none;
+}
+
+.aeo-po__modes,
+.aeo-po__plans {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.aeo-po__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.aeo-po__mode:only-child {
+  grid-column: 1 / -1;
+}
+
+.aeo-po__mode,
+.aeo-po__plan {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.aeo-po__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aeo-po__card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 4.4rem;
+  padding: 1.5rem 1.6rem;
+  border: 0.15rem solid var(--aeo-line);
+  border-radius: 0.8rem;
+  background: var(--aeo-card-bg);
+  text-align: left;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.aeo-po__mode:hover .aeo-po__input:not(:checked) + .aeo-po__card,
+.aeo-po__plan:hover .aeo-po__input:not(:checked) + .aeo-po__pill {
+  border-color: rgba(var(--color-foreground), 0.55);
+}
+
+.aeo-po__input:checked + .aeo-po__card {
+  border-color: var(--aeo-accent);
+  background: var(--aeo-tint);
+}
+
+.aeo-po__input:focus-visible + .aeo-po__card,
+.aeo-po__input:focus-visible + .aeo-po__pill {
+  outline: 0.2rem solid var(--aeo-accent);
+  outline-offset: 0.3rem;
+}
+
+.aeo-po__label {
+  font-size: 1.44rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-po__price {
+  margin-top: 0.5rem;
+  font-size: 1.44rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--aeo-accent);
+}
+
+.aeo-po__save {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--aeo-accent);
+}
+
+.color-scheme-4 .aeo-po__price,
+.color-scheme-4 .aeo-po__save {
+  color: #a8b888;
+}
+
+.aeo-po__plans {
+  margin-top: 1.6rem;
+}
+
+.aeo-po__legend {
+  float: left;
+  width: 100%;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  font-size: 1.28rem;
+  line-height: 1.4;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-po__pills {
+  clear: both;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+.aeo-po__pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 4.4rem;
+  padding: 0.9rem 1.6rem;
+  border: 0.15rem solid var(--aeo-line);
+  border-radius: 0.6rem;
+  background: var(--aeo-card-bg);
+  font-size: 1.33rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgb(var(--color-foreground));
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.aeo-po__input:checked + .aeo-po__pill {
+  border-color: var(--aeo-accent);
+  color: var(--aeo-accent);
+}
+
+.color-scheme-4 .aeo-po__input:checked + .aeo-po__pill {
+  color: #a8b888;
+}
+
+.aeo-po__note {
+  margin: 1.1rem 0 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+/* ---------- Quantity + Add to cart on one row (when the blocks are adjacent) ---------- */
+
+@media screen and (min-width: 360px) {
+  .aeo-pdp .product__info-container > .product-form__quantity:has(+ div > product-form) {
+    display: table-cell;
+    vertical-align: top;
+    width: 1px;
+    padding: 0.7rem 1.6rem 0 0;
+  }
+
+  .aeo-pdp .product__info-container > .product-form__quantity + div:has(> product-form) {
+    display: table-cell;
+    vertical-align: top;
+    width: 10000px;
+    padding-top: 0.7rem;
+  }
+
+  .aeo-pdp .product__info-container > .product-form__quantity + div:has(> product-form) > .product-form {
+    margin: 0;
+  }
+
+  .aeo-pdp .product__info-container > .product-form__quantity:has(+ div > product-form) .quantity,
+  .aeo-pdp .product__info-container > .product-form__quantity + div:has(> product-form) .product-form__submit {
+    min-height: 4.8rem;
+  }
+
+  .aeo-pdp .product__info-container > .product-form__quantity:has(+ div > product-form) .quantity__label {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ---------- Buttons: olive Add to cart (artifact .btn), quiet "Buy it now" ---------- */
+
+.aeo-pdp .product-form {
+  --aeo-btn-bg: var(--color-button);
+  --aeo-btn-text: var(--color-button-text);
+}
+
+.aeo-pdp .product-form__submit.button--secondary {
+  --color-button: var(--aeo-btn-bg);
+  --color-button-text: var(--aeo-btn-text);
+}
+
+.aeo-pdp .product-form__submit.button--secondary::after {
+  --border-opacity: calc(1 - var(--buttons-border-opacity));
+}
+
+.aeo-pdp .product-form__submit:not([disabled]):not([aria-disabled='true']) {
+  box-shadow: 0 0.6rem 2rem rgba(var(--aeo-accent-rgb), 0.26);
+}
+
+.aeo-pdp .product-form__submit:not([disabled]):not([aria-disabled='true']):hover {
+  background-color: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.aeo-pdp .shopify-payment-button__button--unbranded,
+.aeo-pdp .shopify-payment-button__button--unbranded:hover:not([disabled]) {
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+  box-shadow: inset 0 0 0 0.15rem var(--aeo-line);
+}
+
+.aeo-pdp .shopify-payment-button__button--unbranded:hover:not([disabled]) {
+  box-shadow: inset 0 0 0 0.15rem rgb(var(--color-foreground));
+}
+
+/* ---------- Guarantee card (aeo_guarantee) ---------- */
+
+.aeo-pdp .product__info-container > .aeo-guarantee {
+  margin-top: 2.2rem;
+}
+
+.aeo-guarantee {
+  display: flex;
+  gap: 1.4rem;
+  align-items: center;
+  padding: 1.6rem 1.8rem;
+  border-radius: 1rem;
+  background: var(--aeo-tint);
+}
+
+.aeo-guarantee__seal {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 5.2rem;
+  height: 5.2rem;
+  padding: 0.4rem;
+  border: 0.2rem solid var(--aeo-accent);
+  border-radius: 50%;
+  color: var(--aeo-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.aeo-guarantee__title {
+  margin: 0;
+  font-size: 1.44rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-guarantee__text {
+  margin: 0.2rem 0 0;
+  font-size: 1.31rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+/* ---------- Reassurance list, inline trust row, allergen ---------- */
+
+.aeo-pdp .product__info-container > .aeo-reassure {
+  margin-top: 1.6rem;
+}
+
+.aeo-reassure {
+  gap: 1rem;
+}
+
+.aeo-reassure li {
+  font-size: 1.36rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-reassure__link {
+  color: rgb(var(--color-foreground));
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.aeo-reassure__link:hover {
+  color: var(--aeo-accent);
+}
+
+.aeo-pdp .product__info-container > .aeo-pdp-trust {
+  margin-top: 1.8rem;
+}
+
+.aeo-pdp-trust li {
+  font-size: 1.25rem;
+  padding: 0.2rem 1.4rem;
+}
+
+@media screen and (max-width: 749px) {
+  .aeo-pdp-trust li {
+    padding: 0.2rem 1.1rem;
+  }
+}
+
+.aeo-pdp .product__info-container > .aeo-allergen {
+  margin-top: 1.8rem;
+}
+
+.aeo-allergen {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  font-size: 1.31rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-allergen__icon {
+  flex-shrink: 0;
+  color: var(--aeo-accent);
+}
+
+.aeo-allergen__text > * {
+  margin: 0;
+}
+
+.aeo-allergen__text > * + * {
+  margin-top: 0.6rem;
+}
+
+.aeo-allergen__text strong,
+.aeo-allergen__text b {
+  color: rgb(var(--color-foreground));
+}
+
+/* ---------- Collapsible tabs styled like the artifact .acc ---------- */
+
+.aeo-pdp .product__info-container > .product__accordion {
+  margin-top: 2rem;
+  border-color: var(--aeo-line);
+}
+
+.aeo-pdp .product__info-container > .product__accordion + .product__accordion {
+  margin-top: 0;
+}
+
+.aeo-pdp .product__accordion summary {
+  align-items: center;
+  gap: 1.6rem;
+  padding: 1.8rem 0;
+  transition: color 0.2s ease;
+}
+
+.aeo-pdp .product__accordion summary::after {
+  content: '+';
+  flex-shrink: 0;
+  min-width: 1.6rem;
+  font-size: 2.08rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--aeo-accent);
+}
+
+.aeo-pdp .product__accordion details[open] > summary::after {
+  content: '\2013';
+}
+
+.aeo-pdp .product__accordion summary > .icon-caret {
+  display: none;
+}
+
+.aeo-pdp .product__accordion .accordion__title {
+  max-width: none;
+  font-family: var(--font-body-family);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: rgb(var(--color-foreground));
+  transition: color 0.2s ease;
+}
+
+.aeo-pdp .product__accordion summary:hover .accordion__title {
+  color: var(--aeo-accent);
+}
+
+.aeo-pdp .product__accordion .accordion__content {
+  margin: 0;
+  padding: 0 0 2rem;
+  font-size: 1.41rem;
+  line-height: 1.75;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-pdp .product__accordion .accordion__content > * {
+  margin: 0;
+}
+
+.aeo-pdp .product__accordion .accordion__content > p + p {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-pdp .product__accordion .accordion__content strong,
+.aeo-pdp .product__accordion .accordion__content b {
+  color: rgb(var(--color-foreground));
+}
+
+/* ---------- Theme editor hint ---------- */
+
+.aeo-editor-hint {
+  margin-top: 2rem;
+  padding: 1.2rem 1.4rem;
+  border: 0.1rem dashed rgba(var(--color-foreground), 0.35);
+  border-radius: 0.8rem;
+  background: var(--aeo-card-bg, transparent);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: rgb(var(--color-foreground));
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .aeo-po__card,
+  .aeo-po__pill,
+  .aeo-pdp .product__accordion summary,
+  .aeo-pdp .product__accordion .accordion__title {
+    transition: none;
+  }
+}

@@ -588,6 +588,9 @@
             {{ 'sections.cart.checkout' | t }}
           </button>
         </div>
+        {%- if settings.aeo_cart_note != blank -%}
+          <p class="aeo-cart-note caption center">{{ settings.aeo_cart_note | escape }}</p>
+        {%- endif -%}
       </div>
     </div>
   </div>

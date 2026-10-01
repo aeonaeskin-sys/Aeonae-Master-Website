@@ -1,0 +1,114 @@
+/*
+  AEONAE FAQ (sections/aeonae-faq.liquid), used on the home page and page.faq.
+  Reference: artifact #faq .faq / .qa / .q / .a. 1rem = 10px (artifact rem x 1.6).
+  Accordion rows, icon and answer type come from .aeo-acc in aeonae.css.
+*/
+
+.aeo-faq[id] {
+  scroll-margin-top: 8rem;
+}
+
+.aeo-faq__eyebrow {
+  margin-bottom: 1.6rem;
+}
+
+.aeo-faq__text {
+  max-width: 56ch;
+  margin: 1.6rem auto 0;
+  font-size: 1.6rem;
+}
+
+.aeo-faq__list {
+  max-width: 82rem;
+  margin: 4.6rem auto 0;
+  text-align: left;
+}
+
+.aeo-faq .aeo-wrap > .aeo-faq__list:first-child {
+  margin-top: 0;
+}
+
+.aeo-faq__question {
+  min-height: 4.4rem;
+}
+
+.aeo-faq__question-text {
+  min-width: 0;
+}
+
+.aeo-faq__answer p {
+  margin: 0;
+}
+
+.aeo-faq__answer p + p,
+.aeo-faq__answer p + ul,
+.aeo-faq__answer ul + p {
+  margin-top: 1rem;
+}
+
+.aeo-faq__answer a {
+  color: var(--aeo-accent);
+  text-underline-offset: 0.3rem;
+}
+
+.aeo-faq__contact {
+  margin: 3.4rem auto 0;
+  max-width: none;
+  font-size: 1.52rem;
+  line-height: 1.6;
+  text-align: center;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-faq__email {
+  color: var(--aeo-accent);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 0.1rem solid currentColor;
+  overflow-wrap: anywhere;
+  transition: opacity 0.2s;
+}
+
+.aeo-faq__email:hover {
+  opacity: 0.6;
+}
+
+.color-scheme-4 .aeo-faq__email,
+.color-scheme-4 .aeo-faq__answer a {
+  color: #fff;
+}
+
+.color-scheme-4 .aeo-acc__summary:hover,
+.color-scheme-4 .aeo-acc__icon {
+  color: #a8b888;
+}
+
+.aeo-faq.color-scheme-4 .aeo-acc,
+.aeo-faq.color-scheme-4 .aeo-acc__item {
+  border-color: rgba(250, 245, 236, 0.14);
+}
+
+.aeo-faq__empty {
+  margin: 4.6rem 0 0;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+/* Softer AEONAE reveal timing (artifact: 0.9s, 32px, cubic-bezier(.2,.7,.2,1)) */
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-faq .aeo-reveal.scroll-trigger.animate--slide-in:not(.scroll-trigger--offscreen):not(.scroll-trigger--design-mode):not(.scroll-trigger--cancel) {
+    animation: aeo-faq-reveal-in 0.9s var(--aeo-ease) forwards;
+    animation-delay: calc(var(--animation-order, 0) * 75ms);
+  }
+}
+
+@keyframes aeo-faq-reveal-in {
+  from {
+    opacity: 0.01;
+    transform: translateY(3.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

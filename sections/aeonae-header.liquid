@@ -1,0 +1,704 @@
+{%- comment -%}
+  AEONAE header (artifact header.nav + .menu drawer).
+
+  Dawn integration kept intact:
+  - Cart link is <a id="cart-icon-bubble"> with the same inner markup as
+    sections/cart-icon-bubble.liquid, so cart-drawer.js / cart-notification.js /
+    cart.js can re-render it and attach the drawer open handler.
+  - cart-notification snippet + script when Theme settings > Cart type = Notification.
+  - <shopify-account> exactly as Dawn renders it, with Dawn's custom-property block.
+  - Optional Dawn 'header-search' (predictive search) modal.
+  - Sets --header-height on <html> and keeps the .section-header / .header-wrapper /
+    .menu-drawer hooks that Dawn scripts (predictive search, localization) look up.
+  - Organization / WebSite structured data, as in Dawn.
+{%- endcomment -%}
+
+{{ 'aeonae-header.css' | asset_url | stylesheet_tag }}
+
+{%- if section.settings.show_search -%}
+  <link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+  {%- if settings.predictive_search_enabled -%}
+    <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
+  {%- endif -%}
+{%- endif -%}
+
+{%- if section.settings.show_social -%}
+  <link rel="stylesheet" href="{{ 'component-list-social.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+
+{%- if settings.cart_type == 'notification' -%}
+  <link
+    rel="stylesheet"
+    href="{{ 'component-cart-notification.css' | asset_url }}"
+    media="print"
+    onload="this.media='all'"
+  >
+  <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+<script src="{{ 'aeonae-header.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign menu = section.settings.menu
+  assign bar_height = section.settings.bar_height
+  assign logo_height = section.settings.logo_height
+
+  assign show_wordmark = false
+  if section.settings.show_wordmark and section.settings.wordmark != blank
+    assign show_wordmark = true
+  endif
+
+  assign show_account = false
+  if shop.customer_accounts_enabled and section.settings.show_account
+    assign show_account = true
+  endif
+
+  assign shop_url = section.settings.shop_link | default: routes.all_products_collection_url
+
+  assign country_selector = false
+  if section.settings.enable_country_selector and localization.available_countries.size > 1
+    assign country_selector = true
+  endif
+
+  assign language_selector = false
+  if section.settings.enable_language_selector and localization.available_languages.size > 1
+    assign language_selector = true
+  endif
+
+  assign social_links = false
+  if section.settings.show_social
+    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
+      assign social_links = true
+    endif
+  endif
+
+  assign support_email = settings.aeo_support_email | strip
+  assign show_contact = false
+  if section.settings.show_contact and support_email != blank
+    assign show_contact = true
+  endif
+
+  assign has_groups = false
+  assign has_loose_links = false
+  for link in menu.links
+    if link.links != blank
+      assign has_groups = true
+    else
+      assign has_loose_links = true
+    endif
+  endfor
+
+  assign drawer_id = 'AeoMenuDrawer-' | append: section.id
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --aeo-header-h: {{ bar_height | divided_by: 10.0 }}rem;
+    --aeo-logo-h: {{ logo_height | divided_by: 10.0 }}rem;
+    {%- if section.settings.sticky %}
+      position: sticky;
+      top: 0;
+    {%- else %}
+      position: relative;
+    {%- endif %}
+  }
+  {%- if section.settings.sticky %}
+    html {
+      scroll-padding-top: calc(var(--header-height, {{ bar_height }}px) + 1.6rem);
+    }
+  {%- endif %}
+{%- endstyle -%}
+
+<aeo-header class="aeo-header-root" data-section-id="{{ section.id }}">
+  <header class="aeo-header header-wrapper color-{{ section.settings.color_scheme }}{% if section.settings.show_search %} aeo-header--search{% endif %}">
+    <div class="aeo-wrap aeo-header__row">
+      <div class="aeo-header__left">
+        <button
+          type="button"
+          class="aeo-burger"
+          aria-expanded="false"
+          aria-controls="{{ drawer_id }}"
+          aria-label="{{ 'sections.header.menu' | t }}"
+          data-aeo-menu-toggle
+        >
+          <span class="aeo-burger__lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+
+        {%- if section.settings.show_shop_link and section.settings.shop_label != blank -%}
+          <a
+            href="{{ shop_url }}"
+            class="aeo-header__shop"
+            {% if request.path == shop_url %}
+              aria-current="page"
+            {% endif %}
+          >
+            {{- section.settings.shop_label | escape -}}
+          </a>
+        {%- endif -%}
+      </div>
+
+      <a
+        href="{{ routes.root_url }}"
+        class="aeo-header__brand"
+        {% if request.page_type == 'index' %}
+          aria-current="page"
+        {% endif %}
+      >
+        {%- liquid
+          assign logo = section.settings.logo_mark | default: settings.logo
+          if show_wordmark
+            assign logo_alt = ''
+          else
+            assign logo_alt = logo.alt | default: shop.name
+          endif
+        -%}
+        {%- if logo != blank -%}
+          {%- assign logo_width = logo_height | times: logo.aspect_ratio | round -%}
+          {%- capture logo_widths -%}
+            {{- logo_width }}, {{ logo_width | times: 2 }}, {{ logo_width | times: 3 -}}
+          {%- endcapture -%}
+          {%- capture logo_sizes -%}{{ logo_width }}px{%- endcapture -%}
+          {{
+            logo
+            | image_url: width: 300
+            | image_tag:
+              class: 'aeo-header__logo',
+              width: logo_width,
+              height: logo_height,
+              widths: logo_widths,
+              sizes: logo_sizes,
+              alt: logo_alt,
+              loading: 'eager',
+              preload: true
+          }}
+        {%- else -%}
+          {%- assign logo_width = logo_height | times: 242 | divided_by: 265.0 | round -%}
+          <img
+            src="{{ 'aeonae-logo-mark.png' | asset_url }}"
+            class="aeo-header__logo"
+            width="{{ logo_width }}"
+            height="{{ logo_height }}"
+            alt="{{ logo_alt | escape }}"
+            loading="eager"
+          >
+        {%- endif -%}
+        {%- if show_wordmark -%}
+          <span class="aeo-header__wordmark">{{ section.settings.wordmark | escape }}</span>
+        {%- endif -%}
+      </a>
+
+      <div class="aeo-header__right">
+        {%- if section.settings.show_search -%}
+          {%- render 'header-search', input_id: 'Search-In-Modal' -%}
+        {%- endif -%}
+
+        {%- if show_account -%}
+          <shopify-account
+            menu="{{ settings.customer_account_menu | default: 'customer-account-main-menu' }}"
+            class="header__icon header__icon--account link focus-inset aeo-header__account"
+          >
+            <span slot="signed-out-avatar" class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
+            <span slot="signed-out-avatar" class="visually-hidden">{{ 'customer.log_in' | t }}</span>
+          </shopify-account>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+          {%- endcase -%}
+        {%- endfor -%}
+
+        <a
+          href="{{ routes.cart_url }}"
+          id="cart-icon-bubble"
+          class="aeo-header__cart aeo-header__cart--{{ section.settings.cart_style }}{% if section.settings.show_empty_count %} aeo-header__cart--zero{% endif %}"
+        >
+          {% if cart == empty %}
+            <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
+          {% else %}
+            <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+          {% endif %}
+
+          <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+          {%- if cart != empty -%}
+            <div class="cart-count-bubble">
+              {%- if cart.item_count < 100 -%}
+                <span aria-hidden="true">{{ cart.item_count }}</span>
+              {%- endif -%}
+              <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+            </div>
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
+  </header>
+
+  {%- if settings.cart_type == 'notification' -%}
+    {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: 'dropdown' -%}
+  {%- endif -%}
+
+  <div class="aeo-drawer-overlay" data-aeo-menu-close></div>
+
+  <div
+    id="{{ drawer_id }}"
+    class="aeo-drawer color-{{ section.settings.drawer_color_scheme }} gradient"
+    role="dialog"
+    aria-modal="true"
+    aria-label="{{ 'sections.header.menu' | t }}"
+    tabindex="-1"
+    inert
+  >
+    {%- comment -%}
+      Dawn's localization-form.js toggles a class on the first .menu-drawer in the page
+      (and throws if there is none). This empty hook keeps country/language pickers
+      working here and in the footer without loading Dawn's menu-drawer styles.
+    {%- endcomment -%}
+    <span class="menu-drawer" hidden></span>
+
+    <button type="button" class="aeo-drawer__close" aria-label="{{ 'accessibility.close' | t }}" data-aeo-menu-close>
+      <span class="svg-wrapper" aria-hidden="true">{{- 'icon-close.svg' | inline_asset_content -}}</span>
+    </button>
+
+    <div class="aeo-drawer__inner">
+      {%- assign i = 0 -%}
+      <nav class="aeo-drawer__nav" aria-label="{{ 'sections.header.menu' | t }}">
+        {%- if has_groups -%}
+          {%- for link in menu.links -%}
+            {%- if link.links != blank -%}
+              <div class="aeo-drawer__group">
+                <h2
+                  class="aeo-drawer__heading aeo-drawer__item"
+                  id="{{ drawer_id }}-group-{{ forloop.index }}"
+                  style="--aeo-i: {{ i }};"
+                >
+                  {{- link.title | escape -}}
+                </h2>
+                {%- assign i = i | plus: 1 -%}
+                <ul class="aeo-drawer__list" role="list" aria-labelledby="{{ drawer_id }}-group-{{ forloop.index }}">
+                  {%- for childlink in link.links -%}
+                    {%- liquid
+                      assign is_current = false
+                      if childlink.current
+                        unless childlink.url contains '#'
+                          assign is_current = true
+                        endunless
+                      endif
+                    -%}
+                    <li class="aeo-drawer__item" style="--aeo-i: {{ i }};">
+                      <a
+                        href="{{ childlink.url }}"
+                        class="aeo-drawer__link"
+                        {% if is_current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        {{- childlink.title | escape -}}
+                      </a>
+                      {%- if childlink.links != blank -%}
+                        <ul class="aeo-drawer__sublist" role="list">
+                          {%- for grandchildlink in childlink.links -%}
+                            {%- liquid
+                              assign is_current = false
+                              if grandchildlink.current
+                                unless grandchildlink.url contains '#'
+                                  assign is_current = true
+                                endunless
+                              endif
+                            -%}
+                            <li>
+                              <a
+                                href="{{ grandchildlink.url }}"
+                                class="aeo-drawer__sublink"
+                                {% if is_current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                {{- grandchildlink.title | escape -}}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    </li>
+                    {%- assign i = i | plus: 1 -%}
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- if has_loose_links -%}
+          <div class="aeo-drawer__group">
+            {%- if section.settings.loose_heading != blank -%}
+              <h2 class="aeo-drawer__heading aeo-drawer__item" id="{{ drawer_id }}-group-more" style="--aeo-i: {{ i }};">
+                {{- section.settings.loose_heading | escape -}}
+              </h2>
+              {%- assign i = i | plus: 1 -%}
+            {%- endif -%}
+            <ul
+              class="aeo-drawer__list"
+              role="list"
+              {% if section.settings.loose_heading != blank %}
+                aria-labelledby="{{ drawer_id }}-group-more"
+              {% endif %}
+            >
+              {%- for link in menu.links -%}
+                {%- if link.links == blank -%}
+                  {%- liquid
+                    assign is_current = false
+                    if link.current
+                      unless link.url contains '#'
+                        assign is_current = true
+                      endunless
+                    endif
+                  -%}
+                  <li class="aeo-drawer__item" style="--aeo-i: {{ i }};">
+                    <a
+                      href="{{ link.url }}"
+                      class="aeo-drawer__link"
+                      {% if is_current %}
+                        aria-current="page"
+                      {% endif %}
+                    >
+                      {{- link.title | escape -}}
+                    </a>
+                  </li>
+                  {%- assign i = i | plus: 1 -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if request.design_mode and has_groups == false and has_loose_links == false -%}
+          <p class="aeo-drawer__hint">Choose a menu in the header settings (Menu drawer &gt; Menu).</p>
+        {%- endif -%}
+      </nav>
+
+      {%- if show_account -%}
+        <a
+          href="{{ routes.account_url }}"
+          class="aeo-drawer__account aeo-drawer__item"
+          style="--aeo-i: {{ i }};"
+        >
+          <span class="svg-wrapper" aria-hidden="true">{{- 'icon-account.svg' | inline_asset_content -}}</span>
+          {%- if customer -%}
+            {{ 'customer.account.title' | t }}
+          {%- else -%}
+            {{ 'customer.log_in' | t }}
+          {%- endif -%}
+        </a>
+        {%- assign i = i | plus: 1 -%}
+      {%- endif -%}
+    </div>
+
+    {%- if country_selector or language_selector or social_links -%}
+      <div class="aeo-drawer__utilities">
+        {%- if country_selector or language_selector -%}
+          <div class="aeo-drawer__localization menu-drawer__localization header-localization">
+            {%- if country_selector -%}
+              <localization-form>
+                {%- form 'localization', id: 'AeoDrawerCountryForm', class: 'localization-form' -%}
+                  <div>
+                    <h2 class="visually-hidden" id="AeoDrawerCountryLabel">{{ 'localization.country_label' | t }}</h2>
+                    {%- render 'country-localization', localPosition: 'AeoDrawerCountry' -%}
+                  </div>
+                {%- endform -%}
+              </localization-form>
+            {%- endif -%}
+
+            {%- if language_selector -%}
+              <localization-form>
+                {%- form 'localization', id: 'AeoDrawerLanguageForm', class: 'localization-form' -%}
+                  <div>
+                    <h2 class="visually-hidden" id="AeoDrawerLanguageLabel">{{ 'localization.language_label' | t }}</h2>
+                    {%- render 'language-localization', localPosition: 'AeoDrawerLanguage' -%}
+                  </div>
+                {%- endform -%}
+              </localization-form>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if social_links -%}
+          {%- render 'social-icons', class: 'aeo-drawer__social' -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if show_contact -%}
+      <a
+        href="mailto:{{ support_email }}"
+        class="aeo-drawer__contact aeo-drawer__item color-{{ section.settings.contact_color_scheme }}"
+        style="--aeo-i: {{ i }};"
+      >
+        <span class="aeo-drawer__contact-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 16" fill="none" focusable="false">
+            <rect x="1" y="1" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="m1.8 2.2 8.2 6.3 8.2-6.3" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="aeo-drawer__contact-text">
+          <span class="aeo-drawer__contact-label">{{ section.settings.contact_label | escape }}</span>
+          <span class="aeo-drawer__contact-email">{{ support_email | escape }}</span>
+        </span>
+      </a>
+    {%- endif -%}
+  </div>
+</aeo-header>
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if settings.logo %}
+      "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      {{ settings.social_twitter_link | json }},
+      {{ settings.social_facebook_link | json }},
+      {{ settings.social_pinterest_link | json }},
+      {{ settings.social_instagram_link | json }},
+      {{ settings.social_tiktok_link | json }},
+      {{ settings.social_tumblr_link | json }},
+      {{ settings.social_snapchat_link | json }},
+      {{ settings.social_youtube_link | json }},
+      {{ settings.social_vimeo_link | json }}
+    ],
+    "url": {{ request.origin | append: page.url | json }}
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = request.origin | append: routes.search_url | append: '?q={search_term_string}' %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ request.origin | append: page.url | json }}
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "AEONAE header",
+  "class": "section-header aeo-header-section",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Bar"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2",
+      "info": "The bar uses this scheme's background at 82% opacity with a soft blur."
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky header",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "label": "Height",
+      "min": 56,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 74
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_mark",
+      "label": "Logo mark",
+      "info": "Optional. Overrides Theme settings > Logo here. A square-ish mark on a transparent background works best (at least 242 x 265 px). If empty, the AEONAE DNA mark is used."
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo height",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wordmark",
+      "label": "Show wordmark",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "wordmark",
+      "label": "Wordmark",
+      "default": "AEONAE"
+    },
+    {
+      "type": "header",
+      "content": "Shop link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shop_link",
+      "label": "Show shop link",
+      "default": true,
+      "info": "Hidden on screens narrower than 410px, where the menu already starts with Shop."
+    },
+    {
+      "type": "text",
+      "id": "shop_label",
+      "label": "Label",
+      "default": "Shop"
+    },
+    {
+      "type": "url",
+      "id": "shop_link",
+      "label": "Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account",
+      "default": true,
+      "info": "Appears when customer accounts are turned on. On phones the account link moves into the menu."
+    },
+    {
+      "type": "select",
+      "id": "cart_style",
+      "label": "Cart style",
+      "options": [
+        {
+          "value": "text",
+          "label": "Text and count"
+        },
+        {
+          "value": "icon",
+          "label": "Icon"
+        }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_empty_count",
+      "label": "Show 0 when the cart is empty",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Menu drawer"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Items with sub-items become groups (the item is the small heading). Items without sub-items are listed together at the end."
+    },
+    {
+      "type": "text",
+      "id": "loose_heading",
+      "label": "Heading for single links",
+      "info": "Optional heading above the menu items that have no sub-items."
+    },
+    {
+      "type": "color_scheme",
+      "id": "drawer_color_scheme",
+      "label": "Drawer color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "label": "Show country/region selector",
+      "default": true,
+      "info": "Only appears when more than one country/region is available in Markets."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "label": "Show language selector",
+      "default": true,
+      "info": "Only appears when more than one language is published."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social icons",
+      "default": false,
+      "info": "Add links in Theme settings > Social media."
+    },
+    {
+      "type": "header",
+      "content": "Drawer contact"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact",
+      "label": "Show contact link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "contact_label",
+      "label": "Label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "paragraph",
+      "content": "The email address comes from Theme settings > AEONAE brand > Support email."
+    },
+    {
+      "type": "color_scheme",
+      "id": "contact_color_scheme",
+      "label": "Contact color scheme",
+      "default": "scheme-3"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "AEONAE header"
+    }
+  ]
+}
+{% endschema %}

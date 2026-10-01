@@ -1,0 +1,104 @@
+/*
+  AEONAE reviews section (sections/aeonae-reviews.liquid). Artifact #reviews.
+  The review app's own widget styles itself; this file only styles the heading,
+  the metafield rating summary, the empty state and the app slot. 1rem = 10px.
+*/
+
+.aeo-reviews {
+  scroll-margin-top: 10rem;
+}
+
+.aeo-reviews__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.aeo-reviews__eyebrow {
+  margin-bottom: 1rem;
+}
+
+.aeo-reviews__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.8rem;
+  margin-top: 2.6rem;
+}
+
+.aeo-reviews__big {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: 4.16rem;
+  line-height: 1;
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-reviews__meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.aeo-reviews__stars {
+  --aeo-star: #a8b888;
+  display: inline-block;
+  font-family: Times, serif;
+  font-size: 1.92rem;
+  line-height: 1;
+  letter-spacing: 0.3rem;
+}
+
+.aeo-reviews__stars::before {
+  content: '\2605\2605\2605\2605\2605';
+  background: linear-gradient(
+    90deg,
+    var(--aeo-star) var(--aeo-rating, 0%),
+    rgba(var(--color-foreground), 0.15) var(--aeo-rating, 0%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.aeo-reviews__count {
+  margin: 0.3rem 0 0;
+  font-size: 1.44rem;
+  line-height: 1.4;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-reviews__none {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 1.57rem;
+  line-height: 1.6;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-reviews__apps {
+  margin-top: 3.4rem;
+}
+
+.aeo-reviews__apps > * + * {
+  margin-top: 2.4rem;
+}
+
+.aeo-reviews__hint {
+  margin: 3.4rem 0 0;
+  padding: 1.2rem 1.4rem;
+  border: 0.1rem dashed rgba(var(--color-foreground), 0.35);
+  border-radius: 0.8rem;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: rgb(var(--color-foreground));
+}
+
+@media (forced-colors: active) {
+  .aeo-reviews__stars::before {
+    -webkit-text-fill-color: CanvasText;
+    color: CanvasText;
+    background: none;
+  }
+}

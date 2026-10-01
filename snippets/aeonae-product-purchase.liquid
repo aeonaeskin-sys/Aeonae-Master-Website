@@ -1,0 +1,273 @@
+{%- comment -%}
+  AEONAE purchase options for the main product section (block type: aeo_purchase_options).
+  Native Shopify selling plans: "One time" vs each selling plan group, then a plan picker
+  built from the plans the selected variant can be bought with. Prices and savings come
+  from the variant's selling_plan_allocations, never from hardcoded numbers.
+
+  Renders nothing for shoppers when the product has no selling plan groups (no subscription
+  app yet). In the theme editor a short hint explains what is needed.
+
+  The chosen plan id is written into a hidden input named "selling_plan" tied to the
+  product form (form="{{ product_form_id }}"); it is empty for one-time purchases.
+  assets/aeonae-product.js keeps it in sync, swaps #aeo-po-{section_id} on variant change
+  and preselects the subscription when the URL hash is #subscribe.
+
+  If a subscription app ships its own product block, use that block instead of this one.
+
+  Accepts:
+  - block {Block} - the aeo_purchase_options block
+  - product {Product} - the product
+  - section_id {String} - section.id
+  - product_form_id {String} - id of Dawn's product form
+
+  Usage:
+  {% render 'aeonae-product-purchase', block: block, product: product, section_id: section.id, product_form_id: product_form_id %}
+{%- endcomment -%}
+
+{%- if product.selling_plan_groups.size > 0 -%}
+  {%- liquid
+    assign variant = product.selected_or_first_available_variant
+    assign allocations = variant.selling_plan_allocations
+
+    assign selected_plan_id = ''
+    assign selected_group_id = ''
+    if product.selected_selling_plan != blank
+      for allocation in allocations
+        if allocation.selling_plan.id == product.selected_selling_plan.id
+          assign selected_plan_id = allocation.selling_plan.id
+          assign selected_group_id = allocation.selling_plan_group_id
+          break
+        endif
+      endfor
+    endif
+
+    if product.requires_selling_plan and selected_plan_id == blank and allocations.size > 0
+      assign first_allocation = allocations | first
+      assign selected_plan_id = first_allocation.selling_plan.id
+      assign selected_group_id = first_allocation.selling_plan_group_id
+    endif
+
+    if settings.currency_code_enabled
+      assign one_time_price = variant.price | money_with_currency
+    else
+      assign one_time_price = variant.price | money
+    endif
+
+    assign savings_template = block.settings.savings_text | default: 'Save [savings]'
+  -%}
+
+  <aeo-purchase-options
+    class="aeo-po"
+    data-product-id="{{ product.id }}"
+    data-requires-plan="{{ product.requires_selling_plan }}"
+    {{ block.shopify_attributes }}
+  >
+    <input
+      type="hidden"
+      name="selling_plan"
+      value="{{ selected_plan_id }}"
+      form="{{ product_form_id }}"
+      data-aeo-plan-input
+    >
+    <div
+      id="aeo-po-{{ section_id }}"
+      class="aeo-po__body"
+      data-product-id="{{ product.id }}"
+      {% if allocations.size == 0 %}
+        hidden
+      {% endif %}
+    >
+      <fieldset class="aeo-po__modes">
+        <legend class="visually-hidden">{{ block.settings.legend | default: 'Purchase options' | escape }}</legend>
+        <div class="aeo-po__grid">
+          {%- unless product.requires_selling_plan -%}
+            <label class="aeo-po__mode">
+              <input
+                class="aeo-po__input"
+                type="radio"
+                name="aeo-po-mode-{{ section_id }}"
+                value=""
+                data-aeo-mode
+                {% if selected_plan_id == blank %}
+                  checked
+                {% endif %}
+              >
+              <span class="aeo-po__card">
+                <span class="aeo-po__label">{{ block.settings.one_time_label | default: 'One time' | escape }}</span>
+                {%- if block.settings.show_prices -%}
+                  <span class="aeo-po__price">{{ one_time_price }}</span>
+                {%- endif -%}
+              </span>
+            </label>
+          {%- endunless -%}
+
+          {%- for group in product.selling_plan_groups -%}
+            {%- assign group_allocations = allocations | where: 'selling_plan_group_id', group.id -%}
+            {%- if group_allocations.size > 0 -%}
+              {%- liquid
+                assign active_allocation = group_allocations | first
+                for allocation in group_allocations
+                  if allocation.selling_plan.id == selected_plan_id
+                    assign active_allocation = allocation
+                    break
+                  endif
+                endfor
+
+                if settings.currency_code_enabled
+                  assign group_price = active_allocation.per_delivery_price | money_with_currency
+                else
+                  assign group_price = active_allocation.per_delivery_price | money
+                endif
+
+                assign save_amount = ''
+                assign adjustment = active_allocation.selling_plan.price_adjustments | first
+                if adjustment.value_type == 'percentage' and adjustment.value > 0
+                  assign pct_whole = adjustment.value | floor
+                  if adjustment.value == pct_whole
+                    assign save_amount = pct_whole | append: '%'
+                  else
+                    assign save_amount = adjustment.value | append: '%'
+                  endif
+                elsif active_allocation.compare_at_price > active_allocation.price
+                  assign save_diff = active_allocation.compare_at_price | minus: active_allocation.price
+                  if settings.currency_code_enabled
+                    assign save_amount = save_diff | money_with_currency
+                  else
+                    assign save_amount = save_diff | money
+                  endif
+                endif
+                assign group_save = ''
+                if save_amount != blank
+                  assign group_save = savings_template | replace: '[savings]', save_amount
+                endif
+
+                assign group_label = group.name
+                if forloop.first and block.settings.subscribe_label != blank
+                  assign group_label = block.settings.subscribe_label
+                endif
+              -%}
+              <label class="aeo-po__mode">
+                <input
+                  class="aeo-po__input"
+                  type="radio"
+                  name="aeo-po-mode-{{ section_id }}"
+                  value="{{ group.id }}"
+                  data-aeo-mode
+                  {% if selected_group_id == group.id %}
+                    checked
+                  {% endif %}
+                >
+                <span class="aeo-po__card">
+                  <span class="aeo-po__label">{{ group_label | escape }}</span>
+                  {%- if block.settings.show_prices -%}
+                    <span class="aeo-po__price" data-aeo-group-price>{{ group_price }}</span>
+                  {%- endif -%}
+                  <span
+                    class="aeo-po__save"
+                    data-aeo-group-save
+                    {% if group_save == blank %}
+                      hidden
+                    {% endif %}
+                  >
+                    {{- group_save -}}
+                  </span>
+                </span>
+              </label>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </fieldset>
+
+      {%- for group in product.selling_plan_groups -%}
+        {%- assign group_index = forloop.index -%}
+        {%- assign group_allocations = allocations | where: 'selling_plan_group_id', group.id -%}
+        {%- if group_allocations.size > 0 -%}
+          {%- liquid
+            assign active_plan_id = group_allocations.first.selling_plan.id
+            for allocation in group_allocations
+              if allocation.selling_plan.id == selected_plan_id
+                assign active_plan_id = allocation.selling_plan.id
+                break
+              endif
+            endfor
+
+            assign frequency_label = block.settings.frequency_label
+            if frequency_label == blank
+              assign frequency_label = group.options.first.name | default: group.name
+            endif
+          -%}
+          <fieldset
+            class="aeo-po__plans"
+            data-aeo-plans="{{ group.id }}"
+            {% unless selected_group_id == group.id %}
+              hidden
+            {% endunless %}
+          >
+            <legend class="aeo-po__legend">{{ frequency_label | escape }}</legend>
+            <div class="aeo-po__pills">
+              {%- for allocation in group_allocations -%}
+                {%- liquid
+                  assign plan = allocation.selling_plan
+                  assign plan_text = plan.options.first.value | default: plan.name
+
+                  if settings.currency_code_enabled
+                    assign plan_price = allocation.per_delivery_price | money_with_currency
+                  else
+                    assign plan_price = allocation.per_delivery_price | money
+                  endif
+
+                  assign save_amount = ''
+                  assign adjustment = plan.price_adjustments | first
+                  if adjustment.value_type == 'percentage' and adjustment.value > 0
+                    assign pct_whole = adjustment.value | floor
+                    if adjustment.value == pct_whole
+                      assign save_amount = pct_whole | append: '%'
+                    else
+                      assign save_amount = adjustment.value | append: '%'
+                    endif
+                  elsif allocation.compare_at_price > allocation.price
+                    assign save_diff = allocation.compare_at_price | minus: allocation.price
+                    if settings.currency_code_enabled
+                      assign save_amount = save_diff | money_with_currency
+                    else
+                      assign save_amount = save_diff | money
+                    endif
+                  endif
+                  assign plan_save = ''
+                  if save_amount != blank
+                    assign plan_save = savings_template | replace: '[savings]', save_amount
+                  endif
+                -%}
+                <label class="aeo-po__plan">
+                  <input
+                    class="aeo-po__input"
+                    type="radio"
+                    name="aeo-po-plan-{{ section_id }}-{{ group_index }}"
+                    value="{{ plan.id }}"
+                    data-aeo-plan
+                    data-price="{{ plan_price | strip_html | escape }}"
+                    data-save="{{ plan_save | strip_html | escape }}"
+                    {% if plan.id == active_plan_id %}
+                      checked
+                    {% endif %}
+                  >
+                  <span class="aeo-po__pill">{{ plan_text | escape }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+            {%- if block.settings.plan_note != blank -%}
+              <p class="aeo-po__note">{{ block.settings.plan_note }}</p>
+            {%- endif -%}
+          </fieldset>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </aeo-purchase-options>
+{%- elsif request.design_mode -%}
+  <div class="aeo-editor-hint" {{ block.shopify_attributes }}>
+    <strong>Purchase options:</strong> this product has no subscription plans yet, so nothing shows to shoppers.
+    Install a subscription app (for example Shopify Subscriptions) and add a plan to this product, and the
+    One time / Subscribe and Save cards appear here automatically. If your app adds its own product block,
+    use that block and remove this one.
+  </div>
+{%- endif -%}

@@ -1,0 +1,235 @@
+{%- comment -%}
+  AEONAE mobile buy bar (footer group). Below 990px only.
+  - Product pages: current product. "Add to cart" submits Dawn's main product form
+    (form#product-form-<section id>), mirrors its button state and follows variant changes.
+    Appears once the main add-to-cart button has scrolled out of view.
+  - Other pages: links to the product picked below, after ~90% of a viewport of scrolling.
+    No product picked: renders nothing.
+  - Never on the cart page. Hidden while the cart drawer, menu drawer or a modal is open.
+  Behaviour: assets/aeonae-sticky-buy.js (<aeo-sticky-buy>).
+{%- endcomment -%}
+
+{%- liquid
+  assign mode = ''
+  assign bar_product = nil
+
+  if template.name == 'cart'
+    assign mode = ''
+  elsif template.name == 'product'
+    if section.settings.show_on_product and product != blank
+      assign mode = 'product'
+      assign bar_product = product
+    endif
+  elsif section.settings.product != blank
+    if section.settings.other_pages == 'all' or template.name == 'index'
+      assign mode = 'link'
+      assign bar_product = section.settings.product
+    endif
+  endif
+
+  if bar_product != blank
+    assign label = bar_product.title
+    if section.settings.label != blank and section.settings.product != blank and section.settings.product.id == bar_product.id
+      assign label = section.settings.label
+    endif
+
+    if mode == 'product'
+      assign variant = bar_product.selected_or_first_available_variant
+      assign price = variant.price | default: bar_product.price
+      assign compare_at = variant.compare_at_price
+    else
+      assign price = bar_product.price
+      assign compare_at = bar_product.compare_at_price
+    endif
+
+    if settings.currency_code_enabled
+      assign money_price = price | money_with_currency
+      assign money_compare = compare_at | money_with_currency
+    else
+      assign money_price = price | money
+      assign money_compare = compare_at | money
+    endif
+
+    assign on_sale = false
+    if compare_at > price
+      assign on_sale = true
+    endif
+
+    if mode == 'link' and bar_product.price_varies
+      assign on_sale = false
+      assign money_price = 'products.product.price.from_price_html' | t: price: money_price
+    endif
+
+    assign button_disabled = false
+    assign button_text = 'products.product.add_to_cart' | t
+    if mode == 'product'
+      if variant == null
+        assign button_disabled = true
+        assign button_text = 'products.product.unavailable' | t
+      elsif variant.available == false
+        assign button_disabled = true
+        assign button_text = 'products.product.sold_out' | t
+      endif
+    endif
+  endif
+
+  assign label_id = 'AeoStickyBuyLabel-' | append: section.id
+-%}
+
+{%- if mode != '' -%}
+  {{ 'aeonae-sticky-buy.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'aeonae-sticky-buy.js' | asset_url }}" defer="defer"></script>
+
+  <aeo-sticky-buy
+    class="aeo-sbuy"
+    data-mode="{{ mode }}"
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ bar_product.id }}"
+    data-threshold="{{ section.settings.scroll_threshold }}"
+  >
+    <div class="aeo-sbuy__spacer" aria-hidden="true"></div>
+    <div
+      class="aeo-sbuy__bar color-{{ section.settings.color_scheme }}"
+      role="region"
+      aria-label="Quick purchase"
+      inert
+    >
+      <div class="aeo-sbuy__info">
+        <span class="aeo-sbuy__label" id="{{ label_id }}">{{ label | escape }}</span>
+        <span class="aeo-sbuy__price" data-aeo-sbuy-price>
+          <span class="visually-hidden" data-aeo-sbuy-sale-label {% unless on_sale %}hidden{% endunless %}>
+            {{- 'products.product.price.sale_price' | t -}}
+          </span>
+          <b class="aeo-sbuy__amount" data-aeo-sbuy-amount>{{ money_price }}</b>
+          <s class="aeo-sbuy__compare" data-aeo-sbuy-compare {% unless on_sale %}hidden{% endunless %}>
+            <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+            <span data-aeo-sbuy-compare-amount>{%- if on_sale -%}{{ money_compare }}{%- endif -%}</span>
+          </s>
+        </span>
+      </div>
+
+      {%- if mode == 'product' -%}
+        <button
+          type="button"
+          class="button aeo-sbuy__button"
+          data-aeo-sbuy-add
+          aria-describedby="{{ label_id }}"
+          {% if settings.cart_type == 'drawer' %}
+            aria-haspopup="dialog"
+          {% endif %}
+          {% if button_disabled %}
+            disabled
+          {% endif %}
+        >
+          <span data-aeo-sbuy-text>{{ button_text }}</span>
+          <span class="loading__spinner hidden">
+            {{- 'loading-spinner.svg' | inline_asset_content -}}
+          </span>
+        </button>
+      {%- else -%}
+        <a href="{{ bar_product.url }}" class="button aeo-sbuy__button" aria-describedby="{{ label_id }}">
+          {{- section.settings.link_label | default: 'Shop now' | escape -}}
+        </a>
+      {%- endif -%}
+    </div>
+  </aeo-sticky-buy>
+{%- elsif request.design_mode and template.name != 'cart' -%}
+  {%- comment -%}
+    Load the behaviour in the editor too, so the bar works as soon as a product is picked
+    (scripts inside a re-rendered section do not run again).
+  {%- endcomment -%}
+  {{ 'aeonae-sticky-buy.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'aeonae-sticky-buy.js' | asset_url }}" defer="defer"></script>
+  <p class="aeo-sbuy-hint">
+    Mobile buy bar: select a product in this section to show the bar on this page. On product pages it uses the
+    current product. This note is only visible in the theme editor.
+  </p>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Mobile buy bar",
+  "class": "aeo-sbuy-section",
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A buy bar fixed to the bottom of the screen on phones and tablets (below 990px). Never shown on the cart page."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "header",
+      "content": "Product pages"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_product",
+      "label": "Show on product pages",
+      "info": "Uses the current product. Appears after the main Add to cart button scrolls out of view.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Other pages"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Links to this product from pages that are not product pages. Leave empty to hide the bar there."
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Short product name",
+      "info": "Replaces the product title in the bar for the product selected above, including on its product page.",
+      "default": "Copper Peptide Serum"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "select",
+      "id": "other_pages",
+      "label": "Show on",
+      "options": [
+        {
+          "value": "all",
+          "label": "All other pages"
+        },
+        {
+          "value": "home",
+          "label": "Home page only"
+        }
+      ],
+      "default": "all"
+    },
+    {
+      "type": "range",
+      "id": "scroll_threshold",
+      "min": 20,
+      "max": 200,
+      "step": 10,
+      "unit": "%",
+      "label": "Appear after scrolling",
+      "info": "Share of the screen height scrolled before the bar slides in.",
+      "default": 90
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mobile buy bar"
+    }
+  ]
+}
+{% endschema %}

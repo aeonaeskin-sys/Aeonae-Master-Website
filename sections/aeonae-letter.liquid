@@ -1,0 +1,253 @@
+{%- comment -%}
+  AEONAE founder letter and principles (artifact #about .aboutGrid / .letter / .principle).
+  Eyebrow above a two-column grid from 860px: the letter (heading, text,
+  italic serif signature) and numbered principles (01, 02, ... automatic).
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign principle_count = 0
+  for block in section.blocks
+    if block.type == 'principle'
+      assign principle_count = principle_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-pg aeo-letter aeo-section color-{{ section.settings.color_scheme }} gradient{% if principle_count == 0 %} aeo-letter--single{% endif %}{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.eyebrow != blank -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <p
+        class="aeo-eyebrow aeo-letter__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {{- section.settings.eyebrow | escape -}}
+      </p>
+    {%- endif -%}
+
+    <div class="aeo-letter__grid">
+      <div class="aeo-letter__main">
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-letter__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.letter != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-rte rte aeo-letter__body{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.letter -}}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.signature != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-letter__sign{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.signature | strip | escape | newline_to_br -}}
+          </p>
+        {%- endif -%}
+      </div>
+
+      {%- if principle_count > 0 -%}
+        {%- assign principle_number = 0 -%}
+        <ol class="aeo-letter__principles" role="list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'principle' -%}
+              {%- assign anim_order = anim_order | plus: 1 -%}
+              {%- assign principle_number = principle_number | plus: 1 -%}
+              <li
+                class="aeo-letter__principle{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if motion %}
+                  data-cascade
+                  style="--animation-order: {{ anim_order }};"
+                {% endif %}
+              >
+                <h3 class="aeo-letter__ptitle">
+                  <span class="aeo-letter__num">
+                    {%- if principle_number < 10 %}0{% endif %}{{ principle_number -}}
+                  </span>
+                  {%- if block.settings.title != blank %}
+                    <span class="aeo-letter__pname">{{ block.settings.title | escape }}</span>
+                  {%- endif -%}
+                </h3>
+                {%- if block.settings.text != blank -%}
+                  <p class="aeo-letter__ptext">{{ block.settings.text }}</p>
+                {%- endif -%}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ol>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Letter and principles",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /pages/our-story#about. Letters, numbers and dashes only."
+    },
+    {
+      "type": "header",
+      "content": "Letter"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "About AEONAE"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "We were tired of not knowing what was in the bottle."
+    },
+    {
+      "type": "richtext",
+      "id": "letter",
+      "label": "Letter",
+      "default": "<p>Tired of promises that sounded impressive and meant very little. Tired of paying for hope instead of honesty. When we could not find a brand that told us exactly what was inside, and exactly how much, we decided to build one ourselves.</p><p>Every ingredient printed in full. Every amount that matters, disclosed. If we cannot say something honestly, we do not say it at all. We are a small brand at the very beginning, and what we have is a standard we refuse to lower.</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "signature",
+      "label": "Signature",
+      "info": "Shown in italic serif. Line breaks are kept.",
+      "default": "With care,\nThe AEONAE team"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "principle",
+      "name": "Principle",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Principles are numbered automatically (01, 02, ...) in the order shown."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Disclosure, not adjectives"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "The full ingredient list and the amounts that matter sit on the page. If we cannot state something honestly, the page stays quiet instead."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Letter and principles",
+      "blocks": [
+        {
+          "type": "principle",
+          "settings": {
+            "title": "Disclosure, not adjectives",
+            "text": "The full ingredient list and the amounts that matter sit on the page. If we cannot state something honestly, the page stays quiet instead."
+          }
+        },
+        {
+          "type": "principle",
+          "settings": {
+            "title": "One serum, done properly",
+            "text": "We would rather perfect a single formula we can stand behind than fill a shelf with products we cannot."
+          }
+        },
+        {
+          "type": "principle",
+          "settings": {
+            "title": "Real people, straight answers",
+            "text": "Email a question and you will hear back from the people who made it, usually the same day."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,392 @@
+{%- comment -%}
+  AEONAE single-product spotlight (artifact #shop .spotlight).
+  Price, title, image and link come from the selected product. Without a product
+  the card shows the bottle illustration, no price, and links to all products;
+  the theme editor shows a hint to pick the product.
+{%- endcomment -%}
+
+{{ 'aeonae-home.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign product = section.settings.product
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+
+  assign has_media = false
+  if product != blank and product.featured_media != blank
+    assign has_media = true
+    assign media_alt = product.featured_media.alt | default: product.title | escape
+  endif
+
+  if product != blank
+    assign card_title = product.title | escape
+    assign card_url = product.url
+  else
+    assign card_title = section.settings.title_fallback | escape
+    assign card_url = routes.all_products_collection_url
+  endif
+
+  if product != blank
+    assign on_sale = false
+    if product.price_varies == false and product.compare_at_price > product.price
+      assign on_sale = true
+    endif
+
+    if settings.currency_code_enabled
+      assign money_price = product.price | money_with_currency
+      assign money_price_min = product.price_min | money_with_currency
+      assign money_compare = product.compare_at_price | money_with_currency
+    else
+      assign money_price = product.price | money
+      assign money_price_min = product.price_min | money
+      assign money_compare = product.compare_at_price | money
+    endif
+
+    if product.price_varies
+      assign money_price = 'products.product.price.from_price_html' | t: price: money_price_min
+    endif
+  endif
+
+  assign anim_order = 0
+-%}
+
+<div
+  class="aeo-spot aeo-section color-{{ section.settings.color_scheme }} gradient"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+    <div class="aeo-wrap">
+      <div class="aeo-intro aeo-spot__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-spot__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-spot__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte aeo-spot__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="aeo-wrap">
+    {%- assign anim_order = anim_order | plus: 1 -%}
+    <div
+      class="aeo-spot__reveal{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+      {% if motion %}
+        data-cascade
+        style="--animation-order: {{ anim_order }};"
+      {% endif %}
+    >
+      <div class="aeo-spot__card color-{{ section.settings.card_color_scheme }}">
+        <div class="aeo-spot__art{% if has_media %} aeo-spot__art--media{% if section.settings.media_fit == 'contain' %} aeo-spot__art--contain{% endif %}{% endif %}">
+          {%- if section.settings.badge != blank -%}
+            <span class="aeo-badge aeo-spot__badge">{{ section.settings.badge | escape }}</span>
+          {%- endif -%}
+
+          {%- if has_media -%}
+            {%- render 'aeonae-media',
+              image: product.featured_media.preview_image,
+              alt: media_alt,
+              fit: section.settings.media_fit,
+              sizes: '(min-width: 1200px) 560px, (min-width: 820px) 46vw, 92vw'
+            -%}
+          {%- else -%}
+            <div class="aeo-spot__bottle">
+              {%- render 'aeonae-bottle', uid: section.id, decorative: true -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="aeo-spot__info">
+          {%- if section.settings.category != blank -%}
+            <p class="aeo-spot__cat">{{ section.settings.category | escape }}</p>
+          {%- endif -%}
+
+          <h3 class="aeo-h3 aeo-spot__title">{{ card_title }}</h3>
+
+          {%- if section.settings.description != blank -%}
+            <div class="aeo-spot__desc aeo-rte">{{ section.settings.description }}</div>
+          {%- endif -%}
+
+          {%- liquid
+            assign benefit_count = 0
+            for block in section.blocks
+              if block.type == 'benefit' and block.settings.text != blank
+                assign benefit_count = benefit_count | plus: 1
+              endif
+            endfor
+          -%}
+          {%- if benefit_count > 0 -%}
+            <ul class="aeo-check-list aeo-spot__benefits" role="list">
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'benefit' and block.settings.text != blank -%}
+                  <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          {%- for block in section.blocks -%}
+            {%- if block.type == '@app' -%}
+              <div class="aeo-spot__app">{% render block %}</div>
+            {%- endif -%}
+          {%- endfor -%}
+
+          <div class="aeo-spot__foot">
+            {%- if product != blank or section.settings.price_note != blank -%}
+              <p class="aeo-spot__pricing">
+                {%- if product != blank -%}
+                  {%- if on_sale -%}
+                    <span class="aeo-visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+                    <span class="aeo-spot__price">{{ money_price }}</span>
+                    <span class="aeo-visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+                    <s class="aeo-spot__compare">{{ money_compare }}</s>
+                  {%- else -%}
+                    <span class="aeo-spot__price">{{ money_price }}</span>
+                  {%- endif -%}
+                  {%- unless product.available -%}
+                    <span class="aeo-spot__soldout">{{ 'products.product.sold_out' | t }}</span>
+                  {%- endunless -%}
+                {%- endif -%}
+                {%- if section.settings.price_note != blank -%}
+                  <span class="aeo-spot__note">{{ section.settings.price_note | escape }}</span>
+                {%- endif -%}
+              </p>
+            {%- endif -%}
+
+            {%- if section.settings.button_label != blank -%}
+              <a class="button aeo-spot__button" href="{{ card_url }}">
+                {{- section.settings.button_label | escape -}}
+              </a>
+            {%- endif -%}
+          </div>
+
+          {%- if product == blank and request.design_mode -%}
+            <p class="aeo-spot__hint">
+              Select the serum in this section's Product setting. Price, title, photo and link then come from the
+              product. This note is only visible in the theme editor.
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product spotlight",
+  "tag": "section",
+  "class": "section aeo-spot-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Price, title, featured photo and link come from this product."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Section color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "card_color_scheme",
+      "label": "Card color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /#shop. Letters, numbers and dashes only.",
+      "default": "shop"
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The First Edition"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "One serum, fully disclosed."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>One serum, done properly, before we ever add a second. Every ingredient and the amounts that matter are printed in the open.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Card"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge",
+      "info": "Leave empty to hide. Only state an edition size that is true.",
+      "default": "First Edition of 12"
+    },
+    {
+      "type": "select",
+      "id": "media_fit",
+      "label": "Product photo fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Fill the frame"
+        },
+        {
+          "value": "contain",
+          "label": "Show the whole photo"
+        }
+      ],
+      "default": "cover",
+      "info": "Uses the product's featured media. Without one, the bottle illustration shows."
+    },
+    {
+      "type": "text",
+      "id": "category",
+      "label": "Category",
+      "default": "Copper Peptide Serum"
+    },
+    {
+      "type": "text",
+      "id": "title_fallback",
+      "label": "Title when no product is selected",
+      "default": "1% GHK-Cu Copper Peptide Serum"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>A daily copper peptide serum for the look of firmer, smoother, more even skin. Lightweight, unscented, and suitable for all skin types.</p>"
+    },
+    {
+      "type": "text",
+      "id": "price_note",
+      "label": "Note beside the price",
+      "info": "Only state what is true, for example shipping that matches your shipping rates.",
+      "default": "Free US shipping"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop the serum"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "The look of firmer, smoother skin"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Product spotlight",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "text": "The look of firmer, smoother skin"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "text": "A more even, radiant looking tone"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "text": "The full formula, printed in the open"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

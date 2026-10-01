@@ -1,0 +1,232 @@
+{%- comment -%}
+  AEONAE ritual steps (artifact "A quiet daily ritual." .steps / .step).
+  Centered heading and text, then up to four numbered steps (numbers are
+  automatic), three columns from 760px; four steps use 2 then 4 columns.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign step_count = 0
+  for block in section.blocks
+    if block.type == 'step'
+      assign step_count = step_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-pg aeo-steps aeo-section color-{{ section.settings.color_scheme }} gradient{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-intro aeo-pg__intro aeo-steps__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-pg__heading aeo-steps__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte rte aeo-pg__text aeo-steps__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if step_count > 0 -%}
+      {%- assign step_number = 0 -%}
+      <ol class="aeo-steps__list aeo-steps__list--{{ step_count | at_most: 4 }}" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'step' -%}
+            {%- assign anim_order = anim_order | plus: 1 -%}
+            {%- assign step_number = step_number | plus: 1 -%}
+            <li
+              class="aeo-steps__item{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if motion %}
+                data-cascade
+                style="--animation-order: {{ anim_order }};"
+              {% endif %}
+            >
+              <h3 class="aeo-steps__title">
+                <span class="aeo-steps__num">{{ step_number }}</span>
+                {%- if block.settings.title != blank %}
+                  <span class="aeo-steps__name">{{ block.settings.title | escape }}</span>
+                {%- endif -%}
+              </h3>
+              {%- if block.settings.text != blank -%}
+                <p class="aeo-steps__desc">{{ block.settings.text }}</p>
+              {%- endif -%}
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ol>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-pg__empty">Add step blocks to this section.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Steps",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /pages/results#ritual. Letters, numbers and dashes only."
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "A quiet daily ritual."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>One considered step, repeated. With consistent use, many people find their skin looks smoother and more radiant over time.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Steps are numbered automatically in the order shown."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Cleanse"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "Begin with clean, dry skin, morning or night."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Steps",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Cleanse",
+            "text": "Begin with clean, dry skin, morning or night."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Apply",
+            "text": "Press three to four drops over face and neck. Pause as it absorbs."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Seal",
+            "text": "Follow with moisturizer. Add sunscreen to your morning."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

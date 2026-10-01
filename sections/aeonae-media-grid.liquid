@@ -1,0 +1,341 @@
+{%- comment -%}
+  AEONAE captioned media grid (artifact #texture .shotgrid / .shot).
+  Centered intro, up to eight 4:5 frames with a tag chip and a caption
+  (1 / 2 / 4 columns), and a footnote. Empty frames show the branded
+  placeholder; the footnote can hide itself once every frame has a photo.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign shot_count = 0
+  assign missing_count = 0
+  for block in section.blocks
+    if block.type == 'shot'
+      assign shot_count = shot_count | plus: 1
+      if block.settings.image == blank
+        assign missing_count = missing_count | plus: 1
+      endif
+    endif
+  endfor
+
+  assign columns = section.settings.columns_desktop | plus: 0
+  if shot_count < columns
+    assign columns = shot_count
+  endif
+  case columns
+    when 4
+      assign sizes = '(min-width: 1200px) 270px, (min-width: 1000px) 23vw, (min-width: 680px) 45vw, 90vw'
+    when 3
+      assign sizes = '(min-width: 1200px) 360px, (min-width: 1000px) 30vw, (min-width: 680px) 45vw, 90vw'
+    else
+      assign sizes = '(min-width: 1200px) 550px, (min-width: 680px) 45vw, 90vw'
+  endcase
+
+  assign show_note = false
+  if section.settings.note != blank
+    assign show_note = true
+    if section.settings.note_auto_hide and missing_count == 0 and shot_count > 0
+      assign show_note = false
+    endif
+  endif
+-%}
+
+<div
+  class="aeo-pg aeo-shots aeo-section color-{{ section.settings.color_scheme }} gradient{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-intro aeo-pg__intro aeo-shots__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-pg__heading aeo-shots__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte rte aeo-pg__text aeo-shots__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if shot_count > 0 -%}
+      <ul class="aeo-shots__grid aeo-shots__grid--{{ columns }}" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'shot' -%}
+            {%- liquid
+              assign anim_order = anim_order | plus: 1
+              assign image = block.settings.image
+              assign tag = block.settings.tag | escape
+              assign ph_label = block.settings.tag | default: 'Product photo' | escape
+              assign alt = image.alt | escape
+              if alt == blank
+                assign alt = tag
+              endif
+            -%}
+            <li
+              class="aeo-shots__item{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if motion %}
+                data-cascade
+                style="--animation-order: {{ anim_order }};"
+              {% endif %}
+            >
+              <figure class="aeo-shot aeo-card color-{{ section.settings.card_color_scheme }}">
+                <div class="aeo-shot__frame">
+                  {%- render 'aeonae-media',
+                    image: image,
+                    alt: alt,
+                    ratio: '4 / 5',
+                    sizes: sizes,
+                    label: ph_label,
+                    dims: '1200 x 1500 px (4:5)',
+                    tag: tag
+                  -%}
+                  {%- if image != blank and tag != blank and section.settings.tag_on_photos -%}
+                    <span class="aeo-ph__tag aeo-shot__tag">{{ tag }}</span>
+                  {%- endif -%}
+                </div>
+                {%- if block.settings.caption != blank -%}
+                  <figcaption class="aeo-shot__cap">{{ block.settings.caption }}</figcaption>
+                {%- endif -%}
+              </figure>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-pg__empty">Add photo blocks to this section.</p>
+    {%- endif -%}
+
+    {%- if show_note -%}
+      <div class="aeo-note aeo-rte rte aeo-shots__note">{{ section.settings.note }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Captioned media grid",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Section color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "card_color_scheme",
+      "label": "Card color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /pages/results#texture. Letters, numbers and dashes only."
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "checkbox",
+      "id": "tag_on_photos",
+      "label": "Keep tag chips on uploaded photos",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Texture and feel"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Lightweight, fast absorbing, barely there."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>A clear, water light serum that sinks in without tack or residue. Here is exactly what to expect, from the drop to the skin.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Footnote"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Footnote",
+      "default": "<p>Real photography will fill these frames. They are placeholders for real, unretouched product shots, never stock or generated images.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "note_auto_hide",
+      "label": "Hide the footnote once every frame has a photo",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "Use real, unretouched product photography only. Never use stock or AI-generated images here."
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "shot",
+      "name": "Photo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1200 x 1500 px (4:5). Add alt text in the image settings."
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag",
+          "default": "Texture macro"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "caption",
+          "label": "Caption",
+          "default": "A clear, lightweight fluid that spreads easily."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Captioned media grid",
+      "blocks": [
+        {
+          "type": "shot",
+          "settings": {
+            "tag": "Texture macro",
+            "caption": "A clear, lightweight fluid that spreads easily."
+          }
+        },
+        {
+          "type": "shot",
+          "settings": {
+            "tag": "The dropper",
+            "caption": "A precise glass dropper. Three to four drops per use."
+          }
+        },
+        {
+          "type": "shot",
+          "settings": {
+            "tag": "On the skin",
+            "caption": "Sinks in fast, with no greasy film."
+          }
+        },
+        {
+          "type": "shot",
+          "settings": {
+            "tag": "The finish",
+            "caption": "A soft, comfortable base, ready for moisturizer."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

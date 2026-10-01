@@ -1,0 +1,180 @@
+{%- comment -%}
+  AEONAE trust strip (artifact .trustrip).
+  Up to four items separated by hairlines: 1 column on phones, 2 from 640px,
+  one row (up to 4 columns) from 960px.
+{%- endcomment -%}
+
+{{ 'aeonae-home.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign item_count = 0
+  for block in section.blocks
+    if block.settings.heading != blank or block.settings.text != blank
+      assign item_count = item_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-trust aeo-section color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_borders %} aeo-trust--bordered{% endif %}"
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if item_count > 0 -%}
+      <ul
+        class="aeo-trust__row"
+        role="list"
+        style="--aeo-cols: {{ item_count | at_most: 4 }};"
+      >
+        {%- assign anim_order = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.heading != blank or block.settings.text != blank -%}
+            {%- assign anim_order = anim_order | plus: 1 -%}
+            <li
+              class="aeo-trust__item{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if settings.animations_reveal_on_scroll %}
+                data-cascade
+                style="--animation-order: {{ anim_order }};"
+              {% endif %}
+            >
+              {%- if block.settings.icon != blank -%}
+                <span class="aeo-trust__icon" aria-hidden="true">{{ block.settings.icon | escape }}</span>
+              {%- endif -%}
+              <div class="aeo-trust__body">
+                {%- if block.settings.heading != blank -%}
+                  <p class="aeo-trust__heading">{{ block.settings.heading | escape }}</p>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <p class="aeo-trust__text">{{ block.settings.text }}</p>
+                {%- endif -%}
+              </div>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-trust__empty">Add trust items to this section.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Trust strip",
+  "tag": "section",
+  "class": "section aeo-trust-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_borders",
+      "label": "Show top and bottom hairlines",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "Only list promises that match your store settings: shipping rates, refund policy and where the product is made."
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon",
+          "info": "A single symbol, for example ◈ ▣ ⚑ ✓. Leave empty for no icon.",
+          "default": "◈"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Full disclosure"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "Every ingredient and amount, printed on the page."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Trust strip",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "icon": "◈",
+            "heading": "Full disclosure",
+            "text": "Every ingredient and amount, printed on the page."
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "▣",
+            "heading": "Made in the USA",
+            "text": "Formulated and filled domestically."
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "⚑",
+            "heading": "Free shipping",
+            "text": "On every US order, no minimum."
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "✓",
+            "heading": "14 day returns",
+            "text": "On unopened bottles, no hassle."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

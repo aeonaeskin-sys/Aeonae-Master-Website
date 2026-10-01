@@ -24,6 +24,7 @@
   {%- if product.quantity_price_breaks_configured? -%}
     {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
   {%- endif -%}
+  {{ 'aeonae-product.css' | asset_url | stylesheet_tag }}
 
   {%- style -%}
     .section-{{ section.id }}-padding {
@@ -41,6 +42,7 @@
 
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'aeonae-product.js' | asset_url }}" defer="defer"></script>
   {%- if product.quantity_price_breaks_configured? -%}
     <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
@@ -75,9 +77,21 @@
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
   <product-component view-event-payload="{{ product | standard_event_data: 'view', context: 'page' | escape }}">
     <div class="page-width">
-      <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
+      {%- comment -%}
+        AEONAE: without product media the gallery column shows the bottle stage
+        (snippets/aeonae-product-stage.liquid), so the layout stays two columns
+        instead of Dawn's centered product--no-media layout.
+      {%- endcomment -%}
+      <div class="product aeo-pdp product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}grid--2-col-tablet aeo-pdp--stage{% endif %}">
         <div class="grid__item product__media-wrapper">
-          {% render 'product-media-gallery', variant_images: variant_images %}
+          {%- if product.media.size == 0 -%}
+            {%- render 'aeonae-product-stage',
+              section_id: section.id,
+              sticky: section.settings.enable_sticky_info
+            -%}
+          {%- else -%}
+            {% render 'product-media-gallery', variant_images: variant_images %}
+          {%- endif -%}
         </div>
         <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
           <section
@@ -688,6 +702,17 @@
                   </product-recommendations>
                 {%- when 'icon-with-text' -%}
                   {% render 'icon-with-text', block: block %}
+                {%- when 'aeo_edition' -%}
+                  {%- render 'aeonae-product-edition', block: block, product: product, section_id: section.id -%}
+                {%- when 'aeo_purchase_options' -%}
+                  {%- render 'aeonae-product-purchase',
+                    block: block,
+                    product: product,
+                    section_id: section.id,
+                    product_form_id: product_form_id
+                  -%}
+                {%- when 'aeo_benefits', 'aeo_specs', 'aeo_guarantee', 'aeo_reassurance', 'aeo_trust_inline', 'aeo_allergen' -%}
+                  {%- render 'aeonae-product-detail', block: block -%}
               {%- endcase -%}
             {%- endfor -%}
             <a href="{{ product.url }}" class="link product__view-details animate-arrow">
@@ -2142,6 +2167,263 @@
           "default": "t:sections.main-product.blocks.icon_with_text.settings.heading_3.default",
           "label": "t:sections.main-product.blocks.icon_with_text.settings.heading_3.label",
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
+        }
+      ]
+    },
+    {
+      "type": "aeo_edition",
+      "name": "Edition stock band",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows the live count and progress bar only when the selected variant tracks inventory in Shopify and has between 1 and the low stock threshold units left. Otherwise it shows the label and default note, with no number."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "First Edition of 12"
+        },
+        {
+          "type": "number",
+          "id": "edition_size",
+          "label": "Edition size",
+          "info": "Total units in the edition. The bar fills to (size minus units left) divided by size.",
+          "default": 12
+        },
+        {
+          "type": "range",
+          "id": "threshold",
+          "label": "Low stock threshold",
+          "min": 1,
+          "max": 50,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "count_text",
+          "label": "Low stock count text",
+          "info": "[count] is replaced with the live inventory count.",
+          "default": "Only [count] left"
+        },
+        {
+          "type": "text",
+          "id": "low_note",
+          "label": "Low stock note",
+          "default": "Almost gone. Once the First Edition of 12 sells out, a restock is not guaranteed."
+        },
+        {
+          "type": "text",
+          "id": "default_note",
+          "label": "Default note",
+          "default": "One serum, done properly. When the edition sells out it moves to a waitlist."
+        }
+      ]
+    },
+    {
+      "type": "aeo_benefits",
+      "name": "Benefit checklist",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "benefit_1",
+          "label": "Benefit 1",
+          "default": "The look of firmer, smoother skin"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "benefit_2",
+          "label": "Benefit 2",
+          "default": "A more even, radiant looking tone"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "benefit_3",
+          "label": "Benefit 3",
+          "default": "A fully disclosed formula, printed in the open"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "benefit_4",
+          "label": "Benefit 4"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "benefit_5",
+          "label": "Benefit 5"
+        }
+      ]
+    },
+    {
+      "type": "aeo_specs",
+      "name": "Spec chips",
+      "settings": [
+        {
+          "type": "text",
+          "id": "chips",
+          "label": "Chips",
+          "info": "Separate chips with commas.",
+          "default": "30 ml, Lightweight serum, No added fragrance, All skin types"
+        },
+        {
+          "type": "text",
+          "id": "list_label",
+          "label": "Label for screen readers",
+          "default": "Product details"
+        }
+      ]
+    },
+    {
+      "type": "aeo_purchase_options",
+      "name": "Purchase options",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "One time vs subscription cards built from Shopify selling plans. Hidden until a subscription app adds a selling plan to this product. If your subscription app has its own product block, use that block instead of this one."
+        },
+        {
+          "type": "text",
+          "id": "one_time_label",
+          "label": "One time label",
+          "default": "One time"
+        },
+        {
+          "type": "text",
+          "id": "subscribe_label",
+          "label": "Subscription label",
+          "info": "Leave blank to use the plan group name from your subscription app.",
+          "default": "Subscribe and Save"
+        },
+        {
+          "type": "text",
+          "id": "savings_text",
+          "label": "Savings text",
+          "info": "[savings] is replaced with the plan's discount, for example 10%.",
+          "default": "Save [savings]"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_prices",
+          "label": "Show prices on cards",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "frequency_label",
+          "label": "Plan picker label",
+          "info": "Leave blank to use the option name from your subscription app.",
+          "default": "Deliver every"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "plan_note",
+          "label": "Subscription note",
+          "info": "Only state what your subscription app supports.",
+          "default": "Cancel or skip anytime. You confirm your email and delivery details at checkout."
+        },
+        {
+          "type": "text",
+          "id": "legend",
+          "label": "Label for screen readers",
+          "default": "Purchase options"
+        }
+      ]
+    },
+    {
+      "type": "aeo_guarantee",
+      "name": "Guarantee card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "seal",
+          "label": "Seal text",
+          "default": "14 DAY PROMISE"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Try it with confidence"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "Unopened bottles can be returned within 14 days. Opened or used bottles cannot be returned, for hygiene and safety."
+        }
+      ]
+    },
+    {
+      "type": "aeo_reassurance",
+      "name": "Reassurance list",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "line_1",
+          "label": "Line 1",
+          "default": "Gentle enough for daily use, including sensitive skin"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "line_2",
+          "label": "Line 2",
+          "default": "Every ingredient and the amounts that matter, disclosed in full"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "line_3",
+          "label": "Line 3"
+        },
+        {
+          "type": "header",
+          "content": "Support line"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_support",
+          "label": "Show email support line",
+          "info": "Uses Support email and Support reply note from Theme settings > AEONAE brand > Customer care.",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "support_lead",
+          "label": "Lead-in",
+          "default": "Questions before you buy?"
+        },
+        {
+          "type": "text",
+          "id": "support_link",
+          "label": "Link label",
+          "default": "Email us"
+        }
+      ]
+    },
+    {
+      "type": "aeo_trust_inline",
+      "name": "Inline trust row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "items",
+          "label": "Items",
+          "info": "Separate items with commas. Only list what is true for your store.",
+          "default": "Free US shipping, Secure checkout, Made in the USA"
+        }
+      ]
+    },
+    {
+      "type": "aeo_allergen",
+      "name": "Allergen notice",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Contains <strong>royal jelly</strong>. If you are allergic to bee products, please do not use this serum.</p>"
         }
       ]
     }

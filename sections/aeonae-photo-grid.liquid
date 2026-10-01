@@ -1,0 +1,277 @@
+{%- comment -%}
+  AEONAE customer photos (artifact #results .ugcwrap / .ugc).
+  Heading, text and up to twelve square photos (2 columns, 4 from 680px).
+  Empty photos show a "Customer photo" placeholder. Add a review app's
+  photo gallery as an app block and it replaces the photo grid
+  automatically, so the merchant never has to remove the placeholders.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+  assign placeholder_text = section.settings.placeholder_text | escape
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign app_count = 0
+  assign photo_count = 0
+  assign uploaded_count = 0
+  for block in section.blocks
+    case block.type
+      when '@app'
+        assign app_count = app_count | plus: 1
+      when 'photo'
+        assign photo_count = photo_count | plus: 1
+        if block.settings.image != blank
+          assign uploaded_count = uploaded_count | plus: 1
+        endif
+    endcase
+  endfor
+
+  assign shown_count = photo_count
+  if section.settings.hide_empty and request.design_mode == false
+    assign shown_count = uploaded_count
+  endif
+-%}
+
+<div
+  class="aeo-pg aeo-ugc aeo-section color-{{ section.settings.color_scheme }} gradient{% if section.settings.alignment == 'center' %} aeo-ugc--center{% endif %}{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if request.design_mode and app_count == 0 -%}
+      <p class="aeo-pg__editor-note">
+        <strong>Theme editor only:</strong> use real, verified customer photos shared with permission, never stock
+        or AI-generated images. When you install a reviews app, add its photo gallery here as an app block and it
+        replaces this grid automatically.
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-ugc__head">
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-ugc__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte rte aeo-ugc__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if app_count > 0 -%}
+      <div class="aeo-ugc__apps">
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}
+            {% render block %}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- elsif shown_count > 0 -%}
+      <ul class="aeo-ugc__grid" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'photo' -%}
+            {%- liquid
+              assign image = block.settings.image
+              if image == blank and section.settings.hide_empty and request.design_mode == false
+                continue
+              endif
+              assign anim_order = anim_order | plus: 1
+              assign alt = block.settings.alt | escape
+            -%}
+            <li
+              class="aeo-ugc__item{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if motion %}
+                data-cascade
+                style="--animation-order: {{ anim_order }};"
+              {% endif %}
+            >
+              {%- render 'aeonae-media',
+                image: image,
+                alt: alt,
+                ratio: '1 / 1',
+                sizes: '(min-width: 1200px) 270px, (min-width: 680px) 23vw, 45vw',
+                label: 'Customer photo',
+                dims: '1000 x 1000 px (1:1)',
+                icon: placeholder_text,
+                class: 'aeo-ugc__media'
+              -%}
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- elsif request.design_mode and photo_count == 0 -%}
+      <p class="aeo-pg__empty">Add photo blocks, or a reviews app's photo gallery as an app block.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer photos",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Only use real, verified customer photos shared with permission. Adding an app block (for example a reviews app's photo gallery) replaces the photo grid automatically."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Letters, numbers and dashes only."
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "From our customers"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Real, verified customer photos will appear here as our First Edition ships. We never use stock or generated images.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Photo grid"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_text",
+      "label": "Empty frame text",
+      "default": "Customer photo"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_empty",
+      "label": "Hide empty frames",
+      "info": "Leaves out frames without a photo on the live store. They stay visible in the theme editor.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "photo",
+      "name": "Customer photo",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Photo",
+          "info": "Square, 1000 x 1000 px. Real, verified customer photo shared with permission."
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text",
+          "info": "Describe the photo for screen readers. Leave empty to use the alt text saved with the image."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "Customer photos",
+      "blocks": [
+        {
+          "type": "photo"
+        },
+        {
+          "type": "photo"
+        },
+        {
+          "type": "photo"
+        },
+        {
+          "type": "photo"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

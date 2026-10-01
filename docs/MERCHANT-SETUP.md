@@ -40,7 +40,6 @@ Online Store > Pages > Add page. The page body can stay empty, because the templ
 | The Science | `science` | `page.science` |
 | Results and Ritual | `results` | `page.results` |
 | Our Story | `our-story` | `page.story` |
-| FAQ | `faq` | `page.faq` |
 
 `Contact` already exists and uses Dawn's contact form template.
 
@@ -64,7 +63,7 @@ its links. Top-level items **without** children are listed together at the end.
   - The Science: `/pages/science`
   - Results and Ritual: `/pages/results`
   - Our Standard: `/pages/our-story#standard`
-  - FAQ: `/pages/faq`
+  - FAQ: `/#faq` (the FAQ lives on the home page, as in the reference design)
 - **Company**
   - Our Story: `/pages/our-story`
   - Reviews: `/products/copper-peptide-serum#reviews`

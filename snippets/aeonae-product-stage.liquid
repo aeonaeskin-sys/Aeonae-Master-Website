@@ -1,0 +1,28 @@
+{%- comment -%}
+  No-media fallback for the main product gallery column (artifact .gallery/.gmain).
+  Shown only when the product has no media: a soft gradient frame with the halo and
+  the AEONAE bottle illustration, sticky beside the buy box on wide screens. Upload
+  product media in Shopify admin (Products > [product] > Media) and Dawn's gallery
+  replaces this automatically. The upload hint is visible only in the theme editor.
+
+  Accepts:
+  - section_id {String} - section.id (unique ids for the bottle gradients)
+  - sticky {Boolean} - follow the section's "sticky content" setting
+
+  Usage:
+  {% render 'aeonae-product-stage', section_id: section.id, sticky: section.settings.enable_sticky_info %}
+{%- endcomment -%}
+
+<div class="aeo-pdp-stage{% if sticky %} aeo-pdp-stage--sticky{% endif %}">
+  <div class="aeo-pdp-stage__frame">
+    <div class="aeo-halo aeo-pdp-stage__halo" data-aeo-parallax="0.06" aria-hidden="true"></div>
+    <div class="aeo-pdp-stage__bottle" data-aeo-parallax="0.05">
+      {%- render 'aeonae-bottle', uid: section_id -%}
+    </div>
+    {%- if request.design_mode -%}
+      <span class="aeo-ph__label aeo-pdp-stage__label">
+        Upload product photos: bottle, carton, texture, in use (2000 x 2000 px)
+      </span>
+    {%- endif -%}
+  </div>
+</div>

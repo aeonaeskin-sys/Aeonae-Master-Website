@@ -1,0 +1,493 @@
+{%- comment -%}
+  AEONAE footer (footer group).
+  Brand column (logo, tagline, social icons, payment icons), menu columns
+  from link_list blocks, app blocks, and a legal area with address,
+  disclaimer, copyright, policy links and the country/language selectors.
+  Menus always come from Online Store > Navigation, never from this file.
+{%- endcomment -%}
+
+{{ 'aeonae-footer.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign has_social_icons = true
+  if settings.social_facebook_link == blank and settings.social_instagram_link == blank and settings.social_youtube_link == blank and settings.social_tiktok_link == blank and settings.social_twitter_link == blank and settings.social_pinterest_link == blank and settings.social_snapchat_link == blank and settings.social_tumblr_link == blank and settings.social_vimeo_link == blank
+    assign has_social_icons = false
+  endif
+
+  assign show_social = false
+  if section.settings.show_social and has_social_icons
+    assign show_social = true
+  endif
+
+  assign logo = section.settings.logo | default: settings.logo
+  assign logo_height = section.settings.logo_height
+
+  assign footer_bg_brightness = section.settings.color_scheme.settings.background | color_brightness
+  assign logo_asset = 'aeonae-logo-full.png'
+  if footer_bg_brightness < 128
+    assign logo_asset = 'aeonae-logo-full-light.png'
+  endif
+
+  assign brand_name = section.settings.copyright_name | default: shop.name
+  assign column_count = section.blocks.size | at_most: 4 | at_least: 1
+
+  assign show_country = false
+  if section.settings.enable_country_selector and localization.available_countries.size > 1
+    assign show_country = true
+  endif
+  assign show_language = false
+  if section.settings.enable_language_selector and localization.available_languages.size > 1
+    assign show_language = true
+  endif
+-%}
+
+{%- if show_social -%}
+  {{ 'component-list-social.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+<footer
+  class="aeo-footer aeo-section color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_border %} aeo-footer--border{% endif %}"
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }}; --aeo-footer-cols: {{ column_count }}; --aeo-logo-h: {{ logo_height }}px;"
+>
+  <div class="aeo-wrap">
+    <div class="aeo-footer__grid">
+      <div
+        class="aeo-footer__brand{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if settings.animations_reveal_on_scroll %}
+          data-cascade
+          style="--animation-order: 1;"
+        {% endif %}
+      >
+        {%- if logo != blank -%}
+          {%- liquid
+            assign logo_width = logo_height | times: logo.aspect_ratio | round
+            assign logo_width_2x = logo_width | times: 2
+            assign logo_width_3x = logo_width | times: 3
+            assign logo_widths = logo_width | append: ', ' | append: logo_width_2x | append: ', ' | append: logo_width_3x
+            assign logo_sizes = logo_width | append: 'px'
+            assign logo_alt = logo.alt | default: brand_name | escape
+          -%}
+          {{
+            logo
+            | image_url: width: logo_width_3x
+            | image_tag:
+              class: 'aeo-footer__logo',
+              widths: logo_widths,
+              sizes: logo_sizes,
+              width: logo_width,
+              height: logo_height,
+              loading: 'lazy',
+              alt: logo_alt
+          }}
+        {%- else -%}
+          {%- comment -%} aeonae-logo-full*.png are 520 x 351 px {%- endcomment -%}
+          {%- assign logo_width = logo_height | times: 520 | divided_by: 351.0 | round -%}
+          <img
+            class="aeo-footer__logo"
+            src="{{ logo_asset | asset_url }}"
+            alt="{{ brand_name | escape }}"
+            width="{{ logo_width }}"
+            height="{{ logo_height }}"
+            loading="lazy"
+          >
+        {%- endif -%}
+
+        {%- if section.settings.tagline != blank -%}
+          <p class="aeo-footer__tagline aeo-soft">{{ section.settings.tagline }}</p>
+        {%- endif -%}
+
+        {%- if show_social -%}
+          {%- render 'social-icons', class: 'aeo-footer__social' -%}
+        {%- endif -%}
+
+        {%- if section.settings.show_payment and shop.enabled_payment_types.size > 0 -%}
+          <div class="aeo-footer__pay">
+            <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+            <ul class="aeo-footer__pay-list list-unstyled" role="list">
+              {%- for type in shop.enabled_payment_types -%}
+                <li class="aeo-footer__pay-item">
+                  {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            <div
+              class="aeo-footer__col aeo-footer__col--app{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if settings.animations_reveal_on_scroll %}
+                data-cascade
+                style="--animation-order: {{ forloop.index | plus: 1 }};"
+              {% endif %}
+            >
+              {% render block %}
+            </div>
+          {%- when 'link_list' -%}
+            {%- liquid
+              assign show_contact = false
+              if block.settings.show_contact_email and settings.aeo_support_email != blank
+                assign show_contact = true
+              endif
+              assign has_links = false
+              if block.settings.menu.links.size > 0 or show_contact
+                assign has_links = true
+              endif
+            -%}
+            <div
+              class="aeo-footer__col{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if settings.animations_reveal_on_scroll %}
+                data-cascade
+                style="--animation-order: {{ forloop.index | plus: 1 }};"
+              {% endif %}
+            >
+              {%- if block.settings.heading != blank -%}
+                <h2 class="aeo-footer__heading" id="AeoFooterHeading-{{ block.id }}">{{ block.settings.heading }}</h2>
+              {%- endif -%}
+
+              {%- if has_links -%}
+                <ul
+                  class="aeo-footer__links list-unstyled"
+                  role="list"
+                  {% if block.settings.heading != blank %}
+                    aria-labelledby="AeoFooterHeading-{{ block.id }}"
+                  {% endif %}
+                >
+                  {%- for link in block.settings.menu.links -%}
+                    <li>
+                      <a
+                        href="{{ link.url }}"
+                        class="aeo-footer__link"
+                        {% if link.current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        {{- link.title | escape -}}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                  {%- if show_contact -%}
+                    <li>
+                      <a href="mailto:{{ settings.aeo_support_email | strip | escape }}" class="aeo-footer__link">
+                        {{- block.settings.contact_label | default: 'Contact Us' | escape -}}
+                      </a>
+                    </li>
+                  {%- endif -%}
+                </ul>
+              {%- elsif request.design_mode -%}
+                <p class="aeo-footer__hint">
+                  Select a menu for this column (Online Store &gt; Navigation).
+                </p>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <div
+      class="aeo-footer__legal{% if settings.animations_reveal_on_scroll %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+      {% if settings.animations_reveal_on_scroll %}
+        data-cascade
+      {% endif %}
+    >
+      {%- if section.settings.address != blank -%}
+        <address class="aeo-footer__line aeo-footer__address">{{ section.settings.address }}</address>
+      {%- endif -%}
+
+      {%- if section.settings.disclaimer != blank -%}
+        <div class="aeo-footer__line aeo-footer__disclaimer">{{ section.settings.disclaimer }}</div>
+      {%- endif -%}
+
+      <div class="aeo-footer__line aeo-footer__bottom">
+        <p class="aeo-footer__copyright">
+          <small
+            >&copy; {{ 'now' | date: '%Y' }} {{ brand_name | escape }}.
+            {%- if section.settings.copyright_note != blank %} {{ section.settings.copyright_note | escape }}{% endif -%}
+          </small>
+        </p>
+
+        {%- if section.settings.show_policy -%}
+          {%- liquid
+            assign has_policies = false
+            for policy in shop.policies
+              if policy != blank
+                assign has_policies = true
+                break
+              endif
+            endfor
+          -%}
+          {%- if has_policies -%}
+            <ul class="aeo-footer__policies list-unstyled" role="list">
+              {%- for policy in shop.policies -%}
+                {%- if policy != blank -%}
+                  <li>
+                    <small><a href="{{ policy.url }}" class="aeo-footer__policy-link">{{ policy.title | escape }}</a></small>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if section.settings.show_powered_by -%}
+          <p class="aeo-footer__powered"><small>{{ powered_by_link }}</small></p>
+        {%- endif -%}
+      </div>
+
+      {%- if show_country or show_language -%}
+        <div class="aeo-footer__localization isolate">
+          {%- if show_country -%}
+            <localization-form>
+              {%- form 'localization', id: 'AeoFooterCountryForm', class: 'localization-form' -%}
+                <div>
+                  <h2 class="aeo-footer__loc-label" id="AeoFooterCountryLabel">
+                    {{- 'localization.country_label' | t -}}
+                  </h2>
+                  {%- render 'country-localization', localPosition: 'AeoFooterCountry' -%}
+                </div>
+              {%- endform -%}
+            </localization-form>
+          {%- endif -%}
+
+          {%- if show_language -%}
+            <localization-form>
+              {%- form 'localization', id: 'AeoFooterLanguageForm', class: 'localization-form' -%}
+                <div>
+                  <h2 class="aeo-footer__loc-label" id="AeoFooterLanguageLabel">
+                    {{- 'localization.language_label' | t -}}
+                  </h2>
+                  {%- render 'language-localization', localPosition: 'AeoFooterLanguage' -%}
+                </div>
+              {%- endform -%}
+            </localization-form>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "aeo-footer-section",
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Menu columns come from Online Store > Navigation. Recommended menus: Shop (Copper Peptide Serum, Subscribe and Save), Explore (The Science, Results and Ritual, Our Story), Help (FAQ, Reviews, Shipping and Returns). Turn on \"Add contact email link\" in the Help column for the support email."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Show top border",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Brand column"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "info": "Leave empty to use the theme logo (Theme settings > Logo), then the AEONAE wordmark. Transparent PNG or SVG, at least 300 px tall."
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 30,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height",
+      "default": 62
+    },
+    {
+      "type": "inline_richtext",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Skin longevity, in full disclosure."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social media icons",
+      "info": "Add your profiles in Theme settings > Social media.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment",
+      "label": "Show payment icons",
+      "info": "Shows the payment methods enabled in Settings > Payments.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Legal"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "address",
+      "label": "Address and contact",
+      "default": "AEONAE, 10 Woodmint Terrace, Box 2, Sterling, VA 20164. support@aeonae.com"
+    },
+    {
+      "type": "richtext",
+      "id": "disclaimer",
+      "label": "Disclaimer",
+      "default": "<p>This product is a cosmetic. These statements have not been evaluated by the FDA and are not intended to diagnose, treat, cure, or prevent any disease. Contains royal jelly.</p>"
+    },
+    {
+      "type": "text",
+      "id": "copyright_name",
+      "label": "Copyright name",
+      "info": "Leave empty to use the store name.",
+      "default": "AEONAE"
+    },
+    {
+      "type": "text",
+      "id": "copyright_note",
+      "label": "Copyright note",
+      "default": "All rights reserved."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_policy",
+      "label": "Show policy links",
+      "info": "Add policies in Settings > Policies.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_powered_by",
+      "label": "Show \"Powered by Shopify\"",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Country/region and language"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "label": "Show country/region selector",
+      "info": "Appears when more than one country is set up in Settings > Markets.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "label": "Show language selector",
+      "info": "Appears when more than one language is published.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 82
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "link_list",
+      "name": "Menu column",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Quick links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer",
+          "info": "Create the menu in Online Store > Navigation, for example Shop, Explore or Help."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_contact_email",
+          "label": "Add contact email link",
+          "info": "Adds a link to the support email set in Theme settings > AEONAE brand.",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "contact_label",
+          "label": "Contact link label",
+          "default": "Contact Us",
+          "visible_if": "{{ block.settings.show_contact_email }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop",
+            "menu": "footer"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Explore",
+            "menu": "footer"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Help",
+            "menu": "footer",
+            "show_contact_email": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,105 @@
+/*
+  AEONAE cart drawer refinements (artifact .drawer). Light touch on Dawn's
+  cart-drawer: serif title, warm hairlines, rounded item images and the small
+  reassurance line printed under the checkout button (settings.aeo_cart_note).
+  Include globally from layout/theme.liquid, after component-cart-drawer.css.
+  1rem = 10px.
+*/
+
+.drawer__inner {
+  border-color: var(--aeo-line);
+}
+
+.cart-drawer .drawer__inner {
+  padding: 0 2.4rem;
+}
+
+@media screen and (max-width: 749px) {
+  .cart-drawer .drawer__inner {
+    padding: 0 1.6rem;
+  }
+}
+
+.cart-drawer .drawer__header {
+  margin: 0 -2.4rem;
+  padding: 2.2rem 2.4rem;
+  border-bottom: 0.1rem solid var(--aeo-line);
+}
+
+@media screen and (max-width: 749px) {
+  .cart-drawer .drawer__header {
+    margin: 0 -1.6rem;
+    padding: 2rem 1.6rem;
+  }
+}
+
+.cart-drawer .drawer__heading {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: 2.08rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: rgb(var(--color-foreground));
+}
+
+.cart-drawer .drawer__close {
+  top: 1.2rem;
+  right: 0.8rem;
+}
+
+.cart-drawer .cart-items th {
+  border-bottom-color: var(--aeo-line);
+}
+
+.cart-drawer .cart-item {
+  padding-bottom: 1.8rem;
+  border-bottom: 0.1rem solid var(--aeo-line);
+}
+
+.cart-drawer .cart-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.cart-drawer .cart-item__image {
+  border-radius: 0.8rem;
+  background: rgba(var(--color-foreground), 0.045);
+}
+
+.cart-drawer .drawer__footer {
+  margin: 0 -2.4rem;
+  padding: 2.2rem 2.4rem;
+  border-top: 0.1rem solid var(--aeo-line);
+}
+
+@media screen and (max-width: 749px) {
+  .cart-drawer .drawer__footer {
+    margin: 0 -1.6rem;
+    padding: 2rem 1.6rem;
+  }
+}
+
+.cart-drawer .drawer__footer > details {
+  margin-top: -2.2rem;
+  border-bottom-color: var(--aeo-line);
+}
+
+@media screen and (max-width: 749px) {
+  .cart-drawer .drawer__footer > details {
+    margin-top: -2rem;
+  }
+}
+
+.cart-drawer .totals__total,
+.cart-drawer .totals__total-value {
+  color: rgb(var(--color-foreground));
+}
+
+.aeo-cart-note {
+  margin: 1.2rem 0 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: rgba(var(--color-foreground), 0.8);
+}

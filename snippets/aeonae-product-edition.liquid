@@ -1,0 +1,78 @@
+{%- comment -%}
+  AEONAE "First Edition" band for the main product section (block type: aeo_edition).
+  Bound to real inventory of the selected variant. The count and progress bar only
+  appear when the variant tracks inventory in Shopify and has between 1 and the
+  low-stock threshold units left. Otherwise the label and default note show, with
+  no number and no bar. Nothing here is hardcoded: every value comes from Shopify.
+
+  The element id aeo-edition-{section_id} is swapped by assets/aeonae-product.js
+  from the section HTML Dawn fetches on variant change (PUB_SUB_EVENTS.variantChange).
+
+  Accepts:
+  - block {Block} - the aeo_edition block
+  - product {Product} - the product
+  - section_id {String} - section.id
+
+  Usage:
+  {% render 'aeonae-product-edition', block: block, product: product, section_id: section.id %}
+{%- endcomment -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign size = block.settings.edition_size | default: 0 | floor
+  assign threshold = block.settings.threshold | default: 5
+
+  assign is_low = false
+  if variant != blank and variant.inventory_management == 'shopify'
+    assign units_left = variant.inventory_quantity
+    if units_left > 0 and units_left <= threshold
+      assign is_low = true
+    endif
+  endif
+
+  assign show_bar = false
+  if is_low and size > 0
+    assign show_bar = true
+    assign sold = size | minus: units_left
+    if sold < 0
+      assign sold = 0
+    endif
+    assign fill = sold | times: 100.0 | divided_by: size | round
+    if fill > 100
+      assign fill = 100
+    endif
+  endif
+
+  if is_low
+    assign note = block.settings.low_note
+  else
+    assign note = block.settings.default_note
+  endif
+-%}
+
+<div
+  id="aeo-edition-{{ section_id }}"
+  class="aeo-edition{% if is_low %} aeo-edition--low{% endif %}"
+  data-product-id="{{ product.id }}"
+  role="status"
+  {{ block.shopify_attributes }}
+>
+  <div class="aeo-edition__top">
+    {%- if block.settings.label != blank -%}
+      <span class="aeo-edition__label">{{ block.settings.label | escape }}</span>
+    {%- endif -%}
+    {%- if is_low -%}
+      <span class="aeo-edition__left">
+        {{- block.settings.count_text | default: 'Only [count] left' | escape | replace: '[count]', units_left -}}
+      </span>
+    {%- endif -%}
+  </div>
+  {%- if show_bar -%}
+    <div class="aeo-edition__bar" aria-hidden="true">
+      <span class="aeo-edition__fill" style="--aeo-fill: {{ fill }}%;"></span>
+    </div>
+  {%- endif -%}
+  {%- if note != blank -%}
+    <p class="aeo-edition__note">{{ note | escape }}</p>
+  {%- endif -%}
+</div>

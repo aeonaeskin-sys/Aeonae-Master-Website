@@ -1,0 +1,931 @@
+/*
+  AEONAE header group: announcement ticker, sticky header, menu drawer.
+  Loaded by sections/aeonae-marquee.liquid and sections/aeonae-header.liquid.
+  1rem = 10px (Dawn root size). Artifact values were multiplied by 1.6.
+
+  Stacking: header section 60, drawer overlay 95, drawer 100 (inside the header
+  section, which is raised to 100 while the drawer is open). Dawn's cart drawer
+  (z-index 1000) stays above everything here.
+*/
+
+/* =========================================================================
+   Ticker (artifact .ticker)
+   ========================================================================= */
+
+.aeo-marquee {
+  --aeo-marquee-text: var(--color-foreground);
+  --aeo-marquee-sep: var(--aeo-accent);
+  --aeo-marquee-gap: 4.4rem;
+  --aeo-marquee-line: 1.84rem;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  color: rgb(var(--aeo-marquee-text));
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: var(--aeo-marquee-line);
+}
+
+/* Dark bar (scheme 4): the artifact's sage text and bright olive separator */
+.aeo-marquee.color-scheme-4 {
+  --aeo-marquee-text: 203, 213, 180;
+  --aeo-marquee-sep: #a8b888;
+}
+
+.aeo-marquee__viewport {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.aeo-marquee__track {
+  display: flex;
+  width: max-content;
+}
+
+.aeo-marquee__group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--aeo-marquee-gap);
+  margin: 0;
+  padding: var(--aeo-marquee-pad, 0.9rem) var(--aeo-marquee-gap) var(--aeo-marquee-pad, 0.9rem) 0;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.aeo-marquee__item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--aeo-marquee-gap);
+  height: var(--aeo-marquee-line);
+}
+
+.aeo-marquee__item.is-clipped {
+  visibility: hidden;
+}
+
+.aeo-marquee__sep {
+  color: var(--aeo-marquee-sep);
+}
+
+.aeo-marquee__text {
+  color: inherit;
+}
+
+.aeo-marquee__link {
+  text-decoration: underline;
+  text-decoration-thickness: 0.1rem;
+  text-underline-offset: 0.3rem;
+  text-decoration-color: rgba(var(--aeo-marquee-text), 0.45);
+  transition: text-decoration-color 0.2s;
+}
+
+.aeo-marquee__link:hover {
+  text-decoration-color: currentColor;
+}
+
+.aeo-marquee__link:focus-visible,
+.aeo-marquee__toggle:focus-visible {
+  outline: 0.2rem solid currentColor;
+  outline-offset: 0.2rem;
+  box-shadow: none;
+}
+
+.aeo-marquee__toggle {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgb(var(--aeo-marquee-text));
+  opacity: 0.75;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.aeo-marquee__toggle:hover,
+.aeo-marquee__toggle:focus-visible {
+  opacity: 1;
+}
+
+.aeo-marquee__toggle:focus-visible {
+  outline-offset: -0.5rem;
+}
+
+.aeo-marquee__icon {
+  width: 1rem;
+  height: 1.2rem;
+}
+
+.aeo-marquee__icon--play,
+.aeo-marquee.is-paused .aeo-marquee__icon--pause {
+  display: none;
+}
+
+.aeo-marquee.is-paused .aeo-marquee__icon--play {
+  display: inline-flex;
+}
+
+aeo-marquee:not(:defined) .aeo-marquee__toggle {
+  visibility: hidden;
+}
+
+.aeo-marquee__empty {
+  margin: 0;
+  padding: 0.9rem var(--aeo-gutter);
+  width: 100%;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-marquee:not(.aeo-marquee--static) .aeo-marquee__viewport {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.4rem), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 2.4rem), transparent);
+  }
+
+  .aeo-marquee:not(.aeo-marquee--static) .aeo-marquee__track {
+    animation: aeo-marquee var(--aeo-marquee-duration, 36s) linear infinite;
+  }
+
+  .aeo-marquee.is-paused .aeo-marquee__track,
+  .aeo-marquee.is-editor-paused .aeo-marquee__track,
+  .aeo-marquee__viewport:hover .aeo-marquee__track,
+  .aeo-marquee__viewport:focus-within .aeo-marquee__track {
+    animation-play-state: paused;
+  }
+}
+
+/* Each loop moves the track left by exactly one group, so copies line up seamlessly. */
+@keyframes aeo-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% / var(--aeo-marquee-groups, 2)));
+  }
+}
+
+/* Static row: "Scroll messages" off, or the visitor prefers reduced motion.
+   Messages wrap, and only the first line is shown, so the row never overflows
+   and never cuts a message in half (aeonae-header.js hides the wrapped ones). */
+.aeo-marquee--static {
+  --aeo-marquee-gap: 2.4rem;
+}
+
+.aeo-marquee--static .aeo-marquee__track {
+  width: 100%;
+}
+
+.aeo-marquee--static .aeo-marquee__group {
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 1rem;
+  height: calc(var(--aeo-marquee-line) + 2 * var(--aeo-marquee-pad, 0.9rem));
+  padding: var(--aeo-marquee-pad, 0.9rem) var(--aeo-gutter);
+  overflow: hidden;
+}
+
+.aeo-marquee--static .aeo-marquee__item:first-child .aeo-marquee__sep,
+.aeo-marquee--static [data-aeo-clone],
+.aeo-marquee--static .aeo-marquee__toggle {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aeo-marquee {
+    --aeo-marquee-gap: 2.4rem;
+  }
+
+  .aeo-marquee__track {
+    width: 100%;
+  }
+
+  .aeo-marquee__group {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 1rem;
+    height: calc(var(--aeo-marquee-line) + 2 * var(--aeo-marquee-pad, 0.9rem));
+    padding: var(--aeo-marquee-pad, 0.9rem) var(--aeo-gutter);
+    overflow: hidden;
+  }
+
+  .aeo-marquee__item:first-child .aeo-marquee__sep,
+  .aeo-marquee [data-aeo-clone],
+  .aeo-marquee__toggle {
+    display: none;
+  }
+}
+
+/* 44px touch target for the pause button on phones */
+@media (prefers-reduced-motion: no-preference) and (max-width: 749px),
+  (prefers-reduced-motion: no-preference) and (pointer: coarse) {
+  .aeo-marquee:not(.aeo-marquee--static) {
+    min-height: 4.4rem;
+  }
+}
+
+/* =========================================================================
+   Header (artifact header.nav)
+   ========================================================================= */
+
+.shopify-section-group-header-group.aeo-header-section {
+  z-index: 60;
+}
+
+.shopify-section-group-header-group.aeo-header-section.aeo-menu-is-open {
+  z-index: 100;
+}
+
+aeo-header {
+  display: block;
+}
+
+/* .header-wrapper is kept for Dawn scripts; the bar itself is translucent. */
+.aeo-header.header-wrapper {
+  position: relative;
+  z-index: 0;
+  background: transparent;
+  border-bottom: 0.1rem solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* The blur lives on a pseudo-element so the header does not become a containing
+   block for fixed-position children (search modal overlay, account dialog). */
+.aeo-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(var(--color-background), 0.82);
+  -webkit-backdrop-filter: blur(1.4rem);
+  backdrop-filter: blur(1.4rem);
+  pointer-events: none;
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .aeo-header::before {
+    background: rgba(var(--color-background), 0.97);
+  }
+}
+
+.aeo-header.is-scrolled {
+  border-bottom-color: var(--aeo-line);
+  box-shadow: 0 0.4rem 2.4rem rgba(42, 36, 29, 0.05);
+}
+
+.aeo-header__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1.2rem;
+  height: var(--aeo-header-h, 7.4rem);
+}
+
+.aeo-header__left {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2vw, 1.6rem);
+}
+
+.aeo-header__right {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: clamp(1.4rem, 2vw, 3rem);
+}
+
+/* Burger (artifact .burger) with a 44px hit area */
+.aeo-burger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 4.4rem;
+  height: 4.4rem;
+  margin: 0 0 0 -1rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.6rem;
+  background: none;
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+}
+
+.aeo-burger__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 2.4rem;
+}
+
+.aeo-burger__lines span {
+  display: block;
+  height: 0.2rem;
+  border-radius: 0.2rem;
+  background: currentColor;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.aeo-burger[aria-expanded='true'] .aeo-burger__lines span:nth-child(1) {
+  transform: translateY(0.7rem) rotate(45deg);
+}
+
+.aeo-burger[aria-expanded='true'] .aeo-burger__lines span:nth-child(2) {
+  opacity: 0;
+}
+
+.aeo-burger[aria-expanded='true'] .aeo-burger__lines span:nth-child(3) {
+  transform: translateY(-0.7rem) rotate(-45deg);
+}
+
+/* "Shop" pill (artifact .navShop) */
+.aeo-header__shop {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.8rem 1.7rem;
+  border: 0.15rem solid var(--aeo-line);
+  border-radius: 2.2rem;
+  color: rgb(var(--color-foreground));
+  font-size: 1.41rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+/* Extends the tap area to 44px tall without changing the pill's look */
+.aeo-header__shop::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4.4rem;
+  transform: translateY(-50%);
+}
+
+.aeo-header__shop[aria-current='page'] {
+  border-color: rgba(var(--color-foreground), 0.45);
+}
+
+.aeo-header__shop:hover {
+  border-color: rgb(var(--color-foreground));
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+/* Brand (artifact .brandC) */
+.aeo-header__brand {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.4rem;
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+}
+
+.aeo-header__logo {
+  display: block;
+  width: auto;
+  height: var(--aeo-logo-h, 2.8rem);
+}
+
+.aeo-header__wordmark {
+  padding-left: 0.26em;
+  color: rgb(var(--color-foreground));
+  font-family: var(--font-heading-family);
+  font-size: clamp(1.68rem, 2.4vw, 2.11rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Cart: Dawn's #cart-icon-bubble markup restyled as "Cart (n)" (artifact .cartbtn) */
+.aeo-header__cart {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 4.4rem;
+  color: rgb(var(--color-foreground));
+  font-size: 1.41rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.aeo-header__cart:hover {
+  color: var(--aeo-accent);
+}
+
+.aeo-header__cart--text > .svg-wrapper {
+  display: none;
+}
+
+/* Reveal Dawn's visually hidden "Cart" label (the item count text stays hidden) */
+.aeo-header__cart--text > .visually-hidden {
+  position: static !important;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: nowrap;
+}
+
+.aeo-header__cart--text .cart-count-bubble {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  width: auto;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: 1.1rem;
+  background: var(--aeo-accent);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Kept as separate rules: an unsupported :has() must not drop the rules above. */
+.aeo-header__cart--text.aeo-header__cart--zero:not(:has(.cart-count-bubble))::after {
+  content: '0';
+  content: '0' / '';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: 1.1rem;
+  background: var(--aeo-accent);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.aeo-header__cart .cart-count-bubble:not(:has(span[aria-hidden]))::before {
+  content: '99+';
+  content: '99+' / '';
+}
+
+.aeo-header__cart--icon {
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  margin-right: -1rem;
+}
+
+.aeo-header__cart--icon .svg-wrapper {
+  width: 4.4rem;
+  height: 4.4rem;
+}
+
+.aeo-header__cart--icon .cart-count-bubble {
+  min-width: 1.7rem;
+  width: auto;
+  padding: 0 0.4rem;
+  border-radius: 1rem;
+  background: var(--aeo-accent);
+  color: #fff;
+}
+
+/* Customer accounts: Dawn's custom-property block for <shopify-account> */
+shopify-account.header__icon {
+  --shopify-account-font-heading: var(--font-heading-family);
+  --shopify-account-font-heading-weight: var(--font-heading-weight);
+  --shopify-account-font-body: var(--font-body-family);
+  --shopify-account-font-body-weight: var(--font-body-weight);
+  --shopify-account-radius-base: var(--popup-corner-radius);
+  --shopify-account-radius-button: var(--buttons-radius);
+  --shopify-account-radius-button-small: var(--buttons-radius);
+  --shopify-account-radius-input: var(--inputs-radius);
+  --shopify-account-color-background: rgb(var(--color-background));
+  --shopify-account-color-text: rgb(var(--color-foreground));
+  --shopify-account-color-accent: rgb(var(--color-button));
+  --shopify-account-color-accent-text: rgb(var(--color-button-text));
+  --shopify-account-dialog-position-top: var(--account-dialog-top, var(--header-height, 0px));
+}
+
+shopify-account.header__icon:not(:defined) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.4rem;
+  height: 4.4rem;
+}
+
+/* Search (Dawn header-search snippet) */
+.aeo-header .header__search {
+  display: inline-flex;
+  line-height: 0;
+}
+
+/* ---------- Header: small screens ---------- */
+
+@media screen and (max-width: 749px) {
+  .aeo-header__row {
+    column-gap: 0.8rem;
+  }
+
+  /* The account link moves into the menu drawer on phones */
+  .aeo-header__right shopify-account.aeo-header__account {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .aeo-header__logo {
+    height: calc(var(--aeo-logo-h, 2.8rem) * 0.86);
+  }
+
+  .aeo-header__wordmark {
+    padding-left: 0.2em;
+    font-size: 1.68rem;
+    letter-spacing: 0.2em;
+  }
+
+  .aeo-header__shop {
+    padding: 0.7rem 1.4rem;
+    font-size: 1.3rem;
+  }
+}
+
+@media screen and (max-width: 419px) {
+  .aeo-header--search .aeo-header__wordmark {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 409px) {
+  .aeo-header__shop {
+    display: none;
+  }
+}
+
+/* Scroll-state marker created by aeonae-header.js: once it leaves the viewport
+   (page scrolled more than 20px) the bar gets its border and shadow. */
+.aeo-header-sentinel {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  display: block;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* =========================================================================
+   Menu drawer (artifact .menuOverlay / .menu)
+   ========================================================================= */
+
+body.aeo-scroll-lock {
+  overflow: hidden;
+  padding-right: var(--aeo-scrollbar-w, 0px);
+}
+
+/* Beats Dawn's div:empty { display: none } */
+.aeo-header-root .aeo-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: block;
+  background: rgba(42, 36, 29, 0.42);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s, visibility 0s linear 0.35s;
+}
+
+.aeo-header-root .aeo-drawer-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s;
+}
+
+.aeo-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  width: min(43rem, 90vw);
+  color: rgb(var(--color-foreground));
+  box-shadow: 0 0 6rem rgba(42, 36, 29, 0.18);
+  outline: none;
+  overscroll-behavior: contain;
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.42s var(--aeo-ease-drawer), visibility 0s linear 0.42s;
+}
+
+.aeo-drawer.is-open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.42s var(--aeo-ease-drawer), visibility 0s;
+}
+
+.aeo-drawer__close {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.6rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.aeo-drawer__close:hover {
+  background: rgba(var(--color-foreground), 0.06);
+}
+
+.aeo-drawer__close .svg-wrapper {
+  width: 1.7rem;
+  height: 1.7rem;
+}
+
+.aeo-drawer__inner {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8.4rem 3.6rem 2.4rem;
+}
+
+.aeo-drawer__group {
+  margin: 0 0 3rem;
+}
+
+.aeo-drawer__group:last-child {
+  margin-bottom: 0;
+}
+
+.aeo-drawer__heading {
+  margin: 0 0 1.2rem;
+  color: var(--aeo-accent);
+  font-family: var(--font-body-family);
+  font-size: 1.22rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.color-scheme-4 .aeo-drawer__heading {
+  color: #a8b888;
+}
+
+.aeo-drawer__list,
+.aeo-drawer__sublist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aeo-drawer__link {
+  display: block;
+  padding: 0.7rem 0;
+  color: rgb(var(--color-foreground));
+  font-family: var(--font-heading-family);
+  font-size: 2.27rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color 0.2s, translate 0.2s;
+}
+
+.aeo-drawer__link:hover,
+.aeo-drawer__link[aria-current='page'] {
+  color: var(--aeo-accent);
+}
+
+.aeo-drawer__link[aria-current='page'] {
+  text-decoration: underline;
+  text-decoration-color: var(--aeo-copper);
+  text-decoration-thickness: 0.1rem;
+  text-underline-offset: 0.6rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-drawer__link:hover {
+    translate: 0.7rem 0;
+  }
+}
+
+.aeo-drawer__sublist {
+  margin: 0 0 0.6rem;
+  padding-left: 1.4rem;
+  border-left: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-drawer__sublink {
+  display: block;
+  padding: 1.1rem 0;
+  color: rgba(var(--color-foreground), 0.8);
+  font-size: 1.5rem;
+  line-height: 1.45;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.aeo-drawer__sublink:hover,
+.aeo-drawer__sublink[aria-current='page'] {
+  color: var(--aeo-accent);
+}
+
+.aeo-drawer__hint {
+  margin: 0;
+  color: rgba(var(--color-foreground), 0.8);
+  font-size: 1.4rem;
+}
+
+.aeo-drawer__account {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 4.4rem;
+  margin-top: 2.4rem;
+  color: rgb(var(--color-foreground));
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.aeo-drawer__account .svg-wrapper {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.aeo-drawer__account:hover {
+  color: var(--aeo-accent);
+}
+
+@media screen and (min-width: 750px) {
+  .aeo-drawer__account {
+    display: none;
+  }
+}
+
+/* Country / language pickers and social icons (Dawn snippets) */
+.aeo-drawer__utilities {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 2rem;
+  padding: 1.2rem 3.6rem;
+  border-top: 0.1rem solid var(--aeo-line);
+}
+
+/* Dawn hides drawer localization on desktop; this drawer is the only place it lives. */
+.aeo-drawer .aeo-drawer__localization {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2rem;
+}
+
+/* Second picker opens toward the drawer, not past its edge */
+.aeo-drawer .aeo-drawer__localization localization-form + localization-form .disclosure__list-wrapper:not(.country-selector) {
+  right: 0;
+  left: auto;
+}
+
+.aeo-drawer .list-social {
+  justify-content: flex-start;
+  margin-left: -1.1rem;
+}
+
+/* Contact block (artifact .menuContact) */
+.aeo-drawer__contact {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 2.2rem 3.6rem;
+  border-top: 0.1rem solid var(--aeo-line);
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+}
+
+.aeo-drawer__contact-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border: 0.15rem solid var(--aeo-accent);
+  border-radius: 50%;
+  color: var(--aeo-accent);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.aeo-drawer__contact-icon svg {
+  display: block;
+  width: 1.7rem;
+  height: auto;
+}
+
+.aeo-drawer__contact:hover .aeo-drawer__contact-icon {
+  background: var(--aeo-accent);
+  color: #fff;
+}
+
+.aeo-drawer__contact-text {
+  min-width: 0;
+}
+
+.aeo-drawer__contact-label {
+  display: block;
+  color: rgb(var(--color-foreground));
+  font-size: 1.57rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.aeo-drawer__contact-email {
+  display: block;
+  color: var(--aeo-accent);
+  font-size: 1.31rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.color-scheme-4 .aeo-drawer__contact-email {
+  color: #a8b888;
+}
+
+/* Staggered entrance (artifact .mitem): delay = 0.1s + 0.04s per item */
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-drawer .aeo-drawer__item {
+    opacity: 0;
+    transform: translateX(-1.8rem);
+    transition: opacity 0.55s var(--aeo-ease), transform 0.55s var(--aeo-ease);
+  }
+
+  .aeo-drawer.is-open .aeo-drawer__item {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(0.1s + min(var(--aeo-i, 0), 16) * 0.04s);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aeo-drawer,
+  .aeo-drawer.is-open,
+  .aeo-header-root .aeo-drawer-overlay,
+  .aeo-header-root .aeo-drawer-overlay.is-open,
+  .aeo-header.header-wrapper,
+  .aeo-burger__lines span {
+    transition: none;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .aeo-drawer__inner,
+  .aeo-drawer__utilities,
+  .aeo-drawer__contact {
+    padding-left: 2.4rem;
+    padding-right: 2.4rem;
+  }
+}

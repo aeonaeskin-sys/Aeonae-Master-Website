@@ -101,7 +101,8 @@ h4,
   line-height: 1.06;
   letter-spacing: -0.015em;
   color: rgb(var(--color-foreground));
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .aeo-h1 {
@@ -459,7 +460,7 @@ h4,
     animation: aeo-rise 0.8s var(--aeo-delay, 0s) both var(--aeo-ease);
   }
 
-  .shopify-design-mode .aeo-motion .aeo-rise {
+  .shopify-design-mode.aeo-motion .aeo-rise {
     animation: none;
   }
 }
@@ -517,12 +518,29 @@ details[open] > .aeo-acc__summary .aeo-acc__icon {
   max-width: 70rem;
 }
 
-/* ---------- Dawn scroll-trigger: softer, longer reveal like the artifact ---------- */
+/* ---------- Dawn scroll-trigger: softer, longer reveal like the artifact ----------
+   Dawn's reveal is a keyframe animation (--animation-slide-in), so the AEONAE timing
+   swaps the keyframes rather than a transition. Sections may scope their own variant. */
 
 @media (prefers-reduced-motion: no-preference) {
   .aeo-reveal.scroll-trigger.animate--slide-in {
-    transition-duration: 0.9s;
-    transition-timing-function: var(--aeo-ease);
+    transform: translateY(3.2rem);
+  }
+
+  .aeo-reveal.scroll-trigger.animate--slide-in:not(.scroll-trigger--offscreen):not(.scroll-trigger--design-mode):not(.scroll-trigger--cancel) {
+    animation: aeo-reveal-in 0.9s var(--aeo-ease) forwards;
+    animation-delay: calc(var(--animation-order, 0) * 75ms);
+  }
+
+  @keyframes aeo-reveal-in {
+    from {
+      opacity: 0.01;
+      transform: translateY(3.2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 

@@ -1,75 +1,281 @@
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
+    "hero": {
+      "type": "aeonae-hero",
       "blocks": {
-        "heading": {
-          "type": "heading",
+        "trust-1": {
+          "type": "trust_item",
           "settings": {
-            "heading": "Browse our latest products",
-            "heading_size": "h0"
+            "text": "Free US shipping"
           }
         },
-        "button": {
-          "type": "buttons",
+        "trust-2": {
+          "type": "trust_item",
           "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "text": "Made in the USA"
+          }
+        },
+        "trust-3": {
+          "type": "trust_item",
+          "settings": {
+            "text": "14 day returns"
           }
         }
       },
       "block_order": [
-        "heading",
-        "button"
+        "trust-1",
+        "trust-2",
+        "trust-3"
       ],
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "image_behavior": "none",
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
+        "color_scheme": "scheme-2",
+        "artifact_gradient": true,
+        "eyebrow": "1% GHK-Cu Copper Peptide Serum",
+        "heading": "A serum with nothing to hide.",
+        "text": "Formulated for the look of firmer, smoother, more even skin, with every ingredient and every amount printed on the label.",
+        "button_label": "Shop the serum",
+        "button_link": "/products/copper-peptide-serum",
+        "link_label": "Read Our Story",
+        "link_url": "/pages/our-story",
+        "media_style": "photo",
+        "show_halo": true,
+        "media_position": "right",
+        "padding_top": 84,
+        "padding_bottom": 92
       }
     },
-    "featured_collection": {
-      "type": "featured-collection",
+    "trust_strip": {
+      "type": "aeonae-trust-strip",
+      "blocks": {
+        "item-1": {
+          "type": "item",
+          "settings": {
+            "icon": "◈",
+            "heading": "Full disclosure",
+            "text": "Every ingredient and amount, printed on the page."
+          }
+        },
+        "item-2": {
+          "type": "item",
+          "settings": {
+            "icon": "▣",
+            "heading": "Made in the USA",
+            "text": "Formulated and filled domestically."
+          }
+        },
+        "item-3": {
+          "type": "item",
+          "settings": {
+            "icon": "⚑",
+            "heading": "Free shipping",
+            "text": "On every US order, no minimum."
+          }
+        },
+        "item-4": {
+          "type": "item",
+          "settings": {
+            "icon": "✓",
+            "heading": "14 day returns",
+            "text": "On unopened bottles, no hassle."
+          }
+        }
+      },
+      "block_order": [
+        "item-1",
+        "item-2",
+        "item-3",
+        "item-4"
+      ],
       "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "collection": "all",
-        "products_to_show": 8,
-        "columns_desktop": 4,
+        "color_scheme": "scheme-2",
+        "show_borders": true,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "spotlight": {
+      "type": "aeonae-spotlight",
+      "blocks": {
+        "benefit-1": {
+          "type": "benefit",
+          "settings": {
+            "text": "The look of firmer, smoother skin"
+          }
+        },
+        "benefit-2": {
+          "type": "benefit",
+          "settings": {
+            "text": "A more even, radiant looking tone"
+          }
+        },
+        "benefit-3": {
+          "type": "benefit",
+          "settings": {
+            "text": "The full formula, printed in the open"
+          }
+        }
+      },
+      "block_order": [
+        "benefit-1",
+        "benefit-2",
+        "benefit-3"
+      ],
+      "settings": {
         "color_scheme": "scheme-1",
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "enable_desktop_slider": false,
-        "swipe_on_mobile": false,
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "padding_top": 44,
-        "padding_bottom": 36
+        "card_color_scheme": "scheme-2",
+        "anchor_id": "shop",
+        "eyebrow": "The First Edition",
+        "heading": "One serum, fully disclosed.",
+        "text": "<p>One serum, done properly, before we ever add a second. Every ingredient and the amounts that matter are printed in the open.</p>",
+        "badge": "First Edition of 12",
+        "media_fit": "cover",
+        "category": "Copper Peptide Serum",
+        "title_fallback": "1% GHK-Cu Copper Peptide Serum",
+        "description": "<p>A daily copper peptide serum for the look of firmer, smoother, more even skin. Lightweight, unscented, and suitable for all skin types.</p>",
+        "price_note": "Free US shipping",
+        "button_label": "Shop the serum",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "explore": {
+      "type": "aeonae-explore",
+      "blocks": {
+        "card-science": {
+          "type": "card",
+          "settings": {
+            "category": "The Formula",
+            "title": "The Science",
+            "text": "Copper peptides, the actives, and the full formula printed in the open.",
+            "link_label": "Explore the Science",
+            "link": "/pages/science"
+          }
+        },
+        "card-results": {
+          "type": "card",
+          "settings": {
+            "category": "The experience",
+            "title": "Results and Ritual",
+            "text": "What to expect over time, the daily ritual, and real customer photos.",
+            "link_label": "See Results and Ritual",
+            "link": "/pages/results"
+          }
+        },
+        "card-story": {
+          "type": "card",
+          "settings": {
+            "category": "The brand",
+            "title": "Our Story",
+            "text": "Why we built AEONAE, and the standard we refuse to lower.",
+            "link_label": "Read Our Story",
+            "link": "/pages/our-story"
+          }
+        }
+      },
+      "block_order": [
+        "card-science",
+        "card-results",
+        "card-story"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "card_color_scheme": "scheme-2",
+        "eyebrow": "Go deeper",
+        "heading": "Everything, in the open.",
+        "text": "<p>Three short reads: the science behind the serum, what to expect from it, and why we built AEONAE.</p>",
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "faq": {
+      "type": "aeonae-faq",
+      "blocks": {
+        "faq-1": {
+          "type": "question",
+          "settings": {
+            "question": "What does the serum do?",
+            "answer": "<p>It is a cosmetic serum made to support the look of firmer, smoother, more even skin. It is designed to improve the appearance of your skin, not to treat any medical condition.</p>"
+          }
+        },
+        "faq-2": {
+          "type": "question",
+          "settings": {
+            "question": "How do I use it?",
+            "answer": "<p>Apply three to four drops to clean skin morning or evening, then follow with moisturizer. Use sunscreen during the day.</p>"
+          }
+        },
+        "faq-3": {
+          "type": "question",
+          "settings": {
+            "question": "Is it safe for me?",
+            "answer": "<p>The full ingredient list is on the product page so you can check it against anything you avoid. The serum contains royal jelly, so if you are allergic to bee products, do not use it.</p>"
+          }
+        },
+        "faq-4": {
+          "type": "question",
+          "settings": {
+            "question": "When will my order arrive?",
+            "answer": "<p>First Edition orders ship within one to three business days as each batch is prepared. You will get a confirmation and tracking the moment yours is on the way.</p>"
+          }
+        },
+        "faq-5": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Unopened bottles can be returned within 14 days of delivery for a refund. For hygiene and safety, once a bottle has been opened or used it cannot be returned. If your order arrives damaged, send us a photo within 48 hours and we will replace it.</p>"
+          }
+        },
+        "faq-6": {
+          "type": "question",
+          "settings": {
+            "question": "Can I cancel my subscription?",
+            "answer": "<p>Yes, any time. Change your delivery schedule or cancel from your account whenever you like.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq-1",
+        "faq-2",
+        "faq-3",
+        "faq-4",
+        "faq-5",
+        "faq-6"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "anchor_id": "faq",
+        "eyebrow": "",
+        "heading": "Questions, answered",
+        "text": "",
+        "open_first": true,
+        "contact_text": "Still have a question? Email us at",
+        "enable_schema": false,
+        "padding_top": 124,
+        "padding_bottom": 124
+      }
+    },
+    "newsletter": {
+      "type": "aeonae-newsletter",
+      "settings": {
+        "color_scheme": "scheme-5",
+        "eyebrow": "Join the list",
+        "heading": "Take 10% off your first bottle.",
+        "text": "<p>Join the list for a code, plus early access to new editions. No noise, leave any time.</p>",
+        "provider": "shopify",
+        "placeholder": "name@email.com",
+        "button_label": "Join",
+        "success_text": "Thank you. You are on the list.",
+        "padding_top": 124,
+        "padding_bottom": 124
       }
     }
   },
   "order": [
-    "image_banner",
-    "featured_collection"
+    "hero",
+    "trust_strip",
+    "spotlight",
+    "explore",
+    "faq",
+    "newsletter"
   ]
 }

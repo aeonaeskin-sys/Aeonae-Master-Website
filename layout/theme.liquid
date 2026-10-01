@@ -286,6 +286,7 @@
 
     {%- if settings.cart_type == 'drawer' -%}
       {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+      {{ 'aeonae-cart.css' | asset_url | stylesheet_tag }}
       {{ 'component-cart.css' | asset_url | stylesheet_tag }}
       {{ 'component-totals.css' | asset_url | stylesheet_tag }}
       {{ 'component-price.css' | asset_url | stylesheet_tag }}
@@ -322,6 +323,16 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+    <noscript>
+      <style>
+        .scroll-trigger.animate--slide-in,
+        .scroll-trigger.animate--fade-in {
+          opacity: 1 !important;
+          transform: none !important;
+          animation: none !important;
+        }
+      </style>
+    </noscript>
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">

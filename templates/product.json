@@ -3,18 +3,61 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "vendor": {
+        "eyebrow": {
           "type": "text",
           "settings": {
-            "text": "{{ product.vendor }}",
+            "text": "First Edition, edition of 12",
             "text_style": "uppercase"
           }
         },
         "title": {
           "type": "title"
         },
+        "rating": {
+          "type": "rating"
+        },
         "price": {
           "type": "price"
+        },
+        "edition": {
+          "type": "aeo_edition",
+          "settings": {
+            "label": "First Edition of 12",
+            "edition_size": 12,
+            "threshold": 5,
+            "count_text": "Only [count] left",
+            "low_note": "Almost gone. Once the First Edition of 12 sells out, a restock is not guaranteed.",
+            "default_note": "One serum, done properly. When the edition sells out it moves to a waitlist."
+          }
+        },
+        "benefits": {
+          "type": "aeo_benefits",
+          "settings": {
+            "benefit_1": "The look of firmer, smoother skin",
+            "benefit_2": "A more even, radiant looking tone",
+            "benefit_3": "A fully disclosed formula, printed in the open",
+            "benefit_4": "",
+            "benefit_5": ""
+          }
+        },
+        "specs": {
+          "type": "aeo_specs",
+          "settings": {
+            "chips": "30 ml, Lightweight serum, No added fragrance, All skin types",
+            "list_label": "Product details"
+          }
+        },
+        "purchase_options": {
+          "type": "aeo_purchase_options",
+          "settings": {
+            "one_time_label": "One time",
+            "subscribe_label": "Subscribe and Save",
+            "savings_text": "Save [savings]",
+            "show_prices": true,
+            "frequency_label": "Deliver every",
+            "plan_note": "Cancel or skip anytime. You confirm your email and delivery details at checkout.",
+            "legend": "Purchase options"
+          }
         },
         "variant_picker": {
           "type": "variant_picker",
@@ -33,39 +76,95 @@
             "show_gift_card_recipient": true
           }
         },
-        "description": {
-          "type": "description"
-        },
-        "share": {
-          "type": "share",
+        "guarantee": {
+          "type": "aeo_guarantee",
           "settings": {
-            "share_label": "Share"
+            "seal": "14 DAY PROMISE",
+            "title": "Try it with confidence",
+            "text": "Unopened bottles can be returned within 14 days. Opened or used bottles cannot be returned, for hygiene and safety."
+          }
+        },
+        "reassurance": {
+          "type": "aeo_reassurance",
+          "settings": {
+            "line_1": "Gentle enough for daily use, including sensitive skin",
+            "line_2": "Every ingredient and the amounts that matter, disclosed in full",
+            "line_3": "",
+            "show_support": true,
+            "support_lead": "Questions before you buy?",
+            "support_link": "Email us"
+          }
+        },
+        "trust_inline": {
+          "type": "aeo_trust_inline",
+          "settings": {
+            "items": "Free US shipping, Secure checkout, Made in the USA"
+          }
+        },
+        "allergen": {
+          "type": "aeo_allergen",
+          "settings": {
+            "text": "<p>Contains <strong>royal jelly</strong>. If you are allergic to bee products, please do not use this serum.</p>"
+          }
+        },
+        "tab_inside": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "What is inside",
+            "icon": "none",
+            "content": "<p><strong>Copper Tripeptide-1 (GHK-Cu)</strong>: The hero peptide, for the look of firmer, smoother skin.<br><strong>Niacinamide</strong>: Supports the appearance of a more even complexion.<br><strong>Sodium Hyaluronate</strong>: Draws in moisture for a plumper, more hydrated look.<br><strong>Aloe Vera</strong>: Helps skin look calm and comfortable.</p><p><strong>Full list (INCI):</strong> Aqua (Water), Niacinamide, Aloe barbadensis (Aloe Vera) Leaf Juice, Glycerin, Lactobacillus/Ganoderma Lucidum (Reishi Mushroom) Extract /Lentinus Edodes (Shiitake Mushroom) Extract Ferment Filtrate, Lactobacillus Ferment Lysate, Lactococcus Ferment Lysate, Copper Tripeptide-1, Saccharomyces/Capsicum Annuum Fruit Ferment Filtrate, Royal Jelly, Sodium Hyaluronate, Chamomilla Recutita (Matricaria) Flower Extract, Citrus Aurantium Dulcis Callus Culture Extract, Fructooligosaccharides, Beta Vulgaris (Beet) Root Extract, Centella Asiatica Extract, Hydrolyzed Ganoderma (Mushroom) Lucidum Extract, Leuconostoc Ferment Filtrate, Palmitoyl Tripeptide-5, Acetyl Hexapeptide-8, Xanthan Gum, Beta Glucan, Phenoxyethanol, Sodium Hydroxide.</p>"
+          }
+        },
+        "tab_how": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "How to use",
+            "icon": "none",
+            "content": "<p>On clean, dry skin morning or evening, press three to four drops over face and neck. Follow with moisturizer, and use sunscreen during the day.</p>"
+          }
+        },
+        "tab_shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping and Returns",
+            "icon": "none",
+            "content": "<p>Free US shipping on every order. First Edition orders ship within one to three business days, tracked. Unopened bottles can be returned within 14 days of delivery. For hygiene and safety, opened or used bottles cannot be returned.</p>"
           }
         }
       },
       "block_order": [
-        "vendor",
+        "eyebrow",
         "title",
+        "rating",
         "price",
+        "edition",
+        "benefits",
+        "specs",
+        "purchase_options",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
-        "description",
-        "share"
+        "guarantee",
+        "reassurance",
+        "trust_inline",
+        "allergen",
+        "tab_inside",
+        "tab_how",
+        "tab_shipping"
       ],
       "settings": {
         "enable_sticky_info": true,
         "color_scheme": "scheme-1",
-        "media_position": "left",
-        "gallery_layout": "stacked",
-        "media_size": "large",
+        "media_size": "medium",
         "constrain_to_viewport": true,
         "media_fit": "contain",
-        "image_zoom": "lightbox",
+        "gallery_layout": "thumbnail",
         "mobile_thumbnails": "hide",
+        "media_position": "left",
+        "image_zoom": "lightbox",
         "hide_variants": true,
         "enable_video_looping": false,
-        "padding_top": 36,
+        "padding_top": 44,
         "padding_bottom": 12
       }
     },
@@ -76,28 +175,23 @@
         "padding_bottom": 0
       }
     },
-    "related-products": {
-      "type": "related-products",
+    "reviews": {
+      "type": "aeonae-reviews",
       "settings": {
-        "heading": "You may also like",
-        "heading_size": "h2",
-        "products_to_show": 4,
-        "columns_desktop": 4,
+        "eyebrow": "Reviews",
+        "heading": "What people are saying",
+        "show_summary": true,
+        "empty_text": "No reviews yet. Be the first to share how the serum looks and feels for you.",
+        "anchor_id": "reviews",
         "color_scheme": "scheme-1",
-        "image_ratio": "square",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "columns_mobile": "2",
-        "padding_top": 36,
-        "padding_bottom": 28
+        "padding_top": 124,
+        "padding_bottom": 124
       }
     }
   },
   "order": [
     "main",
     "disclosures",
-    "related-products"
+    "reviews"
   ]
 }

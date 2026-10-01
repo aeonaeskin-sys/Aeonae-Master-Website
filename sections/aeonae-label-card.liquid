@@ -1,0 +1,337 @@
+{%- comment -%}
+  AEONAE ingredient label (artifact "Nothing hidden" .discMark / .labelcard).
+  Centered intro with the logo mark, then a bordered label card: a small
+  heading, the full INCI list set in the serif (italic text renders as a
+  non-italic accent highlight) and a row of short facts (blocks).
+
+  INCI source, in order:
+  1. The product picked in this section (or the product of a product page)
+     when it has a value in the metafield named below (default custom.inci).
+  2. The "Ingredient list" text. It can also be connected to a page or shop
+     metafield with the theme editor's dynamic source button.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign mark_height = section.settings.mark_height | divided_by: 10.0
+
+  assign inci_html = ''
+  assign inci_product = section.settings.product
+  if inci_product == blank and product != blank
+    assign inci_product = product
+  endif
+  assign mf_path = section.settings.inci_metafield | strip
+  if inci_product != blank and mf_path contains '.'
+    assign mf_parts = mf_path | split: '.'
+    assign mf_namespace = mf_parts.first | strip
+    assign mf_key = mf_parts.last | strip
+    assign mf = inci_product.metafields[mf_namespace][mf_key]
+    if mf != blank
+      if mf.type == 'rich_text_field'
+        assign inci_html = mf | metafield_tag
+      else
+        assign inci_html = mf.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
+      endif
+    endif
+  endif
+  if inci_html == blank
+    assign inci_html = section.settings.inci
+  endif
+
+  assign fact_count = 0
+  for block in section.blocks
+    if block.type == 'fact' and block.settings.text != blank
+      assign fact_count = fact_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-pg aeo-label aeo-section color-{{ section.settings.color_scheme }} gradient{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.show_mark or section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-intro aeo-pg__intro aeo-label__intro">
+        {%- if section.settings.show_mark -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-label__mark-wrap{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {%- if section.settings.mark_image != blank -%}
+              {%- assign mark = section.settings.mark_image -%}
+              <img
+                class="aeo-label__mark"
+                style="--aeo-mark-h: {{ mark_height }}rem;"
+                src="{{ mark | image_url: height: 160 }}"
+                srcset="{{ mark | image_url: height: 80 }} 1x, {{ mark | image_url: height: 160 }} 2x, {{ mark | image_url: height: 240 }} 3x"
+                width="{{ mark.width }}"
+                height="{{ mark.height }}"
+                alt=""
+                loading="lazy"
+              >
+            {%- else -%}
+              <img
+                class="aeo-label__mark"
+                style="--aeo-mark-h: {{ mark_height }}rem;"
+                src="{{ 'aeonae-logo-mark.png' | asset_url }}"
+                width="242"
+                height="265"
+                alt=""
+                loading="lazy"
+              >
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-pg__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte rte aeo-pg__text aeo-label__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if inci_html != blank or section.settings.label_heading != blank or fact_count > 0 -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <div
+        class="aeo-label__card color-{{ section.settings.card_color_scheme }}{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        {%- if section.settings.label_heading != blank -%}
+          <h3 class="aeo-label__heading">{{ section.settings.label_heading | escape }}</h3>
+        {%- endif -%}
+        {%- if inci_html != blank -%}
+          <div class="aeo-label__list">{{ inci_html }}</div>
+        {%- endif -%}
+        {%- if fact_count > 0 -%}
+          <ul class="aeo-label__facts" role="list">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'fact' and block.settings.text != blank -%}
+                <li {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Ingredient label",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Section color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "card_color_scheme",
+      "label": "Label color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Lets links jump here, for example /pages/science#ingredients. Letters, numbers and dashes only."
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mark",
+      "label": "Show logo mark",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "mark_image",
+      "label": "Custom mark",
+      "info": "Leave empty to use the AEONAE DNA mark. Transparent PNG or SVG, at least 240 px tall."
+    },
+    {
+      "type": "range",
+      "id": "mark_height",
+      "min": 24,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "label": "Mark height",
+      "default": 46
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Nothing hidden"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The entire formula, in the open."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>No proprietary blends and no fine print. Here is every ingredient in the bottle, in order, exactly as it appears on the label.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Label"
+    },
+    {
+      "type": "text",
+      "id": "label_heading",
+      "label": "Label heading",
+      "default": "Ingredients, INCI"
+    },
+    {
+      "type": "richtext",
+      "id": "inci",
+      "label": "Ingredient list",
+      "info": "Copy it exactly as printed on the bottle. Italic text shows as a highlighted active. You can connect a page or shop metafield here with the dynamic source button.",
+      "default": "<p>Aqua (Water), <em>Niacinamide</em>, Aloe barbadensis (Aloe Vera) Leaf Juice, Glycerin, Lactobacillus/Ganoderma Lucidum (Reishi Mushroom) Extract /Lentinus Edodes (Shiitake Mushroom) Extract Ferment Filtrate, Lactobacillus Ferment Lysate, Lactococcus Ferment Lysate, <em>Copper Tripeptide-1</em>, Saccharomyces/Capsicum Annuum Fruit Ferment Filtrate, Royal Jelly, Sodium Hyaluronate, Chamomilla Recutita (Matricaria) Flower Extract, Citrus Aurantium Dulcis Callus Culture Extract, Fructooligosaccharides, Beta Vulgaris (Beet) Root Extract, Centella Asiatica Extract, Hydrolyzed Ganoderma (Mushroom) Lucidum Extract, Leuconostoc Ferment Filtrate, <em>Palmitoyl Tripeptide-5</em>, <em>Acetyl Hexapeptide-8</em>, Xanthan Gum, Beta Glucan, Phenoxyethanol, Sodium Hydroxide.</p>"
+    },
+    {
+      "type": "paragraph",
+      "content": "Best practice: keep the INCI in one place. Pick the product below and add a product metafield (rich text or multi-line text) holding the list; it then replaces the text above here and can be shown on the product page too."
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product with INCI metafield"
+    },
+    {
+      "type": "text",
+      "id": "inci_metafield",
+      "label": "Product metafield",
+      "info": "Namespace and key, for example custom.inci. When the product has a value here, it is shown instead of the ingredient list text.",
+      "default": "custom.inci"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "fact",
+      "name": "Label fact",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "info": "A short, verifiable fact printed under the list, for example the hero active's percentage or an allergen.",
+          "default": "Hero active disclosed at 1% GHK-Cu"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Ingredient label",
+      "blocks": [
+        {
+          "type": "fact",
+          "settings": {
+            "text": "Hero active disclosed at 1% GHK-Cu"
+          }
+        },
+        {
+          "type": "fact",
+          "settings": {
+            "text": "Contains royal jelly"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

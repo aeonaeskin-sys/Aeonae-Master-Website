@@ -1,0 +1,339 @@
+{%- comment -%}
+  AEONAE home hero (artifact .hero).
+  Two columns from 900px (text 1.05fr, media .95fr), stacked and centered below.
+  Media column: uploaded photo (framed or cut-out), otherwise the bottle illustration
+  floating over the halo glow. Trust items are blocks rendered as a divided row.
+{%- endcomment -%}
+
+{{ 'aeonae-home.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign image = section.settings.image
+  assign image_mobile = section.settings.image_mobile
+  assign media_style = section.settings.media_style
+
+  assign use_gradient = false
+  if section.settings.artifact_gradient
+    assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+    if scheme_brightness > 128
+      assign use_gradient = true
+    endif
+  endif
+
+  assign trust_count = 0
+  for block in section.blocks
+    if block.type == 'trust_item' and block.settings.text != blank
+      assign trust_count = trust_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="aeo-hero aeo-section color-{{ section.settings.color_scheme }} gradient{% if use_gradient %} aeo-hero--artifact-bg{% endif %}{% if section.settings.media_position == 'left' %} aeo-hero--media-left{% endif %}"
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap aeo-hero__grid">
+    <div class="aeo-hero__text">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="aeo-eyebrow aeo-hero__eyebrow aeo-rise" style="--aeo-delay: .05s;">
+          {{- section.settings.eyebrow | escape -}}
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="aeo-h1 aeo-hero__heading aeo-rise" style="--aeo-delay: .14s;">
+          {{- section.settings.heading -}}
+        </h1>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <p class="aeo-lede aeo-hero__lede aeo-rise" style="--aeo-delay: .26s;">
+          {{- section.settings.text -}}
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank or section.settings.link_label != blank -%}
+        <div class="aeo-btn-row aeo-hero__actions aeo-rise" style="--aeo-delay: .38s;">
+          {%- if section.settings.button_label != blank -%}
+            <a
+              class="button aeo-hero__button"
+              {% if section.settings.button_link != blank %}
+                href="{{ section.settings.button_link }}"
+              {% else %}
+                role="link" aria-disabled="true"
+              {% endif %}
+            >
+              {{- section.settings.button_label | escape -}}
+            </a>
+          {%- endif -%}
+          {%- if section.settings.link_label != blank -%}
+            <a
+              class="aeo-tlink aeo-hero__link"
+              {% if section.settings.link_url != blank %}
+                href="{{ section.settings.link_url }}"
+              {% else %}
+                role="link" aria-disabled="true"
+              {% endif %}
+            >
+              {{- section.settings.link_label | escape -}}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if trust_count > 0 -%}
+        <ul class="aeo-divided aeo-hero__trust aeo-rise" role="list" style="--aeo-delay: .48s;">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'trust_item' and block.settings.text != blank -%}
+              <li {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <div
+      class="aeo-hero__media aeo-stage{% if image == blank %} aeo-rise{% endif %}"
+      {% if image == blank %}
+        style="--aeo-delay: .2s;"
+      {% endif %}
+    >
+      {%- if section.settings.show_halo -%}
+        <div class="aeo-halo" data-aeo-parallax="0.05" aria-hidden="true"></div>
+      {%- endif -%}
+
+      {%- if image != blank -%}
+        {%- if media_style == 'cutout' -%}
+          <div class="aeo-hero__cutout" data-aeo-lift="0.08">
+            {%- render 'aeonae-media',
+              image: image,
+              image_mobile: image_mobile,
+              fit: 'contain',
+              sizes: '(min-width: 900px) 360px, 78vw',
+              loading: 'eager',
+              class: 'aeo-float aeo-bottle--reflect'
+            -%}
+          </div>
+        {%- else -%}
+          <div class="aeo-hero__photo">
+            {%- render 'aeonae-media',
+              image: image,
+              image_mobile: image_mobile,
+              ratio: '4 / 5',
+              sizes: '(min-width: 1200px) 520px, (min-width: 900px) 44vw, 90vw',
+              loading: 'eager'
+            -%}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="aeo-hero__bottle" data-aeo-lift="0.08">
+          {%- render 'aeonae-bottle', uid: section.id, class: 'aeo-float aeo-bottle--reflect' -%}
+        </div>
+        {%- if request.design_mode -%}
+          <p class="aeo-hero__hint">
+            Replace image: hero product photo &middot; 1600 x 2000 px (4:5), or a transparent PNG cut-out. Until then
+            the bottle illustration shows here. This note is only visible in the theme editor.
+          </p>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "section",
+  "class": "section aeo-hero-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "checkbox",
+      "id": "artifact_gradient",
+      "label": "Use the AEONAE cream gradient background",
+      "info": "Soft cream-to-sand gradient from the brand design. Applies only to light color schemes; turn off to use the color scheme background.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "1% GHK-Cu Copper Peptide Serum"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Shown as the page's main heading (H1).",
+      "default": "A serum with nothing to hide."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "Formulated for the look of firmer, smoother, more even skin, with every ingredient and every amount printed on the label."
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop the serum"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Text link label",
+      "default": "Read Our Story"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Text link"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Leave empty to show the bottle illustration. Photo: 1600 x 2000 px (4:5). Cut-out: transparent PNG, about 900 x 1400 px."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image (optional)",
+      "info": "Used below 750px wide. 1200 x 1500 px (4:5)."
+    },
+    {
+      "type": "select",
+      "id": "media_style",
+      "label": "Image style",
+      "options": [
+        {
+          "value": "photo",
+          "label": "Framed photo (4:5)"
+        },
+        {
+          "value": "cutout",
+          "label": "Product cut-out (transparent PNG)"
+        }
+      ],
+      "default": "photo",
+      "info": "A cut-out floats and reflects like the bottle illustration."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_halo",
+      "label": "Show halo glow",
+      "info": "Glow color is set in Theme settings > AEONAE brand.",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media position on desktop",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 84
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 92
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Trust item",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "info": "Only state what is true for your store, for example shipping that matches your shipping rates.",
+          "default": "Free US shipping"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [
+        {
+          "type": "trust_item",
+          "settings": {
+            "text": "Free US shipping"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "text": "Made in the USA"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "text": "14 day returns"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

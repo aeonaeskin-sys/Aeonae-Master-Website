@@ -1,0 +1,366 @@
+{%- comment -%}
+  AEONAE before and after cards (artifact #results .resgrid / .rescard).
+  Up to six cards, each a square before photo and after photo side by side
+  with a label and caption, plus a note. Empty photos show branded
+  placeholders tagged Before / After. With "Hide until real photos are
+  uploaded" on, cards missing either photo are left out of the live store
+  (they stay visible, dimmed, in the theme editor).
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign anim_order = 0
+  assign before_label = section.settings.before_label | escape
+  assign after_label = section.settings.after_label | escape
+
+  assign on_dark = false
+  assign scheme_brightness = section.settings.color_scheme.settings.background | color_brightness
+  if scheme_brightness < 128
+    assign on_dark = true
+  endif
+
+  assign result_count = 0
+  assign complete_count = 0
+  for block in section.blocks
+    if block.type == 'result'
+      assign result_count = result_count | plus: 1
+      if block.settings.before_image != blank and block.settings.after_image != blank
+        assign complete_count = complete_count | plus: 1
+      endif
+    endif
+  endfor
+
+  assign hide_incomplete = false
+  if section.settings.hide_empty
+    assign hide_incomplete = true
+  endif
+
+  assign shown_count = result_count
+  if hide_incomplete and request.design_mode == false
+    assign shown_count = complete_count
+  endif
+  assign columns = shown_count | at_most: 3
+-%}
+
+<div
+  class="aeo-pg aeo-ba aeo-section color-{{ section.settings.color_scheme }} gradient{% if on_dark %} aeo-on-dark{% endif %}"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if request.design_mode -%}
+      <p class="aeo-pg__editor-note">
+        <strong>Theme editor only:</strong> use real, consented, unretouched customer photos only, with written
+        permission from each customer. Never use stock, AI-generated or edited images. Shoppers do not see this
+        note.
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="aeo-intro aeo-pg__intro aeo-ba__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-pg__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-pg__heading aeo-ba__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <div
+            class="aeo-soft aeo-rte rte aeo-pg__text{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.text -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if shown_count > 0 -%}
+      <ul class="aeo-ba__grid" role="list" style="--aeo-cols: {{ columns }};">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'result' -%}
+            {%- liquid
+              assign before = block.settings.before_image
+              assign after = block.settings.after_image
+              assign incomplete = false
+              if before == blank or after == blank
+                assign incomplete = true
+              endif
+              if incomplete and hide_incomplete and request.design_mode == false
+                continue
+              endif
+              assign anim_order = anim_order | plus: 1
+              assign card_label = block.settings.label | escape
+
+              assign before_alt = before.alt | escape
+              if before_alt == blank
+                assign before_alt = card_label | append: ', ' | append: before_label
+              endif
+              assign after_alt = after.alt | escape
+              if after_alt == blank
+                assign after_alt = card_label | append: ', ' | append: after_label
+              endif
+            -%}
+            <li
+              class="aeo-ba__item{% if incomplete and hide_incomplete %} aeo-ba__item--held{% endif %}{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+              {{ block.shopify_attributes }}
+              {% if motion %}
+                data-cascade
+                style="--animation-order: {{ anim_order }};"
+              {% endif %}
+            >
+              <figure class="aeo-ba__card aeo-card aeo-card--lift color-{{ section.settings.card_color_scheme }}">
+                {%- if incomplete and hide_incomplete -%}
+                  <span class="aeo-ba__held">Hidden on the live store until both photos are uploaded</span>
+                {%- endif -%}
+                <div class="aeo-ba__pair">
+                  <div class="aeo-ba__ph">
+                    {%- render 'aeonae-media',
+                      image: before,
+                      alt: before_alt,
+                      ratio: '1 / 1',
+                      sizes: '(min-width: 1200px) 180px, (min-width: 760px) 16vw, 46vw',
+                      label: 'Before photo',
+                      dims: '1000 x 1000 px (1:1)',
+                      tag: before_label,
+                      icon: '○'
+                    -%}
+                    {%- if before != blank and before_label != blank -%}
+                      <span class="aeo-ph__tag" aria-hidden="true">{{ before_label }}</span>
+                    {%- endif -%}
+                  </div>
+                  <div class="aeo-ba__ph">
+                    {%- render 'aeonae-media',
+                      image: after,
+                      alt: after_alt,
+                      ratio: '1 / 1',
+                      sizes: '(min-width: 1200px) 180px, (min-width: 760px) 16vw, 46vw',
+                      label: 'After photo',
+                      dims: '1000 x 1000 px (1:1)',
+                      tag: after_label,
+                      icon: '○'
+                    -%}
+                    {%- if after != blank and after_label != blank -%}
+                      <span class="aeo-ph__tag" aria-hidden="true">{{ after_label }}</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+                {%- if block.settings.label != blank or block.settings.caption != blank -%}
+                  <figcaption class="aeo-ba__cap">
+                    {%- if block.settings.label != blank -%}
+                      <p class="aeo-ba__label">{{ card_label }}</p>
+                    {%- endif -%}
+                    {%- if block.settings.caption != blank -%}
+                      <p class="aeo-ba__text">{{ block.settings.caption }}</p>
+                    {%- endif -%}
+                  </figcaption>
+                {%- endif -%}
+              </figure>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    {%- elsif request.design_mode and result_count == 0 -%}
+      <p class="aeo-pg__empty">Add before and after blocks to this section.</p>
+    {%- endif -%}
+
+    {%- if section.settings.note != blank -%}
+      <div class="aeo-note aeo-rte rte aeo-ba__note">{{ section.settings.note }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Before and after",
+  "tag": "section",
+  "class": "section aeo-pg-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Only use real, consented, unretouched customer photos, with written permission from each customer. Never use stock, AI-generated or edited images, and describe appearance only."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Section color scheme",
+      "default": "scheme-3"
+    },
+    {
+      "type": "color_scheme",
+      "id": "card_color_scheme",
+      "label": "Card color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor ID",
+      "info": "Letters, numbers and dashes only."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_empty",
+      "label": "Hide until real photos are uploaded",
+      "info": "Leaves out every card that is missing its before or after photo on the live store. Cards stay visible in the theme editor.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "before_label",
+      "label": "Before tag",
+      "default": "Before"
+    },
+    {
+      "type": "text",
+      "id": "after_label",
+      "label": "After tag",
+      "default": "After"
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Note"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note",
+      "default": "<p>Photos will be from real customers and unretouched. This is a cosmetic, so results describe the appearance of skin, and individual experiences vary.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 124
+    }
+  ],
+  "blocks": [
+    {
+      "type": "result",
+      "name": "Before and after",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "before_image",
+          "label": "Before photo",
+          "info": "Square, 1000 x 1000 px. Same framing and light as the after photo."
+        },
+        {
+          "type": "image_picker",
+          "id": "after_image",
+          "label": "After photo",
+          "info": "Square, 1000 x 1000 px. Unretouched."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Customer, week 4"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "caption",
+          "label": "Caption",
+          "default": "How skin looks after four weeks of daily use."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Before and after",
+      "blocks": [
+        {
+          "type": "result",
+          "settings": {
+            "label": "Customer, week 4",
+            "caption": "How skin looks after four weeks of daily use."
+          }
+        },
+        {
+          "type": "result",
+          "settings": {
+            "label": "Customer, week 8",
+            "caption": "The look of a smoother, more even tone."
+          }
+        },
+        {
+          "type": "result",
+          "settings": {
+            "label": "Customer, week 12",
+            "caption": "A firmer, more radiant looking finish."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

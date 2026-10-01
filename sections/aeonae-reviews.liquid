@@ -1,0 +1,203 @@
+{%- comment -%}
+  AEONAE reviews (artifact #reviews). Product template only.
+  - Summary from the standard review metafields (reviews.rating, reviews.rating_count)
+    that review apps write; nothing is shown when they are empty. No fake reviews.
+  - The review app's own blocks (widget, stars, photo gallery) are added as app blocks.
+  - The empty state shows only when there is no rating metafield and no app block.
+  - No native review form and no "Write a review" button: the app provides those.
+{%- endcomment -%}
+
+{{ 'aeonae-reviews.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign motion = settings.animations_reveal_on_scroll
+  assign anchor = section.settings.anchor_id | strip | handleize
+  assign app_blocks = section.blocks | where: 'type', '@app'
+
+  assign rating = nil
+  if product != blank
+    assign rating = product.metafields.reviews.rating.value
+  endif
+
+  if rating != blank
+    assign rating_value = rating.rating | round: 1
+    assign rating_max = rating.scale_max | default: 5
+    assign rating_pct = rating.rating | times: 100.0 | divided_by: rating_max | round: 1
+    assign rating_count = product.metafields.reviews.rating_count.value | default: 0
+  endif
+
+  assign anim_order = 0
+-%}
+
+<div
+  class="aeo-reviews aeo-section color-{{ section.settings.color_scheme }} gradient"
+  {% if anchor != blank %}
+    id="{{ anchor }}"
+  {% endif %}
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="aeo-reviews__head">
+        {%- if section.settings.eyebrow != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <p
+            class="aeo-eyebrow aeo-reviews__eyebrow{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.eyebrow | escape -}}
+          </p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          {%- assign anim_order = anim_order | plus: 1 -%}
+          <h2
+            class="aeo-h2 aeo-reviews__heading{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+            {% if motion %}
+              data-cascade
+              style="--animation-order: {{ anim_order }};"
+            {% endif %}
+          >
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if rating != blank and section.settings.show_summary -%}
+      {%- assign anim_order = anim_order | plus: 1 -%}
+      <div
+        class="aeo-reviews__summary{% if motion %} aeo-reveal scroll-trigger animate--slide-in{% endif %}"
+        {% if motion %}
+          data-cascade
+          style="--animation-order: {{ anim_order }};"
+        {% endif %}
+      >
+        <p class="aeo-reviews__big" aria-hidden="true">{{ rating_value }}</p>
+        <div class="aeo-reviews__meta">
+          <span
+            class="aeo-reviews__stars"
+            role="img"
+            aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: rating_value, rating_max: rating_max }}"
+            style="--aeo-rating: {{ rating_pct }}%;"
+          ></span>
+          {%- if rating_count > 0 -%}
+            <p class="aeo-reviews__count">
+              Based on {{ rating_count }}
+              {% if rating_count == 1 %}review{% else %}reviews{% endif %}
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- elsif app_blocks.size == 0 -%}
+      <div class="aeo-reviews__summary">
+        <p class="aeo-reviews__none">{{ section.settings.empty_text | escape }}</p>
+      </div>
+    {%- endif -%}
+
+    {%- if app_blocks.size > 0 -%}
+      <div class="aeo-reviews__apps">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- elsif request.design_mode -%}
+      <p class="aeo-reviews__hint">Add your review app's block here (Apps &gt; Add block)</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Reviews",
+  "tag": "section",
+  "class": "section aeo-reviews-section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Add your review app's blocks (review list, star summary, photo gallery) to this section. The star summary uses the product's reviews.rating and reviews.rating_count metafields, which review apps fill in."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Reviews"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What people are saying"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show rating summary",
+      "info": "Only appears when the product has a rating from a review app.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Empty state text",
+      "info": "Shown only when there is no rating and no review app block.",
+      "default": "No reviews yet. Be the first to share how the serum looks and feels for you."
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor id",
+      "info": "Links like /products/copper-peptide-serum#reviews scroll here.",
+      "default": "reviews"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 124
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 124
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews"
+    }
+  ]
+}
+{% endschema %}
