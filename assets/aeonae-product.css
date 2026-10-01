@@ -510,6 +510,11 @@ quick-add-modal .page-width:has(> .product.aeo-pdp) {
   color: rgb(var(--color-background));
 }
 
+/* Shopify's injected payment-button CSS does this too; set it so the button never shrinks to its label */
+.aeo-pdp .shopify-payment-button__button {
+  width: 100%;
+}
+
 .aeo-pdp .shopify-payment-button__button--unbranded,
 .aeo-pdp .shopify-payment-button__button--unbranded:hover:not([disabled]) {
   background-color: transparent;
