@@ -198,7 +198,8 @@
       "aeo_halo": "#A8B888",
       "aeo_ambient_motion": true,
       "aeo_support_email": "support@aeonae.com",
-      "aeo_support_note": "A real person replies, usually the same day"
+      "aeo_support_note": "A real person replies, usually the same day",
+      "aeo_cart_note": "Free US shipping. Secure checkout."
     }
   }
 }

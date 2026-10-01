@@ -222,6 +222,17 @@
       },
       {
         "type": "header",
+        "content": "Cart"
+      },
+      {
+        "type": "text",
+        "id": "aeo_cart_note",
+        "label": "Cart drawer reassurance line",
+        "info": "Shown under the checkout button. Only state what is true for your store.",
+        "default": "Free US shipping. Secure checkout."
+      },
+      {
+        "type": "header",
         "content": "Placeholders"
       },
       {
