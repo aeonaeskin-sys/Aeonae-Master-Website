@@ -12,6 +12,9 @@
   Hidden while a drawer or modal locks the page (Dawn adds body.overflow-hidden*),
   while the cart drawer is open, and while a text field elsewhere has focus
   (the on-screen keyboard is up). No scroll listeners: IntersectionObserver only.
+  The observers extend the root far below the viewport (PAST_TOP), so "intersecting"
+  means "not yet scrolled above the viewport top" and an instant jump (anchor link,
+  scroll restoration) still crosses the boundary and fires the callback.
 */
 (() => {
   if (customElements.get('aeo-sticky-buy')) return;
@@ -25,6 +28,12 @@
   ].join(',');
 
   const clean = (text) => (text || '').replace(/\s+/g, ' ').trim();
+
+  const PAST_TOP = { rootMargin: '0px 0px 1000000px 0px' };
+  const isPastTop = (entries) => {
+    const entry = entries[entries.length - 1];
+    return !entry.isIntersecting && entry.boundingClientRect.top < 0;
+  };
 
   const hasLock = (el) =>
     Array.from(el.classList).some((name) => name.startsWith('overflow-hidden') || LOCK_CLASSES.includes(name));
@@ -166,10 +175,10 @@
       marker.style.cssText = `display:block;position:absolute;left:0;top:${threshold}vh;width:1px;height:1px;pointer-events:none;visibility:hidden;`;
       document.body.appendChild(marker);
 
-      const observer = new IntersectionObserver(([entry]) => {
-        this.state.triggered = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+      const observer = new IntersectionObserver((entries) => {
+        this.state.triggered = isPastTop(entries);
         this.update();
-      });
+      }, PAST_TOP);
       observer.observe(marker);
 
       this.cleanups.push(() => {
@@ -192,7 +201,11 @@
 
       if (typeof subscribe === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
         const unsubscribe = subscribe(PUB_SUB_EVENTS.variantChange, (event) => this.onVariantChange(event));
-        this.cleanups.push(unsubscribe);
+        const unsubscribeError = subscribe(PUB_SUB_EVENTS.cartError, (event) => this.onCartError(event));
+        const unsubscribeUpdate = subscribe(PUB_SUB_EVENTS.cartUpdate, () => {
+          this.pendingSubmit = 0;
+        });
+        this.cleanups.push(unsubscribe, unsubscribeError, unsubscribeUpdate);
       }
 
       // The main product block can be swapped (combined listings) or re-rendered in the editor.
@@ -267,11 +280,18 @@
 
         // Watch the button itself; fall back to the form if a theme hides the button box.
         const target = found.button.getClientRects().length ? found.button : found.form;
-        this.viewObserver = new IntersectionObserver(([entry]) => {
-          this.state.triggered = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        this.viewObserver = new IntersectionObserver((entries) => {
+          this.state.triggered = isPastTop(entries);
           this.update();
-        });
+        }, PAST_TOP);
         this.viewObserver.observe(target);
+
+        // Subscription chosen in the AEONAE purchase options: show its per-delivery price.
+        if (found.info) {
+          this.planListener = () => this.updatePrice();
+          this.planTarget = found.info;
+          found.info.addEventListener('aeo:plan-change', this.planListener);
+        }
 
         this.syncButton();
         // Picks up a price change after a product swap (combined listings), which publishes no variantChange.
@@ -287,6 +307,8 @@
       if (this.buttonObserver) this.buttonObserver.disconnect();
       if (this.priceObserver) this.priceObserver.disconnect();
       if (this.viewObserver) this.viewObserver.disconnect();
+      if (this.planTarget) this.planTarget.removeEventListener('aeo:plan-change', this.planListener);
+      this.planTarget = null;
       this.buttonObserver = null;
       this.priceObserver = null;
       this.viewObserver = null;
@@ -299,6 +321,7 @@
       const { form, button } = this.main;
       if (button.hasAttribute('disabled') || button.getAttribute('aria-disabled') === 'true') return;
 
+      this.pendingSubmit = Date.now();
       if (typeof form.requestSubmit === 'function') {
         form.requestSubmit();
       } else {
@@ -347,6 +370,35 @@
       this.priceWrap.hidden = Boolean(priceEl && priceEl.classList.contains('hidden'));
     }
 
+    /* Dawn shows add-to-cart errors next to the main button, which is off screen whenever
+       the bar is visible. Bring that message into view when the bar started the request. */
+    onCartError(event) {
+      const fromBar = this.pendingSubmit && Date.now() - this.pendingSubmit < 15000;
+      this.pendingSubmit = 0;
+      if (!fromBar || !this.main || (event && event.source && event.source !== 'product-form')) return;
+
+      const scope = this.main.form.closest('product-form') || this.main.info || document;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Dawn un-hides the message right after publishing cartError.
+      requestAnimationFrame(() => {
+        const message = scope.querySelector('.product-form__error-message-wrapper');
+        if (!message || message.hasAttribute('hidden')) return;
+        message.setAttribute('tabindex', '-1');
+        message.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+        message.focus({ preventScroll: true });
+      });
+    }
+
+    readPlanPrice() {
+      const options = this.main && this.main.info && this.main.info.querySelector('aeo-purchase-options');
+      if (!options) return '';
+      const input = options.input || options.querySelector('[data-aeo-plan-input]');
+      const planId = input ? input.value : '';
+      if (!planId) return '';
+      const plan = options.querySelector(`[data-aeo-plan][value="${CSS.escape(planId)}"]`);
+      return plan ? clean(plan.dataset.price) : '';
+    }
+
     onVariantChange(event) {
       const data = event && event.data;
       if (!data || !this.main) return;
@@ -355,7 +407,13 @@
     }
 
     updatePrice(variant) {
-      // Prefer the price Dawn just rendered (right currency and format for the market).
+      // A selected subscription plan's per-delivery price is what will be charged.
+      const planPrice = this.readPlanPrice();
+      if (planPrice) {
+        this.renderPrice(planPrice, '');
+        return;
+      }
+      // Otherwise prefer the price Dawn just rendered (right currency and format for the market).
       const fromPage = this.readPagePrice();
       if (fromPage) {
         this.renderPrice(fromPage.amount, fromPage.compare);

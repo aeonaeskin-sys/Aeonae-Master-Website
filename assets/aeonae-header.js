@@ -111,22 +111,10 @@
         const first = this.track.querySelector('.aeo-marquee__group');
         if (!first) return;
 
-        if (this.isStatic) {
-          this.markClipped(first);
-          return;
-        }
+        /* Static row: messages wrap onto extra centered lines (CSS), nothing to measure. */
+        if (this.isStatic) return;
 
-        first.querySelectorAll('.is-clipped').forEach((item) => item.classList.remove('is-clipped'));
         this.fill(first);
-      }
-
-      /* Static row: hide (for everyone, including screen readers) the messages that wrapped
-         out of the single visible line, so nothing focusable sits in the clipped area. */
-      markClipped(group) {
-        const items = Array.from(group.children);
-        if (!items.length) return;
-        const top = items[0].offsetTop;
-        items.forEach((item) => item.classList.toggle('is-clipped', item.offsetTop - top > 2));
       }
 
       /* Seamless loop: the track must hold enough copies to cover the viewport plus one

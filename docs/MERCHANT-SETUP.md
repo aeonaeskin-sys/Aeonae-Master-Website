@@ -70,10 +70,14 @@ its links. Top-level items **without** children are listed together at the end.
   - Shipping and Returns: `/policies/shipping-policy`
   - Contact: `/pages/contact`
 
-**Footer menus**: create three menus and pick them in **Footer > Menu columns**:
-- *Shop*: Copper Peptide Serum, Subscribe and Save
-- *Explore*: The Science, Results and Ritual, Our Story
-- *Help*: FAQ, Reviews, Shipping and Returns (the column can also add the support email link)
+**Footer menus.** The footer has three menu columns (Footer > Shop / Explore / Help):
+- **Help** ships with the store's existing `footer` menu. That menu holds **Your Privacy Choices**
+  (`/pages/data-sharing-opt-out`). Shopify adds this link for US privacy opt-out rights, so **keep it in a footer menu**.
+  Add FAQ (`/#faq`), Reviews and Shipping and Returns to the `footer` menu, and remove "Search" if you don't want it.
+  The column also adds the support email as "Contact Us".
+- **Shop** and **Explore** ship empty and stay hidden from shoppers until you pick a menu. Create the menus and select them:
+  - *Shop*: Copper Peptide Serum, Subscribe and Save
+  - *Explore*: The Science, Results and Ritual, Our Story
 
 ## 6. Apps
 
@@ -81,8 +85,8 @@ None of these apps are installed today. The theme leaves a place for each one wi
 
 | Need | What to do | Where it shows |
 |---|---|---|
-| **Reviews** (any app that uses Shopify app blocks and the standard `reviews.rating` metafields, for example Judge.me, Okendo, Yotpo or Loox) | Install the app, enable its app embed (Customize > App embeds), then add its blocks: star rating in **Product information** (under the title) and the review widget in **Reviews**. | Product page stars, Reviews section, optional photo gallery on Results |
-| **Klaviyo** (pop-ups, signup, flows) | Install Klaviyo, connect the store, enable **Klaviyo onsite JavaScript** in Customize > App embeds. Pop-ups are configured in Klaviyo and need no theme change. For the in-page signup, set **Newsletter > Signup provider = Klaviyo** and paste the embedded form ID, or add a Klaviyo app block. | Site-wide pop-ups; Home newsletter |
+| **Reviews** (any app that uses Shopify app blocks and the standard `reviews.rating` metafields, for example Judge.me, Okendo, Yotpo or Loox) | Install the app and enable its app embed (Customize > App embeds). Add the app's review widget block to the **Reviews** section on the product template. For stars under the product title, use **one** of these, never both: keep the theme's **Product rating** block (it reads the `reviews.rating` metafields most review apps fill), or remove it and add the app's own star-rating block in **Product information**. | Product page stars, Reviews section, optional photo gallery on Results |
+| **Klaviyo** (pop-ups, signup, flows) | Install Klaviyo, connect the store, enable **Klaviyo onsite JavaScript** in Customize > App embeds. Pop-ups are configured in Klaviyo and need no theme change. For the in-page signup, either set **Newsletter > Signup provider = Klaviyo embedded form** and paste the form ID, or set it to **App block only** and add Klaviyo's app block. With the default *Shopify customer list*, an added app block shows **in addition** to the Shopify form. | Site-wide pop-ups; Home newsletter |
 | **Subscriptions** (Shopify Subscriptions, Recharge, Skio, …) | Install, create a selling plan for the serum. The product page **Purchase options** block appears automatically. If the app provides its own widget block, use that instead and remove the AEONAE block, so there is one picker. | Product page |
 | **Back-in-stock** | Klaviyo's back-in-stock feature or a dedicated app. | Product page when sold out |
 

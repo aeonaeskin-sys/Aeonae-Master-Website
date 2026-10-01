@@ -501,7 +501,7 @@ quick-add-modal .page-width:has(> .product.aeo-pdp) {
   --border-opacity: calc(1 - var(--buttons-border-opacity));
 }
 
-.aeo-pdp .product-form__submit:not([disabled]):not([aria-disabled='true']) {
+.aeo-pdp .product-form__submit:not([disabled]):not([aria-disabled='true']):not(:focus-visible) {
   box-shadow: 0 0.6rem 2rem rgba(var(--aeo-accent-rgb), 0.26);
 }
 
@@ -514,11 +514,28 @@ quick-add-modal .page-width:has(> .product.aeo-pdp) {
 .aeo-pdp .shopify-payment-button__button--unbranded:hover:not([disabled]) {
   background-color: transparent;
   color: rgb(var(--color-foreground));
+}
+
+.aeo-pdp .shopify-payment-button__button--unbranded:not(:focus-visible) {
   box-shadow: inset 0 0 0 0.15rem var(--aeo-line);
 }
 
-.aeo-pdp .shopify-payment-button__button--unbranded:hover:not([disabled]) {
+.aeo-pdp .shopify-payment-button__button--unbranded:hover:not([disabled]):not(:focus-visible) {
   box-shadow: inset 0 0 0 0.15rem rgb(var(--color-foreground));
+}
+
+/* Variant pills: readable sold-out labels and 44px touch targets on phones */
+.aeo-pdp .product-form__input--pill input[type='radio'].disabled + label,
+.aeo-pdp .product-form__input--pill input[type='radio']:disabled + label {
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+@media screen and (max-width: 749px) {
+  .aeo-pdp .product-form__input--pill input[type='radio'] + label {
+    min-height: 4.4rem;
+    display: inline-flex;
+    align-items: center;
+  }
 }
 
 /* ---------- Guarantee card (aeo_guarantee) ---------- */

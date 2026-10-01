@@ -9,7 +9,7 @@
           "type": "link_list",
           "settings": {
             "heading": "Shop",
-            "menu": "footer",
+            "menu": "",
             "show_contact_email": false,
             "contact_label": "Contact Us"
           }
@@ -18,7 +18,7 @@
           "type": "link_list",
           "settings": {
             "heading": "Explore",
-            "menu": "footer",
+            "menu": "",
             "show_contact_email": false,
             "contact_label": "Contact Us"
           }

@@ -65,10 +65,6 @@
   height: var(--aeo-marquee-line);
 }
 
-.aeo-marquee__item.is-clipped {
-  visibility: hidden;
-}
-
 .aeo-marquee__sep {
   color: var(--aeo-marquee-sep);
 }
@@ -176,8 +172,8 @@ aeo-marquee:not(:defined) .aeo-marquee__toggle {
 }
 
 /* Static row: "Scroll messages" off, or the visitor prefers reduced motion.
-   Messages wrap, and only the first line is shown, so the row never overflows
-   and never cuts a message in half (aeonae-header.js hides the wrapped ones). */
+   Every message stays visible: they wrap onto extra centered lines instead of
+   scrolling, and separators are dropped so no line starts with one. */
 .aeo-marquee--static {
   --aeo-marquee-gap: 2.4rem;
 }
@@ -190,13 +186,12 @@ aeo-marquee:not(:defined) .aeo-marquee__toggle {
   flex: 1 1 auto;
   flex-wrap: wrap;
   justify-content: center;
-  row-gap: 1rem;
-  height: calc(var(--aeo-marquee-line) + 2 * var(--aeo-marquee-pad, 0.9rem));
+  row-gap: 0.2rem;
+  column-gap: 2.4rem;
   padding: var(--aeo-marquee-pad, 0.9rem) var(--aeo-gutter);
-  overflow: hidden;
 }
 
-.aeo-marquee--static .aeo-marquee__item:first-child .aeo-marquee__sep,
+.aeo-marquee--static .aeo-marquee__sep,
 .aeo-marquee--static [data-aeo-clone],
 .aeo-marquee--static .aeo-marquee__toggle {
   display: none;
@@ -215,13 +210,12 @@ aeo-marquee:not(:defined) .aeo-marquee__toggle {
     flex: 1 1 auto;
     flex-wrap: wrap;
     justify-content: center;
-    row-gap: 1rem;
-    height: calc(var(--aeo-marquee-line) + 2 * var(--aeo-marquee-pad, 0.9rem));
+    row-gap: 0.2rem;
+    column-gap: 2.4rem;
     padding: var(--aeo-marquee-pad, 0.9rem) var(--aeo-gutter);
-    overflow: hidden;
   }
 
-  .aeo-marquee__item:first-child .aeo-marquee__sep,
+  .aeo-marquee__sep,
   .aeo-marquee [data-aeo-clone],
   .aeo-marquee__toggle {
     display: none;

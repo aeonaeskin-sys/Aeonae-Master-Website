@@ -50,7 +50,7 @@
   min-height: 4.4rem;
   padding: 1.4rem 1.6rem;
   border-radius: 0.8rem;
-  border: 0.1rem solid rgba(42, 36, 29, 0.3);
+  border: 0.1rem solid rgba(42, 36, 29, 0.6);
   background: var(--aeo-paper);
   color: #2b2620;
   font-family: inherit;
@@ -176,8 +176,16 @@
   padding: 0.8rem 1.2rem;
 }
 
-/* Mobile: stack the field and the button, full-width targets */
+/* Mobile: field and button stay on one row like the reference design,
+   with 48px targets; very narrow screens stack them full width. */
 @media screen and (max-width: 749px) {
+  .aeo-news__input,
+  .aeo-news__button.button {
+    min-height: 4.8rem;
+  }
+}
+
+@media screen and (max-width: 359px) {
   .aeo-news__field {
     flex-direction: column;
   }
@@ -185,6 +193,5 @@
   .aeo-news__input,
   .aeo-news__button.button {
     width: 100%;
-    min-height: 4.8rem;
   }
 }

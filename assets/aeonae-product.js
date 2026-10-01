@@ -24,6 +24,16 @@
     return info ? info.dataset.originalSection || info.dataset.section : null;
   };
 
+  /* A quick add copy of the main product shares its source section id, so also require that
+     this copy is the one whose variant changed. Dawn's product-info.js updates the form's
+     variant input before it publishes variantChange. */
+  const isPublisher = (el, data) => {
+    const info = el.closest('product-info');
+    const input = info && info.querySelector('form[id^="product-form-"] input[name="id"]');
+    if (!input) return true;
+    return input.value === (data.variant ? String(data.variant.id) : '');
+  };
+
   /* HTML from the fetched section, with ids rewritten for a quick add copy when needed. */
   const adoptHtml = (el, source, sectionId) => {
     const info = el.closest('product-info');
@@ -40,6 +50,7 @@
 
     document.querySelectorAll('.aeo-edition').forEach((band) => {
       if (sourceSectionId(band) !== data.sectionId) return;
+      if (!isPublisher(band, data)) return;
       if (band.dataset.productId !== source.dataset.productId) return;
       band.className = source.className;
       band.innerHTML = adoptHtml(band, source, data.sectionId);
@@ -136,6 +147,14 @@
 
       if (body && body.hidden) planId = '';
       this.input.value = planId;
+
+      const plan = planId ? this.querySelector(`[data-aeo-plan][value="${CSS.escape(planId)}"]`) : null;
+      this.dispatchEvent(
+        new CustomEvent('aeo:plan-change', {
+          bubbles: true,
+          detail: { planId, price: plan ? plan.dataset.price || '' : '' },
+        })
+      );
     }
 
     updateGroupCard(mode, plan) {
@@ -155,6 +174,7 @@
     onVariantChange(data) {
       if (!data || !data.html || !this.isConnected) return;
       if (sourceSectionId(this) !== data.sectionId) return;
+      if (!isPublisher(this, data)) return;
 
       const source = data.html.getElementById(`aeo-po-${data.sectionId}`);
       const target = this.body;

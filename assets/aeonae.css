@@ -177,7 +177,8 @@ h4,
   transition: transform 0.22s var(--aeo-ease), background-color 0.22s, color 0.22s, box-shadow 0.22s;
 }
 
-.button:not(.button--secondary):not(.button--tertiary):not([disabled]):not([aria-disabled='true']) {
+/* :not(:focus-visible) keeps Dawn's keyboard focus ring (also a box-shadow) intact */
+.button:not(.button--secondary):not(.button--tertiary):not([disabled]):not([aria-disabled='true']):not(:focus-visible) {
   box-shadow: 0 0.6rem 2rem rgba(var(--aeo-accent-rgb), 0.26);
 }
 
@@ -409,6 +410,11 @@ h4,
   background: radial-gradient(circle, rgba(var(--aeo-halo-rgb), 0.32), transparent 66%);
   filter: blur(2.4rem);
   pointer-events: none;
+}
+
+/* Dawn hides div:empty; the halo is intentionally empty */
+.aeo-halo:empty {
+  display: block;
 }
 
 .aeo-bottle {
