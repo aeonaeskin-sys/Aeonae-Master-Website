@@ -1,0 +1,74 @@
+{%- comment -%}
+  AEONAE design tokens, brand fonts and base stylesheet.
+  Rendered from layout/theme.liquid directly after base.css so the
+  overrides here win over Dawn defaults without editing base.css.
+{%- endcomment -%}
+
+{%- assign aeo_copper_text = settings.aeo_copper | color_darken: 12 -%}
+
+{%- if settings.aeo_brand_fonts -%}
+  {% comment %}theme-check-disable AssetPreload{% endcomment %}
+  <link rel="preload" as="font" href="{{ 'aeonae-fraunces.woff2' | asset_url }}" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="{{ 'aeonae-hanken-grotesk.woff2' | asset_url }}" type="font/woff2" crossorigin>
+  {% comment %}theme-check-enable AssetPreload{% endcomment %}
+{%- endif -%}
+
+{% style %}
+  {%- if settings.aeo_brand_fonts -%}
+    @font-face {
+      font-family: 'Fraunces';
+      font-style: normal;
+      font-weight: 300 500;
+      font-display: swap;
+      src: url('{{ 'aeonae-fraunces.woff2' | asset_url }}') format('woff2');
+    }
+    @font-face {
+      font-family: 'Fraunces';
+      font-style: italic;
+      font-weight: 300 400;
+      font-display: swap;
+      src: url('{{ 'aeonae-fraunces-italic.woff2' | asset_url }}') format('woff2');
+    }
+    @font-face {
+      font-family: 'Hanken Grotesk';
+      font-style: normal;
+      font-weight: 300 700;
+      font-display: swap;
+      src: url('{{ 'aeonae-hanken-grotesk.woff2' | asset_url }}') format('woff2');
+    }
+  {%- endif -%}
+
+  :root {
+    {%- if settings.aeo_brand_fonts %}
+      --font-heading-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+      --font-heading-style: normal;
+      --font-heading-weight: 400;
+      --font-body-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-body-style: normal;
+      --font-body-weight: 400;
+      --font-body-weight-bold: 600;
+    {%- endif %}
+    --aeo-accent: {{ settings.aeo_accent }};
+    --aeo-accent-rgb: {{ settings.aeo_accent.red }}, {{ settings.aeo_accent.green }}, {{ settings.aeo_accent.blue }};
+    --aeo-copper: {{ settings.aeo_copper }};
+    --aeo-copper-text: {{ aeo_copper_text }};
+    --aeo-line: {{ settings.aeo_line }};
+    --aeo-halo-rgb: {{ settings.aeo_halo.red }}, {{ settings.aeo_halo.green }}, {{ settings.aeo_halo.blue }};
+  }
+{% endstyle %}
+
+{{ 'aeonae.css' | asset_url | stylesheet_tag }}
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    {%- if settings.animations_reveal_on_scroll %}
+      root.classList.add('aeo-motion');
+    {%- endif %}
+    {%- if settings.aeo_ambient_motion %}
+      root.classList.add('aeo-ambient');
+    {%- endif %}
+  })();
+</script>

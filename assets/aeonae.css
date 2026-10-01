@@ -1,0 +1,548 @@
+/*
+  AEONAE design system, layered on top of Dawn's base.css.
+
+  Units: Dawn sets the root font size to 62.5%, so 1rem = 10px here.
+  Colors: sections set Dawn color schemes (.color-scheme-N), which provide
+  --color-foreground, --color-background, --color-button, etc. The brand
+  tokens below (--aeo-*) come from Theme settings > AEONAE brand.
+*/
+
+:root {
+  --aeo-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --aeo-ease-drawer: cubic-bezier(0.4, 0, 0.2, 1);
+  --aeo-wrap: 120rem;
+  --aeo-gutter: clamp(2.4rem, 5.5vw, 4.8rem);
+  --aeo-radius-card: 1.6rem;
+  --aeo-radius-media: 1.8rem;
+  --aeo-shadow-card: 0 1.8rem 4rem rgba(42, 36, 29, 0.09);
+  --aeo-shadow-soft: 0 1.8rem 4.4rem rgba(42, 36, 29, 0.06);
+  --aeo-paper: #fcf8f1;
+  --aeo-ph-gradient: linear-gradient(165deg, #f6f1e9, #e7dccb);
+}
+
+/* ---------- Global type refinements ---------- */
+
+body {
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+.h0,
+.h1,
+.h2,
+.h3,
+.h4 {
+  letter-spacing: -0.015em;
+  line-height: 1.06;
+}
+
+:focus-visible {
+  outline-color: var(--aeo-accent);
+}
+
+/* ---------- Layout primitives ---------- */
+
+.aeo-wrap {
+  max-width: var(--aeo-wrap);
+  margin: 0 auto;
+  padding: 0 var(--aeo-gutter);
+}
+
+/* Sections set --aeo-pt / --aeo-pb (unitless px) from their padding settings.
+   Padding scales down on small screens the same way the artifact's clamp() did. */
+.aeo-section {
+  padding-top: clamp(calc(var(--aeo-pt, 124) * 0.565px), 10vw, calc(var(--aeo-pt, 124) * 1px));
+  padding-bottom: clamp(calc(var(--aeo-pb, 124) * 0.565px), 10vw, calc(var(--aeo-pb, 124) * 1px));
+}
+
+.aeo-center {
+  text-align: center;
+}
+
+.aeo-intro {
+  max-width: 66rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.aeo-intro > * {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------- Type ---------- */
+
+.aeo-eyebrow {
+  display: block;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--aeo-accent);
+  margin: 0;
+}
+
+.color-scheme-4 .aeo-eyebrow,
+.aeo-on-dark .aeo-eyebrow {
+  color: #a8b888;
+}
+
+.aeo-h1,
+.aeo-h2,
+.aeo-h3 {
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  color: rgb(var(--color-foreground));
+  margin: 0;
+}
+
+.aeo-h1 {
+  font-size: clamp(3.84rem, 6.4vw, 7.04rem);
+}
+
+.aeo-h2 {
+  font-size: clamp(3.04rem, 4.6vw, 5.12rem);
+}
+
+.aeo-h3 {
+  font-size: clamp(2.4rem, 3vw, 3.36rem);
+  line-height: 1.16;
+}
+
+.aeo-lede {
+  font-size: clamp(1.63rem, 1.5vw, 1.86rem);
+  color: rgba(var(--color-foreground), 0.8);
+  max-width: 46ch;
+  margin: 0;
+}
+
+.aeo-soft {
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-rte p {
+  max-width: 62ch;
+}
+
+.aeo-rte > *:first-child {
+  margin-top: 0;
+}
+
+.aeo-rte > *:last-child {
+  margin-bottom: 0;
+}
+
+.aeo-intro .aeo-rte p,
+.aeo-center .aeo-rte p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Text link with an underline rule (artifact .tlink) */
+.aeo-tlink {
+  display: inline-block;
+  font-size: 1.44rem;
+  font-weight: 600;
+  color: var(--aeo-accent);
+  padding-bottom: 0.2rem;
+  border-bottom: 0.15rem solid currentColor;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.aeo-tlink:hover {
+  opacity: 0.6;
+}
+
+.color-scheme-4 .aeo-tlink {
+  color: #fff;
+}
+
+/* ---------- Buttons (refines Dawn .button) ---------- */
+
+.button,
+.shopify-payment-button__button--unbranded {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-size: 1.5rem;
+  transition: transform 0.22s var(--aeo-ease), background-color 0.22s, color 0.22s, box-shadow 0.22s;
+}
+
+.button:not(.button--secondary):not(.button--tertiary):not([disabled]):not([aria-disabled='true']) {
+  box-shadow: 0 0.6rem 2rem rgba(var(--aeo-accent-rgb), 0.26);
+}
+
+.button:not(.button--secondary):not(.button--tertiary):not([disabled]):not([aria-disabled='true']):hover {
+  background-color: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.button--secondary:not([disabled]):hover {
+  --border-opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .button:not([disabled]):not([aria-disabled='true']):hover {
+    transform: translateY(-0.2rem);
+  }
+
+  .button:not([disabled]):not([aria-disabled='true']):active {
+    transform: translateY(-0.1rem) scale(0.985);
+  }
+}
+
+.aeo-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem 2.4rem;
+  align-items: center;
+}
+
+.aeo-center .aeo-btn-row,
+.aeo-intro .aeo-btn-row {
+  justify-content: center;
+}
+
+/* ---------- Cards, chips, lists ---------- */
+
+.aeo-card {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  border: 0.1rem solid var(--aeo-line);
+  border-radius: var(--aeo-radius-card);
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-card--lift {
+    transition: transform 0.35s var(--aeo-ease), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+
+  .aeo-card--lift:hover {
+    transform: translateY(-0.4rem);
+    box-shadow: var(--aeo-shadow-card);
+  }
+}
+
+.aeo-check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.aeo-check-list li {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
+
+.aeo-check-list li::before {
+  content: '\2713';
+  color: var(--aeo-accent);
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.color-scheme-4 .aeo-check-list li::before {
+  color: #a8b888;
+}
+
+.aeo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aeo-chips li,
+.aeo-chip {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+  background: rgba(var(--color-foreground), 0.06);
+  border-radius: 2rem;
+  padding: 0.7rem 1.4rem;
+  line-height: 1.3;
+}
+
+.aeo-badge {
+  position: absolute;
+  top: 1.4rem;
+  left: 1.4rem;
+  z-index: 3;
+  font-size: 1.06rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.1rem;
+  border-radius: 2rem;
+  background: #2a241d;
+  color: #fff;
+  line-height: 1.3;
+}
+
+/* Inline trust row: "Free US shipping | Made in the USA | 14 day returns" */
+.aeo-divided {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  row-gap: 0.6rem;
+}
+
+.aeo-divided li {
+  font-size: 1.28rem;
+  color: rgba(var(--color-foreground), 0.8);
+  padding: 0.2rem 1.8rem;
+  line-height: 1.4;
+}
+
+.aeo-divided li:first-child {
+  padding-left: 0;
+}
+
+.aeo-divided li + li {
+  border-left: 0.1rem solid var(--aeo-line);
+}
+
+/* ---------- Media + placeholders ---------- */
+
+.aeo-media {
+  position: relative;
+  aspect-ratio: var(--aeo-ratio, auto);
+  overflow: hidden;
+}
+
+.aeo-media > picture,
+.aeo-media > picture > img,
+.aeo-media > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.aeo-media img {
+  object-fit: var(--aeo-fit, cover);
+}
+
+.aeo-ph {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: var(--aeo-ratio, 4 / 5);
+  background: var(--aeo-ph-gradient);
+  color: #b9ab95;
+  overflow: hidden;
+}
+
+.aeo-ph__icon {
+  font-size: 2.7rem;
+  line-height: 1;
+  color: #c7b9a2;
+}
+
+.aeo-ph__tag {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--aeo-copper-text);
+  background: rgba(252, 248, 241, 0.9);
+  padding: 0.4rem 0.9rem;
+  border-radius: 1.2rem;
+  line-height: 1.3;
+}
+
+.aeo-ph__label {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  font-size: 1.1rem;
+  line-height: 1.35;
+  font-weight: 600;
+  color: #2a241d;
+  background: rgba(252, 248, 241, 0.94);
+  border: 0.1rem dashed rgba(42, 36, 29, 0.35);
+  border-radius: 0.8rem;
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+}
+
+/* ---------- Bottle illustration + halo ---------- */
+
+.aeo-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aeo-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 94%;
+  height: 86%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(var(--aeo-halo-rgb), 0.32), transparent 66%);
+  filter: blur(2.4rem);
+  pointer-events: none;
+}
+
+.aeo-bottle {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aeo-bottle svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.aeo-bottle--reflect {
+  -webkit-box-reflect: below 2px linear-gradient(transparent 62%, rgba(42, 36, 29, 0.14));
+}
+
+@keyframes aeo-float {
+  0%,
+  100% {
+    transform: translateY(var(--aeo-py, 0px));
+  }
+  50% {
+    transform: translateY(calc(var(--aeo-py, 0px) - 12px));
+  }
+}
+
+@keyframes aeo-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-ambient .aeo-float {
+    animation: aeo-float 7s ease-in-out infinite;
+  }
+
+  /* Staggered entrance for page heroes: add .aeo-rise and style="--aeo-delay: .2s" */
+  .aeo-motion .aeo-rise {
+    animation: aeo-rise 0.8s var(--aeo-delay, 0s) both var(--aeo-ease);
+  }
+
+  .shopify-design-mode .aeo-motion .aeo-rise {
+    animation: none;
+  }
+}
+
+/* ---------- Accordions (FAQ, product tabs) ---------- */
+
+.aeo-acc {
+  border-top: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-acc__item {
+  border-bottom: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-acc__summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2.2rem;
+  padding: 2.4rem 0;
+  font-size: 1.63rem;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+  list-style: none;
+  text-align: left;
+}
+
+.aeo-acc__summary::-webkit-details-marker {
+  display: none;
+}
+
+.aeo-acc__summary:hover {
+  color: var(--aeo-accent);
+}
+
+.aeo-acc__icon {
+  flex-shrink: 0;
+  color: var(--aeo-accent);
+  font-size: 2.4rem;
+  line-height: 1;
+  font-weight: 400;
+  transition: transform 0.25s;
+}
+
+details[open] > .aeo-acc__summary .aeo-acc__icon {
+  transform: rotate(45deg);
+}
+
+.aeo-acc__body {
+  font-size: 1.52rem;
+  line-height: 1.7;
+  color: rgba(var(--color-foreground), 0.8);
+  padding-bottom: 2.6rem;
+  max-width: 70rem;
+}
+
+/* ---------- Dawn scroll-trigger: softer, longer reveal like the artifact ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .aeo-reveal.scroll-trigger.animate--slide-in {
+    transition-duration: 0.9s;
+    transition-timing-function: var(--aeo-ease);
+  }
+}
+
+/* ---------- Utilities ---------- */
+
+.aeo-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.aeo-note {
+  font-size: 1.28rem;
+  line-height: 1.6;
+  color: rgba(var(--color-foreground), 0.8);
+  max-width: 74ch;
+}

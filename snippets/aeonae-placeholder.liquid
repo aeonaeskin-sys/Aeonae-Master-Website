@@ -1,0 +1,35 @@
+{%- comment -%}
+  Branded stand-in for an image the merchant has not uploaded yet.
+  Never renders a broken image. The "Replace image" label only appears
+  inside the theme editor, so shoppers see a clean, intentional frame.
+
+  Accepts:
+  - label {String} - what belongs here, e.g. 'Texture macro photo' (theme editor only)
+  - dims {String} - recommended size, e.g. '1600 x 2000 px' (theme editor only)
+  - ratio {String} - CSS aspect-ratio, e.g. '4 / 5'. Default: '4 / 5'
+  - tag {String} - optional caption chip that is part of the design, e.g. 'Before'
+  - icon {String} - optional glyph shown in the center. Default: '◍'
+  - class {String} - extra classes
+
+  Usage:
+  {% render 'aeonae-placeholder', label: 'Texture macro photo', dims: '1200 x 1500 px', ratio: '4 / 5', tag: 'Texture macro' %}
+{%- endcomment -%}
+
+<div
+  class="aeo-ph{% if class != blank %} {{ class }}{% endif %}"
+  style="--aeo-ratio: {{ ratio | default: '4 / 5' }};"
+  {% unless request.design_mode %}
+    aria-hidden="true"
+  {% endunless %}
+>
+  {%- if tag != blank -%}
+    <span class="aeo-ph__tag">{{ tag }}</span>
+  {%- endif -%}
+  <span class="aeo-ph__icon" aria-hidden="true">{{ icon | default: '◍' }}</span>
+  {%- if request.design_mode and label != blank -%}
+    <span class="aeo-ph__label">
+      Replace image: {{ label -}}
+      {%- if dims != blank %} &middot; {{ dims }}{% endif -%}
+    </span>
+  {%- endif -%}
+</div>

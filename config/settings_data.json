@@ -1,63 +1,63 @@
 {
-  "current": "Dawn",
+  "current": "AEONAE",
   "presets": {
-    "Dawn": {
+    "AEONAE": {
       "logo_width": 90,
       "customer_account_menu": "customer-account-main-menu",
       "color_schemes": {
         "scheme-1": {
           "settings": {
-            "background": "#FFFFFF",
+            "background": "#F4EDE1",
             "background_gradient": "",
-            "text": "#121212",
-            "button": "#121212",
+            "text": "#2B2620",
+            "button": "#4F5E38",
             "button_label": "#FFFFFF",
-            "secondary_button_label": "#121212",
-            "shadow": "#121212"
+            "secondary_button_label": "#2A241D",
+            "shadow": "#2A241D"
           }
         },
         "scheme-2": {
           "settings": {
-            "background": "#F3F3F3",
+            "background": "#FCF8F1",
             "background_gradient": "",
-            "text": "#121212",
-            "button": "#121212",
-            "button_label": "#F3F3F3",
-            "secondary_button_label": "#121212",
-            "shadow": "#121212"
+            "text": "#2B2620",
+            "button": "#4F5E38",
+            "button_label": "#FFFFFF",
+            "secondary_button_label": "#2A241D",
+            "shadow": "#2A241D"
           }
         },
         "scheme-3": {
           "settings": {
-            "background": "#242833",
+            "background": "#EFE7D8",
             "background_gradient": "",
-            "text": "#FFFFFF",
-            "button": "#FFFFFF",
-            "button_label": "#000000",
-            "secondary_button_label": "#FFFFFF",
-            "shadow": "#121212"
+            "text": "#2B2620",
+            "button": "#4F5E38",
+            "button_label": "#FFFFFF",
+            "secondary_button_label": "#2A241D",
+            "shadow": "#2A241D"
           }
         },
         "scheme-4": {
           "settings": {
-            "background": "#121212",
+            "background": "#2A241D",
             "background_gradient": "",
-            "text": "#FFFFFF",
-            "button": "#FFFFFF",
-            "button_label": "#121212",
+            "text": "#ECE4D6",
+            "button": "#4F5E38",
+            "button_label": "#FFFFFF",
             "secondary_button_label": "#FFFFFF",
-            "shadow": "#121212"
+            "shadow": "#000000"
           }
         },
         "scheme-5": {
           "settings": {
-            "background": "#334FB4",
+            "background": "#E7DDCC",
             "background_gradient": "",
-            "text": "#FFFFFF",
-            "button": "#FFFFFF",
-            "button_label": "#334FB4",
-            "secondary_button_label": "#FFFFFF",
-            "shadow": "#121212"
+            "text": "#2B2620",
+            "button": "#4F5E38",
+            "button_label": "#FFFFFF",
+            "secondary_button_label": "#2A241D",
+            "shadow": "#2A241D"
           }
         }
       },
@@ -70,24 +70,24 @@
       "spacing_grid_horizontal": 8,
       "spacing_grid_vertical": 8,
       "animations_reveal_on_scroll": true,
-      "animations_hover_elements": "none",
-      "buttons_border_thickness": 1,
+      "animations_hover_elements": "vertical-lift",
+      "buttons_border_thickness": 0,
       "buttons_border_opacity": 100,
-      "buttons_radius": 0,
+      "buttons_radius": 6,
       "buttons_shadow_opacity": 0,
       "buttons_shadow_horizontal_offset": 0,
       "buttons_shadow_vertical_offset": 4,
       "buttons_shadow_blur": 5,
       "variant_pills_border_thickness": 1,
       "variant_pills_border_opacity": 55,
-      "variant_pills_radius": 40,
+      "variant_pills_radius": 8,
       "variant_pills_shadow_opacity": 0,
       "variant_pills_shadow_horizontal_offset": 0,
       "variant_pills_shadow_vertical_offset": 4,
       "variant_pills_shadow_blur": 5,
       "inputs_border_thickness": 1,
-      "inputs_border_opacity": 55,
-      "inputs_radius": 0,
+      "inputs_border_opacity": 30,
+      "inputs_radius": 8,
       "inputs_shadow_opacity": 0,
       "inputs_shadow_horizontal_offset": 0,
       "inputs_shadow_vertical_offset": 4,
@@ -98,7 +98,7 @@
       "card_color_scheme": "scheme-2",
       "card_border_thickness": 0,
       "card_border_opacity": 10,
-      "card_corner_radius": 0,
+      "card_corner_radius": 16,
       "card_shadow_opacity": 0,
       "card_shadow_horizontal_offset": 0,
       "card_shadow_vertical_offset": 4,
@@ -127,21 +127,21 @@
       "blog_card_shadow_blur": 5,
       "text_boxes_border_thickness": 0,
       "text_boxes_border_opacity": 10,
-      "text_boxes_radius": 0,
+      "text_boxes_radius": 16,
       "text_boxes_shadow_opacity": 0,
       "text_boxes_shadow_horizontal_offset": 0,
       "text_boxes_shadow_vertical_offset": 4,
       "text_boxes_shadow_blur": 5,
       "media_border_thickness": 1,
       "media_border_opacity": 5,
-      "media_radius": 0,
+      "media_radius": 18,
       "media_shadow_opacity": 0,
       "media_shadow_horizontal_offset": 0,
       "media_shadow_vertical_offset": 4,
       "media_shadow_blur": 5,
       "popup_border_thickness": 1,
       "popup_border_opacity": 10,
-      "popup_corner_radius": 0,
+      "popup_corner_radius": 16,
       "popup_shadow_opacity": 5,
       "popup_shadow_horizontal_offset": 0,
       "popup_shadow_vertical_offset": 4,
@@ -172,11 +172,11 @@
       "predictive_search_show_vendor": false,
       "predictive_search_show_price": false,
       "currency_code_enabled": true,
-      "cart_type": "notification",
+      "cart_type": "drawer",
       "show_vendor": false,
       "show_cart_note": false,
       "cart_drawer_collection": "",
-      "cart_color_scheme": "scheme-1",
+      "cart_color_scheme": "scheme-2",
       "sections": {
         "main-password-header": {
           "type": "main-password-header",
@@ -190,7 +190,15 @@
             "color_scheme": "scheme-1"
           }
         }
-      }
+      },
+      "aeo_brand_fonts": true,
+      "aeo_accent": "#4F5E38",
+      "aeo_copper": "#AE6A3E",
+      "aeo_line": "#E7DFCF",
+      "aeo_halo": "#A8B888",
+      "aeo_ambient_motion": true,
+      "aeo_support_email": "support@aeonae.com",
+      "aeo_support_note": "A real person replies, usually the same day"
     }
   }
 }

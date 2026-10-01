@@ -1,9 +1,9 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Dawn",
+    "theme_name": "AEONAE (Dawn)",
     "theme_version": "16.0.0",
-    "theme_author": "Shopify",
+    "theme_author": "AEONAE, built on Shopify Dawn",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
     "theme_support_url": "https://support.shopify.com/"
   },
@@ -143,6 +143,90 @@
         "unit": "%",
         "label": "t:settings_schema.typography.settings.body_scale.label",
         "default": 100
+      }
+    ]
+  },
+  {
+    "name": "AEONAE brand",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Brand-level settings for the AEONAE sections. Colors for each section come from the color schemes above."
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "checkbox",
+        "id": "aeo_brand_fonts",
+        "label": "Use AEONAE brand fonts",
+        "info": "Fraunces for headings and Hanken Grotesk for body text, self-hosted in theme assets. Turn off to use the font pickers in Typography instead.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Accents"
+      },
+      {
+        "type": "color",
+        "id": "aeo_accent",
+        "label": "Accent (eyebrows, checkmarks, links)",
+        "default": "#4F5E38"
+      },
+      {
+        "type": "color",
+        "id": "aeo_copper",
+        "label": "Copper accent",
+        "info": "Used for timeline rules and edition details. Text set in copper is automatically darkened for readable contrast.",
+        "default": "#AE6A3E"
+      },
+      {
+        "type": "color",
+        "id": "aeo_line",
+        "label": "Hairline borders",
+        "default": "#E7DFCF"
+      },
+      {
+        "type": "color",
+        "id": "aeo_halo",
+        "label": "Product halo glow",
+        "default": "#A8B888"
+      },
+      {
+        "type": "header",
+        "content": "Motion"
+      },
+      {
+        "type": "checkbox",
+        "id": "aeo_ambient_motion",
+        "label": "Ambient motion (floating bottle, soft parallax)",
+        "info": "Always disabled for visitors who prefer reduced motion.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Customer care"
+      },
+      {
+        "type": "text",
+        "id": "aeo_support_email",
+        "label": "Support email",
+        "default": "support@aeonae.com"
+      },
+      {
+        "type": "text",
+        "id": "aeo_support_note",
+        "label": "Support reply note",
+        "default": "A real person replies, usually the same day"
+      },
+      {
+        "type": "header",
+        "content": "Placeholders"
+      },
+      {
+        "type": "paragraph",
+        "content": "Sections without an uploaded image show a branded placeholder. In the theme editor, each placeholder is labeled with the asset it expects. See docs/ASSET-CHECKLIST.md in the theme repository."
       }
     ]
   },

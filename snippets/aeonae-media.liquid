@@ -1,0 +1,85 @@
+{%- comment -%}
+  Responsive image with an optional mobile crop and a deliberate fallback.
+
+  Accepts:
+  - image {Image} - desktop/default image (image_picker value or product media preview)
+  - image_mobile {Image} - optional image used below 750px
+  - alt {String} - alt text override. Default: image.alt
+  - sizes {String} - sizes attribute. Default: '100vw'
+  - ratio {String} - CSS aspect-ratio of the frame, e.g. '4 / 5'. Default: natural ratio
+  - fit {String} - 'cover' (default) or 'contain'
+  - loading {String} - 'lazy' (default) or 'eager' for above-the-fold media
+  - fallback {String} - 'placeholder' (default), 'bottle', or 'none'
+  - label, dims, tag, icon {String} - passed to aeonae-placeholder when there is no image
+  - uid {String} - unique id, required when fallback is 'bottle'
+  - class {String} - extra classes on the wrapper
+
+  Usage:
+  {% render 'aeonae-media', image: section.settings.image, image_mobile: section.settings.image_mobile, sizes: '(min-width: 990px) 50vw, 100vw', ratio: '4 / 5', label: 'Hero photo', dims: '1600 x 2000 px' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign fit = fit | default: 'cover'
+  assign sizes = sizes | default: '100vw'
+  assign loading = loading | default: 'lazy'
+  assign fallback = fallback | default: 'placeholder'
+  if loading == 'eager'
+    assign fetch_priority = 'high'
+  else
+    assign fetch_priority = 'auto'
+  endif
+-%}
+
+{%- if image != blank -%}
+  {%- liquid
+    if alt == blank
+      assign alt = image.alt | escape
+    endif
+    if ratio == blank
+      assign ratio = image.width | append: ' / ' | append: image.height
+    endif
+  -%}
+  <div
+    class="aeo-media{% if class != blank %} {{ class }}{% endif %}"
+    style="--aeo-ratio: {{ ratio }}; --aeo-fit: {{ fit }};"
+  >
+    <picture>
+      {%- if image_mobile != blank -%}
+        <source
+          media="(max-width: 749px)"
+          srcset="
+            {{ image_mobile | image_url: width: 375 }} 375w,
+            {{ image_mobile | image_url: width: 550 }} 550w,
+            {{ image_mobile | image_url: width: 750 }} 750w,
+            {{ image_mobile | image_url: width: 1100 }} 1100w,
+            {{ image_mobile | image_url: width: 1500 }} 1500w
+          "
+          sizes="100vw"
+          width="{{ image_mobile.width }}"
+          height="{{ image_mobile.height }}"
+        >
+      {%- endif -%}
+      {{
+        image
+        | image_url: width: 3200
+        | image_tag:
+          widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3200',
+          sizes: sizes,
+          loading: loading,
+          fetchpriority: fetch_priority,
+          alt: alt
+      }}
+    </picture>
+  </div>
+{%- elsif fallback == 'bottle' -%}
+  {%- render 'aeonae-bottle', uid: uid, class: class -%}
+{%- elsif fallback == 'placeholder' -%}
+  {%- render 'aeonae-placeholder',
+    label: label,
+    dims: dims,
+    ratio: ratio,
+    tag: tag,
+    icon: icon,
+    class: class
+  -%}
+{%- endif -%}
