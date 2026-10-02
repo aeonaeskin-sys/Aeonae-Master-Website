@@ -169,6 +169,13 @@
         this.closeButton = this.drawer ? this.drawer.querySelector('.aeo-drawer__close') : null;
         this.isOpen = false;
 
+        /* The drawer and its overlay are mounted on <body>. Inside the sticky header they would be
+           clipped to its stacking context and backdrop, which let the page show through the drawer.
+           A click on the overlay or the close button both close it. */
+        this.closers = [this.overlay, this.closeButton].filter(Boolean);
+        this.portal = [this.overlay, this.drawer].filter(Boolean);
+        this.portal.forEach((el) => document.body.appendChild(el));
+
         this.onToggleClick = this.onToggleClick.bind(this);
         this.onCloseClick = this.onCloseClick.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
@@ -197,10 +204,13 @@
         window.removeEventListener('scroll', this.onScroll);
 
         if (this.toggleButton) this.toggleButton.removeEventListener('click', this.onToggleClick);
-        this.querySelectorAll('[data-aeo-menu-close]').forEach((el) => el.removeEventListener('click', this.onCloseClick));
+        (this.closers || []).forEach((el) => el.removeEventListener('click', this.onCloseClick));
         if (this.drawer) this.drawer.removeEventListener('click', this.onDrawerClick);
         window.removeEventListener('pageshow', this.onPageShow);
         document.removeEventListener('shopify:section:deselect', this.onSectionDeselect);
+
+        // Remove the body-mounted copies so a section re-render in the editor never leaves a duplicate.
+        (this.portal || []).forEach((el) => el.remove());
       }
 
       /* --header-height, like Dawn's sticky-header (used by the account dialog and other sections) */
@@ -255,7 +265,7 @@
         if (!this.drawer || !this.toggleButton) return;
 
         this.toggleButton.addEventListener('click', this.onToggleClick);
-        this.querySelectorAll('[data-aeo-menu-close]').forEach((el) => el.addEventListener('click', this.onCloseClick));
+        this.closers.forEach((el) => el.addEventListener('click', this.onCloseClick));
         this.drawer.addEventListener('click', this.onDrawerClick);
         window.addEventListener('pageshow', this.onPageShow);
         document.addEventListener('shopify:section:deselect', this.onSectionDeselect);

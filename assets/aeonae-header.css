@@ -604,8 +604,9 @@ body.aeo-scroll-lock {
   padding-right: var(--aeo-scrollbar-w, 0px);
 }
 
-/* Beats Dawn's div:empty { display: none } */
-.aeo-header-root .aeo-drawer-overlay {
+/* :empty beats Dawn's div:empty { display: none } */
+.aeo-drawer-overlay,
+.aeo-drawer-overlay:empty {
   position: fixed;
   inset: 0;
   z-index: 95;
@@ -616,7 +617,7 @@ body.aeo-scroll-lock {
   transition: opacity 0.35s, visibility 0s linear 0.35s;
 }
 
-.aeo-header-root .aeo-drawer-overlay.is-open {
+.aeo-drawer-overlay.is-open {
   opacity: 1;
   visibility: visible;
   transition: opacity 0.35s;
@@ -632,12 +633,23 @@ body.aeo-scroll-lock {
   flex-direction: column;
   width: min(43rem, 90vw);
   color: rgb(var(--color-foreground));
+  /* Solid, never fixed-attachment: Dawn's .gradient uses background-attachment: fixed, which some
+     browsers drop on a transformed, fixed-position panel and leave it see-through. */
+  background-color: rgb(var(--color-background));
   box-shadow: 0 0 6rem rgba(42, 36, 29, 0.18);
   outline: none;
   overscroll-behavior: contain;
   transform: translateX(-100%);
   visibility: hidden;
   transition: transform 0.42s var(--aeo-ease-drawer), visibility 0s linear 0.42s;
+}
+
+/* Same shorthand as Dawn's .gradient (keeps gradient schemes), minus the fixed attachment. */
+.aeo-drawer.gradient,
+.aeo-drawer__contact {
+  background: rgb(var(--color-background));
+  background: var(--gradient-background, rgb(var(--color-background)));
+  background-attachment: scroll;
 }
 
 .aeo-drawer.is-open {
@@ -907,8 +919,8 @@ body.aeo-scroll-lock {
 @media (prefers-reduced-motion: reduce) {
   .aeo-drawer,
   .aeo-drawer.is-open,
-  .aeo-header-root .aeo-drawer-overlay,
-  .aeo-header-root .aeo-drawer-overlay.is-open,
+  .aeo-drawer-overlay,
+  .aeo-drawer-overlay.is-open,
   .aeo-header.header-wrapper,
   .aeo-burger__lines span {
     transition: none;

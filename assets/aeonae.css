@@ -44,6 +44,18 @@ h4,
   outline-color: var(--aeo-accent);
 }
 
+/* ---------- Scheme backgrounds ----------
+   Dawn's .gradient uses background-attachment: fixed, which some browsers drop on elements that are
+   transformed, sticky or fixed (the panel then looks see-through). AEONAE surfaces use scroll attachment;
+   with the solid color schemes this looks identical, and gradient schemes still render as gradients. */
+
+.aeo-section.gradient,
+.aeo-marquee.gradient,
+.aeo-footer.gradient,
+.aeo-sbuy__bar.gradient {
+  background-attachment: scroll;
+}
+
 /* ---------- Layout primitives ---------- */
 
 .aeo-wrap {
