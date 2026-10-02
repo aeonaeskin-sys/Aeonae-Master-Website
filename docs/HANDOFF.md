@@ -110,3 +110,46 @@ publishing.
   - the "Add to cart $58.00" live total on the button (Dawn's button is kept intact)
   - the reference's 50/50 product grid (Dawn's media-size setting controls it)
   - the "Be first to know" notify modal (use Klaviyo back-in-stock)
+
+## Round 2 (2026-10-02): live-store bug fixes
+
+**Root cause of the "unstyled" storefront in the merchant's screenshots.** The pages rendered with:
+- a white background and pure black text
+- buttons with no fill
+- invisible input borders and a see-through menu drawer and header
+
+That is what Dawn outputs when the store has **no saved color schemes**: the CSS color variables are never written. It
+followed a Shopify sync commit that briefly replaced `config/settings_schema.json` with an empty list. That removed the
+settings, and the color schemes have no schema defaults to fall back to. Fixes:
+- `snippets/aeonae-head.liquid` writes the AEONAE color schemes itself whenever the store has none, so the theme can no
+  longer fall back to an unstyled state. Verified locally by rendering with an empty scheme list.
+- `config/settings_data.json` stores the AEONAE values directly in `current` (still also as a preset), and the schema
+  defaults now match them (cart drawer, radii, input borders, currency format).
+
+**Navigation drawer.**
+- Only one close control (the burger no longer turns into a second X).
+- A light warm veil with a slight blur replaces the dark screen.
+- The drawer is a solid panel mounted on `<body>`.
+- Keyboard and focus behavior is re-tested.
+
+**Contact page.** `templates/page.contact.json` now uses `sections/aeonae-contact.liquid`:
+- Shopify's native contact form, so messages still arrive in the store inbox.
+- Introduction, topic list and chooser, support email, privacy-policy link.
+- Bordered, labelled fields; inline errors with focus on the first invalid field; a "Sending…" state that blocks double
+  submits.
+- Shows the page's own admin content if any.
+
+**Header.** 95% opaque, so product photos no longer blur through it.
+
+**Catalog** (`templates/collection.json`):
+- Three-column portrait cards, capped at one card's width when there is a single product.
+- Hover second image, no empty sort or filter controls, trust strip below.
+- Editorial card typography.
+
+**Docs.** [`COMPLIANCE-REGISTER.md`](COMPLIANCE-REGISTER.md) and [`RESEARCH.md`](RESEARCH.md).
+
+**Not verifiable from here:**
+- The connected store ("Aeonae") is not the store this session's Shopify connector can read ("My Store"), so its
+  products, apps (reviews, Klaviyo) and saved settings could not be inspected.
+- The contact form's success state could not be rendered by the local harness. It uses Shopify's standard
+  `form.posted_successfully?`.

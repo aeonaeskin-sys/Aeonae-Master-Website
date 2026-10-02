@@ -57,6 +57,107 @@
   }
 {% endstyle %}
 
+{%- comment -%}
+  Safety net: if the store has lost its saved color schemes (for example after a failed settings
+  import), Dawn's layout outputs no color variables and every page renders unstyled: white page,
+  black text, invisible buttons, input borders and drawer backgrounds. This re-creates the AEONAE
+  schemes from config/settings_data.json so the storefront never falls back to that state.
+{%- endcomment -%}
+{%- assign aeo_scheme_count = 0 -%}
+{%- for scheme in settings.color_schemes -%}
+  {%- assign aeo_scheme_count = aeo_scheme_count | plus: 1 -%}
+{%- endfor -%}
+{%- if aeo_scheme_count == 0 -%}
+  {% style %}
+    :root,
+    .color-scheme-1 {
+      --color-background: 244,237,225;
+      --gradient-background: #F4EDE1;
+      --color-foreground: 43,38,32;
+      --color-background-contrast: 210,181,132;
+      --color-shadow: 42,36,29;
+      --color-button: 79,94,56;
+      --color-button-text: 255,255,255;
+      --color-secondary-button: 244,237,225;
+      --color-secondary-button-text: 42,36,29;
+      --color-link: 42,36,29;
+      --color-badge-foreground: 43,38,32;
+      --color-badge-background: 244,237,225;
+      --color-badge-border: 43,38,32;
+      --payment-terms-background-color: rgb(244,237,225);
+    }
+    .color-scheme-2 {
+      --color-background: 252,248,241;
+      --gradient-background: #FCF8F1;
+      --color-foreground: 43,38,32;
+      --color-background-contrast: 230,195,136;
+      --color-shadow: 42,36,29;
+      --color-button: 79,94,56;
+      --color-button-text: 255,255,255;
+      --color-secondary-button: 252,248,241;
+      --color-secondary-button-text: 42,36,29;
+      --color-link: 42,36,29;
+      --color-badge-foreground: 43,38,32;
+      --color-badge-background: 252,248,241;
+      --color-badge-border: 43,38,32;
+      --payment-terms-background-color: rgb(252,248,241);
+    }
+    .color-scheme-3 {
+      --color-background: 239,231,216;
+      --gradient-background: #EFE7D8;
+      --color-foreground: 43,38,32;
+      --color-background-contrast: 202,175,126;
+      --color-shadow: 42,36,29;
+      --color-button: 79,94,56;
+      --color-button-text: 255,255,255;
+      --color-secondary-button: 239,231,216;
+      --color-secondary-button-text: 42,36,29;
+      --color-link: 42,36,29;
+      --color-badge-foreground: 43,38,32;
+      --color-badge-background: 239,231,216;
+      --color-badge-border: 43,38,32;
+      --payment-terms-background-color: rgb(239,231,216);
+    }
+    .color-scheme-4 {
+      --color-background: 42,36,29;
+      --gradient-background: #2A241D;
+      --color-foreground: 236,228,214;
+      --color-background-contrast: 180,164,146;
+      --color-shadow: 0,0,0;
+      --color-button: 79,94,56;
+      --color-button-text: 255,255,255;
+      --color-secondary-button: 42,36,29;
+      --color-secondary-button-text: 255,255,255;
+      --color-link: 255,255,255;
+      --color-badge-foreground: 236,228,214;
+      --color-badge-background: 42,36,29;
+      --color-badge-border: 236,228,214;
+      --payment-terms-background-color: rgb(42,36,29);
+    }
+    .color-scheme-5 {
+      --color-background: 231,221,204;
+      --gradient-background: #E7DDCC;
+      --color-foreground: 43,38,32;
+      --color-background-contrast: 190,163,117;
+      --color-shadow: 42,36,29;
+      --color-button: 79,94,56;
+      --color-button-text: 255,255,255;
+      --color-secondary-button: 231,221,204;
+      --color-secondary-button-text: 42,36,29;
+      --color-link: 42,36,29;
+      --color-badge-foreground: 43,38,32;
+      --color-badge-background: 231,221,204;
+      --color-badge-border: 43,38,32;
+      --payment-terms-background-color: rgb(231,221,204);
+    }
+
+    body, .color-scheme-1, .color-scheme-2, .color-scheme-3, .color-scheme-4, .color-scheme-5 {
+      color: rgba(var(--color-foreground), 0.75);
+      background-color: rgb(var(--color-background));
+    }
+  {% endstyle %}
+{%- endif -%}
+
 {{ 'aeonae.css' | asset_url | stylesheet_tag }}
 
 <script>

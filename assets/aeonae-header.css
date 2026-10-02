@@ -262,7 +262,7 @@ aeo-header {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: rgba(var(--color-background), 0.82);
+  background: rgba(var(--color-background), 0.95);
   -webkit-backdrop-filter: blur(1.4rem);
   backdrop-filter: blur(1.4rem);
   pointer-events: none;
@@ -333,17 +333,8 @@ aeo-header {
   transition: transform 0.3s, opacity 0.3s;
 }
 
-.aeo-burger[aria-expanded='true'] .aeo-burger__lines span:nth-child(1) {
-  transform: translateY(0.7rem) rotate(45deg);
-}
-
-.aeo-burger[aria-expanded='true'] .aeo-burger__lines span:nth-child(2) {
-  opacity: 0;
-}
-
-.aeo-burger[aria-expanded='true'] .aeo-burger__lines span:nth-child(3) {
-  transform: translateY(-0.7rem) rotate(-45deg);
-}
+/* The burger stays a burger while the drawer is open: the drawer has its own close button,
+   and a second X in the header read as a duplicate close control. */
 
 /* "Shop" pill (artifact .navShop) */
 .aeo-header__shop {
@@ -611,7 +602,10 @@ body.aeo-scroll-lock {
   inset: 0;
   z-index: 95;
   display: block;
-  background: rgba(42, 36, 29, 0.42);
+  /* A light, warm veil rather than a dark screen: enough to separate the drawer from the page. */
+  background: rgba(42, 36, 29, 0.16);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.35s, visibility 0s linear 0.35s;

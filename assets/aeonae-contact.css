@@ -1,0 +1,308 @@
+/* AEONAE contact page (sections/aeonae-contact.liquid). 1rem = 10px. */
+
+.aeo-contact__grid {
+  display: grid;
+  gap: clamp(3.6rem, 6vw, 7.2rem);
+  align-items: start;
+}
+
+@media screen and (min-width: 990px) {
+  .aeo-contact__grid {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  .aeo-contact__intro {
+    position: sticky;
+    top: calc(var(--header-height, 7.4rem) + 3.2rem);
+  }
+}
+
+.aeo-contact__heading {
+  margin-top: 1.4rem;
+}
+
+.aeo-contact__text {
+  margin-top: 2rem;
+  font-size: clamp(1.6rem, 1.4vw, 1.76rem);
+  line-height: 1.7;
+}
+
+.aeo-contact__page-content {
+  margin-top: 1.6rem;
+}
+
+.aeo-contact__topics {
+  margin-top: 3.2rem;
+  padding-top: 2.8rem;
+  border-top: 0.1rem solid var(--aeo-line);
+}
+
+.aeo-contact__subheading {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--aeo-accent);
+}
+
+.aeo-contact__email {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: 3.2rem;
+  min-height: 4.4rem;
+  color: rgb(var(--color-foreground));
+  text-decoration: none;
+}
+
+.aeo-contact__email-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 4.4rem;
+  height: 4.4rem;
+  border: 0.15rem solid var(--aeo-accent);
+  border-radius: 50%;
+  color: var(--aeo-accent);
+}
+
+.aeo-contact__email-label {
+  display: block;
+  font-size: 1.3rem;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-contact__email-address {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--aeo-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.aeo-contact__email:hover .aeo-contact__email-address {
+  text-decoration-thickness: 0.2rem;
+}
+
+.aeo-contact__response {
+  margin-top: 1.6rem;
+}
+
+/* ---------- Form card ---------- */
+
+.aeo-contact__card {
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  border: 0.1rem solid var(--aeo-line);
+  border-radius: var(--aeo-radius-card);
+  padding: clamp(2.4rem, 4vw, 4.4rem);
+  box-shadow: var(--aeo-shadow-soft);
+}
+
+.aeo-contact__form {
+  display: grid;
+  gap: 2.2rem;
+}
+
+.aeo-contact__required-note {
+  margin: 0;
+  font-size: 1.3rem;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-contact__required-note span,
+.aeo-field__req {
+  color: var(--aeo-copper-text);
+  font-weight: 700;
+}
+
+.aeo-contact__row {
+  display: grid;
+  gap: 2.2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .aeo-contact__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.aeo-field {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.aeo-field__label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: rgb(var(--color-foreground));
+  letter-spacing: 0;
+}
+
+.aeo-field__req {
+  margin-left: 0.2rem;
+}
+
+.aeo-field__optional {
+  font-weight: 400;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+/* Visible, clearly bounded inputs (WCAG 1.4.11: border >= 3:1 against the card). */
+.aeo-field__input {
+  width: 100%;
+  min-height: 5rem;
+  padding: 1.3rem 1.6rem;
+  font: inherit;
+  font-size: 1.6rem; /* 16px: stops iOS zooming into the field */
+  line-height: 1.4;
+  color: rgb(var(--color-foreground));
+  background: #fff;
+  border: 0.1rem solid rgba(42, 36, 29, 0.55);
+  border-radius: 0.8rem;
+  box-shadow: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.aeo-field__input:hover {
+  border-color: rgba(42, 36, 29, 0.8);
+}
+
+.aeo-field__input:focus {
+  outline: none;
+}
+
+.aeo-field__input:focus-visible,
+.aeo-field__input:focus {
+  border-color: var(--aeo-accent);
+  box-shadow: 0 0 0 0.3rem rgba(var(--aeo-accent-rgb), 0.22);
+}
+
+.aeo-field__input[aria-invalid='true'] {
+  border-color: #a8322b;
+  box-shadow: 0 0 0 0.1rem #a8322b;
+}
+
+.aeo-field__textarea {
+  min-height: 16rem;
+  resize: vertical;
+}
+
+.aeo-field__select-wrap {
+  position: relative;
+}
+
+.aeo-field__select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 1.8rem;
+  top: 50%;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-right: 0.15rem solid currentColor;
+  border-bottom: 0.15rem solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.aeo-field__select {
+  padding-right: 4.4rem;
+  cursor: pointer;
+}
+
+.aeo-field__error {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.4;
+  color: #a8322b;
+}
+
+.aeo-field__error:empty {
+  display: none;
+}
+
+.aeo-contact__actions {
+  display: grid;
+  gap: 1.4rem;
+  justify-items: start;
+}
+
+.aeo-contact__submit {
+  min-width: 20rem;
+  min-height: 5rem;
+}
+
+@media screen and (max-width: 749px) {
+  .aeo-contact__actions {
+    justify-items: stretch;
+  }
+
+  .aeo-contact__submit {
+    width: 100%;
+  }
+}
+
+.aeo-contact__submit[aria-busy='true'] {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+.aeo-contact__privacy {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: rgba(var(--color-foreground), 0.8);
+}
+
+.aeo-contact__privacy a {
+  color: inherit;
+  text-underline-offset: 0.2rem;
+}
+
+/* ---------- Status messages ---------- */
+
+.aeo-contact__status {
+  padding: 1.6rem 1.8rem;
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
+
+.aeo-contact__status:focus {
+  outline: 0.2rem solid var(--aeo-accent);
+  outline-offset: 0.3rem;
+}
+
+.aeo-contact__status p {
+  margin: 0;
+}
+
+.aeo-contact__status-title {
+  font-weight: 600;
+}
+
+.aeo-contact__status--success {
+  background: rgba(var(--aeo-accent-rgb), 0.1);
+  border: 0.1rem solid rgba(var(--aeo-accent-rgb), 0.45);
+}
+
+.aeo-contact__status--error {
+  background: rgba(168, 50, 43, 0.06);
+  border: 0.1rem solid rgba(168, 50, 43, 0.5);
+}
+
+.aeo-contact__status--error ul {
+  margin: 0.6rem 0 0;
+  padding-left: 1.8rem;
+}
+
+.aeo-contact__status--error a {
+  color: #8f2a24;
+}
