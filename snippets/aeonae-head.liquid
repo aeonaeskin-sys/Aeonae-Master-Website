@@ -63,9 +63,16 @@
   black text, invisible buttons, input borders and drawer backgrounds. This re-creates the AEONAE
   schemes from config/settings_data.json so the storefront never falls back to that state.
 {%- endcomment -%}
+{%- comment -%}
+  Count schemes that actually carry colors. A store can list schemes whose values are empty (seen when
+  its settings_schema.json is out of sync): Dawn then writes blank variables such as
+  "--color-background: ,,;", which are still "defined" and override any var() fallback.
+{%- endcomment -%}
 {%- assign aeo_scheme_count = 0 -%}
 {%- for scheme in settings.color_schemes -%}
-  {%- assign aeo_scheme_count = aeo_scheme_count | plus: 1 -%}
+  {%- if scheme.settings.background != blank and scheme.settings.text != blank and scheme.settings.button != blank -%}
+    {%- assign aeo_scheme_count = aeo_scheme_count | plus: 1 -%}
+  {%- endif -%}
 {%- endfor -%}
 {%- if aeo_scheme_count == 0 -%}
   {% style %}
