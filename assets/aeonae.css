@@ -620,4 +620,10 @@ details[open] > .aeo-acc__summary .aeo-acc__icon {
   .collection .product-grid:has(> .grid__item:only-child) {
     max-width: 52rem;
   }
+
+  /* Dawn sizes each item to a third of the row; a lone item takes the whole (capped) row. */
+  .collection .product-grid > .grid__item:only-child {
+    width: 100%;
+    max-width: 100%;
+  }
 }
