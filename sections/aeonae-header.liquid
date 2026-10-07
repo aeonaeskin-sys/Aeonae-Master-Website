@@ -110,7 +110,7 @@
 {%- endstyle -%}
 
 <aeo-header class="aeo-header-root" data-section-id="{{ section.id }}">
-  <header class="aeo-header header-wrapper color-{{ section.settings.color_scheme }}{% if section.settings.show_search %} aeo-header--search{% endif %}">
+  <header class="aeo-header header-wrapper color-{{ section.settings.color_scheme }}{% if section.settings.show_search %} aeo-header--search{% endif %}{% if section.settings.show_shop_link and shop_url != blank %} aeo-header--has-shop{% endif %}">
     <div class="aeo-wrap aeo-header__row">
       <div class="aeo-header__left">
         <button

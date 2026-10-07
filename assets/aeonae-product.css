@@ -472,6 +472,16 @@ quick-add-modal .page-width:has(> .product.aeo-pdp) {
     min-height: 4.8rem;
   }
 
+  /* Fixed stepper width so the express checkout button below can span the full row. */
+  .aeo-pdp .product__info-container > .product-form__quantity:has(+ div > product-form) .quantity {
+    width: 13.2rem;
+  }
+
+  .aeo-pdp .product__info-container > .product-form__quantity + div:has(> product-form) .shopify-payment-button {
+    width: calc(100% + 14.8rem);
+    margin-left: -14.8rem;
+  }
+
   .aeo-pdp .product__info-container > .product-form__quantity:has(+ div > product-form) .quantity__label {
     position: absolute !important;
     width: 1px;
@@ -758,5 +768,63 @@ quick-add-modal .page-width:has(> .product.aeo-pdp) {
   .aeo-pdp .product__accordion summary,
   .aeo-pdp .product__accordion .accordion__title {
     transition: none;
+  }
+}
+
+/* ---------- Live total in the Add to cart button (artifact "Add to cart  $58.00") ---------- */
+
+.aeo-atc-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: inherit;
+}
+
+.aeo-atc-price::before {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.aeo-atc-price[hidden] {
+  display: none;
+}
+
+.product-form__submit.loading .aeo-atc-price {
+  visibility: hidden;
+}
+
+/* Label and total stay whole; on a very narrow button the total drops to its own line. */
+.aeo-pdp .product-form__submit:has(.aeo-atc-price:not([hidden])) {
+  flex-wrap: wrap;
+  gap: 0.2rem 1rem;
+  line-height: 1.2;
+}
+
+.aeo-pdp .product-form__submit > span:first-child,
+.aeo-atc-price {
+  white-space: nowrap;
+}
+
+/* Phones: label over total, a deliberate two-line button rather than an accidental wrap. */
+@media screen and (max-width: 479px) {
+  .aeo-pdp .product-form__submit:has(.aeo-atc-price:not([hidden])) {
+    flex-direction: column;
+    gap: 0.1rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .aeo-atc-price {
+    font-size: 1.3rem;
+    opacity: 0.9;
+  }
+
+  .aeo-atc-price::before {
+    display: none;
   }
 }

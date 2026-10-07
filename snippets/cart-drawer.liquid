@@ -74,6 +74,12 @@
           </span>
         </button>
       </div>
+      {%- if settings.aeo_cart_banner != blank and cart != empty -%}
+        <p class="aeo-cart-banner">
+          <span class="aeo-cart-banner__check" aria-hidden="true">&#10003;</span>
+          {{- settings.aeo_cart_banner | escape -}}
+        </p>
+      {%- endif -%}
       <cart-drawer-items
         view-event-payload="{{ cart | standard_event_data: 'view', context: 'dialog' | escape }}"
         view-event-trigger="manual"

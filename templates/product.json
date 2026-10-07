@@ -73,7 +73,8 @@
           "type": "buy_buttons",
           "settings": {
             "show_dynamic_checkout": true,
-            "show_gift_card_recipient": true
+            "show_gift_card_recipient": true,
+            "aeo_price_in_button": true
           }
         },
         "guarantee": {
@@ -176,23 +177,182 @@
         "padding_bottom": 0
       }
     },
+    "ingredients": {
+      "type": "aeonae-ingredients",
+      "blocks": {
+        "ingredient-ghk-cu": {
+          "type": "ingredient",
+          "settings": {
+            "name": "GHK-Cu",
+            "description": "The copper peptide at the heart of the formula, for the look of firmer, smoother skin."
+          }
+        },
+        "ingredient-niacinamide": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Niacinamide",
+            "description": "For the appearance of a more even, balanced complexion."
+          }
+        },
+        "ingredient-hyaluronate": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Hyaluronate",
+            "description": "Draws in moisture for a plumper, more hydrated look."
+          }
+        },
+        "ingredient-aloe": {
+          "type": "ingredient",
+          "settings": {
+            "name": "Aloe Vera",
+            "description": "Helps skin look calm, soft, and comfortable."
+          }
+        }
+      },
+      "block_order": [
+        "ingredient-ghk-cu",
+        "ingredient-niacinamide",
+        "ingredient-hyaluronate",
+        "ingredient-aloe"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "anchor_id": "ingredients",
+        "intro_position": "left",
+        "eyebrow": "The Science",
+        "heading": "Built on one of the most studied peptides in skin care.",
+        "text": "<p>GHK-Cu, also called copper tripeptide-1, has been researched in skin science for decades. We formulate around it at a disclosed 1%, and we let the ingredient speak plainly rather than dress it in claims we cannot make.</p>",
+        "padding_top": 104,
+        "padding_bottom": 104
+      }
+    },
+    "ritual": {
+      "type": "aeonae-steps",
+      "blocks": {
+        "step-cleanse": {
+          "type": "step",
+          "settings": {
+            "title": "Cleanse",
+            "text": "Begin with clean, dry skin, morning or night."
+          }
+        },
+        "step-apply": {
+          "type": "step",
+          "settings": {
+            "title": "Apply",
+            "text": "Press three to four drops over face and neck. Pause as it absorbs."
+          }
+        },
+        "step-seal": {
+          "type": "step",
+          "settings": {
+            "title": "Seal",
+            "text": "Follow with moisturizer. Add sunscreen to your morning."
+          }
+        }
+      },
+      "block_order": [
+        "step-cleanse",
+        "step-apply",
+        "step-seal"
+      ],
+      "settings": {
+        "color_scheme": "scheme-2",
+        "anchor_id": "ritual",
+        "heading": "A quiet daily ritual.",
+        "text": "<p>One considered step, repeated. With consistent use, many people find their skin looks smoother and more radiant over time.</p>",
+        "padding_top": 104,
+        "padding_bottom": 104
+      }
+    },
     "reviews": {
       "type": "aeonae-reviews",
       "settings": {
         "eyebrow": "Reviews",
         "heading": "What people are saying",
         "show_summary": true,
-        "empty_text": "No reviews yet. Be the first to share how the serum looks and feels for you.",
+        "empty_text": "No reviews yet. As customers try the First Edition, their reviews will appear here.",
         "anchor_id": "reviews",
         "color_scheme": "scheme-1",
-        "padding_top": 124,
-        "padding_bottom": 124
+        "padding_top": 104,
+        "padding_bottom": 104
+      }
+    },
+    "faq": {
+      "type": "aeonae-faq",
+      "blocks": {
+        "faq-1": {
+          "type": "question",
+          "settings": {
+            "question": "What does the serum do?",
+            "answer": "<p>It is a cosmetic serum made to support the look of firmer, smoother, more even skin. It is designed to improve the appearance of your skin, not to treat any medical condition.</p>"
+          }
+        },
+        "faq-2": {
+          "type": "question",
+          "settings": {
+            "question": "How do I use it?",
+            "answer": "<p>Apply three to four drops to clean skin morning or evening, then follow with moisturizer. Use sunscreen during the day.</p>"
+          }
+        },
+        "faq-3": {
+          "type": "question",
+          "settings": {
+            "question": "Is it safe for me?",
+            "answer": "<p>The full ingredient list is on the product page so you can check it against anything you avoid. The serum contains royal jelly, so if you are allergic to bee products, do not use it.</p>"
+          }
+        },
+        "faq-4": {
+          "type": "question",
+          "settings": {
+            "question": "When will my order arrive?",
+            "answer": "<p>First Edition orders ship within one to three business days as each batch is prepared. You will get a confirmation and tracking the moment yours is on the way.</p>"
+          }
+        },
+        "faq-5": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Unopened bottles can be returned within 14 days of delivery for a refund. For hygiene and safety, once a bottle has been opened or used it cannot be returned. If your order arrives damaged, send us a photo within 48 hours and we will replace it.</p>"
+          }
+        },
+        "faq-6": {
+          "type": "question",
+          "settings": {
+            "question": "Can I cancel my subscription?",
+            "answer": "<p>Yes, any time. Change your delivery schedule or cancel from your account whenever you like.</p>"
+          },
+          "disabled": true
+        }
+      },
+      "block_order": [
+        "faq-1",
+        "faq-2",
+        "faq-3",
+        "faq-4",
+        "faq-5",
+        "faq-6"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "anchor_id": "faq",
+        "eyebrow": "",
+        "heading": "Questions, answered",
+        "text": "",
+        "open_first": true,
+        "contact_text": "Still have a question? Email us at",
+        "enable_schema": false,
+        "padding_top": 104,
+        "padding_bottom": 104
       }
     }
   },
   "order": [
     "main",
     "disclosures",
-    "reviews"
+    "ingredients",
+    "ritual",
+    "reviews",
+    "faq"
   ]
 }

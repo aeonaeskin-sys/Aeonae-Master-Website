@@ -568,7 +568,19 @@ shopify-account.header__icon:not(:defined) {
   }
 }
 
+/* Narrow phones keep the "Shop" pill (the main path to purchase) and drop the logo mark
+   beside the wordmark instead, as the artifact does. */
 @media screen and (max-width: 409px) {
+  .aeo-header--has-shop .aeo-header__brand:has(.aeo-header__wordmark) .aeo-header__logo {
+    display: none;
+  }
+
+  .aeo-header__shop {
+    padding: 0.6rem 1.2rem;
+  }
+}
+
+@media screen and (max-width: 369px) {
   .aeo-header__shop {
     display: none;
   }

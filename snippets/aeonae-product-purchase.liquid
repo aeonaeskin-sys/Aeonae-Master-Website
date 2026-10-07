@@ -246,6 +246,7 @@
                     value="{{ plan.id }}"
                     data-aeo-plan
                     data-price="{{ plan_price | strip_html | escape }}"
+                    data-price-cents="{{ allocation.per_delivery_price }}"
                     data-save="{{ plan_save | strip_html | escape }}"
                     {% if plan.id == active_plan_id %}
                       checked

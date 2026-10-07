@@ -153,3 +153,52 @@ settings, and the color schemes have no schema defaults to fall back to. Fixes:
   products, apps (reviews, Klaviyo) and saved settings could not be inspected.
 - The contact form's success state could not be rendered by the local harness. It uses Shopify's standard
   `form.posted_successfully?`.
+
+## Round 3 (2026-10-07): premium pass, working directly in the store
+
+The Admin connector now reaches the Aeonae store, so this round used real store data. The AEONAE theme is the
+**live theme** (the store is password protected). An unpublished copy, **"AEONAE backup 2026-10-07 (before premium
+pass)"**, was made before any change; publish it to roll back.
+
+**Store changes (Admin API, all additive, nothing deleted):**
+
+| Area | Change |
+|---|---|
+| Pages | Created **The Science** (`/pages/science`, template `science`), **Results and Ritual** (`/pages/results`), **Our Story** (`/pages/our-story`, template `story`) and **Shipping and Returns** (`/pages/shipping-and-returns`, same text as the product tab). The menu links to these used to 404. |
+| Main menu | Shop / Learn / Company groups, matching the artifact's menu (Subscribe and Save left out: no subscriptions exist). |
+| Footer menus | New "Footer: Shop" and "Footer: Explore"; "Footer menu" now starts with Shipping and Returns and still has Search and Your Privacy Choices. |
+| Product | Vendor "My Store" → AEONAE, type Serum, a description (it was empty, and it feeds Google, Facebook and TikTok listings), SEO title and description, alt text on the 3 photos. Title, price, inventory and images are unchanged. |
+
+**Theme changes:**
+- **Links:** every link, the home spotlight, the mobile buy bar and the ingredient label now point to the real product handle `ghk-cu-copper-peptide-serum` (they used `copper-peptide-serum`, which 404s).
+- **Unbacked offer removed:** "10% off" in the ticker and newsletter. The store has no discounts (CLAIMS-REVIEW B1).
+- **Product page:**
+  - Live total in Add to cart: price × quantity, using the subscription price when a plan is chosen, hidden when sold out (block setting).
+  - "Buy it now" spans the full row.
+  - Key ingredients, the daily ritual and the FAQ follow the buy box, using the copy already on the Science, Results and Home pages.
+  - The reviews empty state is now a card with a support link.
+  - The "Can I cancel my subscription?" FAQ is hidden on Home and Product (not deleted).
+- **Header:** the Shop pill stays on phones down to 370px (the logo mark gives way instead).
+- **Password page:** branded "opening soon" page with the bottle, the brand promise and an email signup. Signups are tagged `newsletter` and `prelaunch`, and Dawn's password login is kept.
+- **Generic pages** (`page.json`: Shipping and Returns, Privacy Choices, any new page): AEONAE page hero, an editorial text column and a support card.
+- **Catalog:** centered title and a centered single-product card.
+- **Cart drawer:** "Free US shipping on this order" banner (Theme settings > AEONAE brand > Cart drawer banner). It is true today: the only US rate is $0.
+
+**Tested** in the local render harness with the store's real product data (title, handle, price, 3 images at their real
+sizes, tracked inventory of 12):
+
+| Check | Result |
+|---|---|
+| Theme Check | 0 errors; same 9 warnings as stock Dawn |
+| Horizontal overflow and script errors | None, on 10 pages × 6 widths (320–1440) |
+| axe-core | No violations except Dawn's own heading-order note on the catalog card |
+| Button total | 1 → 2 → 5 bottles, subscription plans, back to one time, and sold out |
+| Cart drawer | Add to cart opens it with the banner |
+
+**Not verifiable here:**
+- The store's storefront, CDN and product photos are blocked by this environment's network, so the real photos were never seen.
+- Payment, checkout and app behavior.
+
+**Apps:** none were installed. The Admin API cannot install apps, and only a store owner can approve one. The single
+artifact feature that needs an app is **reviews**. The recommended free option is **Judge.me** (its free plan covers
+review collection, request emails and the `reviews.rating` metafields this theme reads). Setup is in MERCHANT-SETUP §Apps.

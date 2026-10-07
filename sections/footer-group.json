@@ -9,7 +9,7 @@
           "type": "link_list",
           "settings": {
             "heading": "Shop",
-            "menu": "",
+            "menu": "footer-shop",
             "show_contact_email": false,
             "contact_label": "Contact Us"
           }
@@ -18,7 +18,7 @@
           "type": "link_list",
           "settings": {
             "heading": "Explore",
-            "menu": "",
+            "menu": "footer-explore",
             "show_contact_email": false,
             "contact_label": "Contact Us"
           }
@@ -65,7 +65,8 @@
         "label": "Copper Peptide Serum",
         "link_label": "Shop now",
         "other_pages": "all",
-        "scroll_threshold": 90
+        "scroll_threshold": 90,
+        "product": "ghk-cu-copper-peptide-serum"
       }
     }
   },

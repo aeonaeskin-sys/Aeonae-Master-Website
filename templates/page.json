@@ -1,14 +1,37 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
+    "hero": {
+      "type": "aeonae-page-hero",
       "settings": {
-        "padding_top": 28,
-        "padding_bottom": 28
+        "color_scheme": "scheme-2",
+        "artifact_gradient": true,
+        "show_divider": true,
+        "show_back": true,
+        "back_label": "Back to home",
+        "show_mark": true,
+        "mark_height": 44,
+        "eyebrow": "AEONAE",
+        "heading": "",
+        "text": "",
+        "button_label": "",
+        "link_label": "",
+        "padding_top": 20,
+        "padding_bottom": 48
+      }
+    },
+    "main": {
+      "type": "aeonae-page-content",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_support": true,
+        "support_heading": "Still have a question?",
+        "padding_top": 40,
+        "padding_bottom": 104
       }
     }
   },
   "order": [
+    "hero",
     "main"
   ]
 }

@@ -14,7 +14,7 @@
         "heading": "A closer look at what is in the bottle.",
         "text": "The peptide at the heart of the serum, the actives that support it, and every ingredient printed in the open.",
         "button_label": "Shop the serum",
-        "button_link": "/products/copper-peptide-serum",
+        "button_link": "/products/ghk-cu-copper-peptide-serum",
         "link_label": "See results",
         "link_url": "/pages/results",
         "padding_top": 20,
@@ -144,7 +144,8 @@
         "inci": "<p>Aqua (Water), <em>Niacinamide</em>, Aloe barbadensis (Aloe Vera) Leaf Juice, Glycerin, Lactobacillus/Ganoderma Lucidum (Reishi Mushroom) Extract /Lentinus Edodes (Shiitake Mushroom) Extract Ferment Filtrate, Lactobacillus Ferment Lysate, Lactococcus Ferment Lysate, <em>Copper Tripeptide-1</em>, Saccharomyces/Capsicum Annuum Fruit Ferment Filtrate, Royal Jelly, Sodium Hyaluronate, Chamomilla Recutita (Matricaria) Flower Extract, Citrus Aurantium Dulcis Callus Culture Extract, Fructooligosaccharides, Beta Vulgaris (Beet) Root Extract, Centella Asiatica Extract, Hydrolyzed Ganoderma (Mushroom) Lucidum Extract, Leuconostoc Ferment Filtrate, <em>Palmitoyl Tripeptide-5</em>, <em>Acetyl Hexapeptide-8</em>, Xanthan Gum, Beta Glucan, Phenoxyethanol, Sodium Hydroxide.</p>",
         "inci_metafield": "custom.inci",
         "padding_top": 124,
-        "padding_bottom": 124
+        "padding_bottom": 124,
+        "product": "ghk-cu-copper-peptide-serum"
       }
     },
     "cta": {
@@ -154,7 +155,7 @@
         "heading": "Read every ingredient before you buy.",
         "text": "<p>No proprietary blends and no fine print. Just the formula, in full.</p>",
         "button_label": "Shop the serum",
-        "button_link": "/products/copper-peptide-serum",
+        "button_link": "/products/ghk-cu-copper-peptide-serum",
         "padding_top": 124,
         "padding_bottom": 124
       }

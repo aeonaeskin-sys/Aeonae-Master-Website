@@ -226,6 +226,13 @@
       },
       {
         "type": "text",
+        "id": "aeo_cart_banner",
+        "label": "Cart drawer banner",
+        "info": "Shown at the top of the cart drawer when it has items. Only state what is true for your store.",
+        "default": "Free US shipping on this order"
+      },
+      {
+        "type": "text",
         "id": "aeo_cart_note",
         "label": "Cart drawer reassurance line",
         "info": "Shown under the checkout button. Only state what is true for your store.",

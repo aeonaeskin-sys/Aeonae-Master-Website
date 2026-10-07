@@ -1,0 +1,92 @@
+{%- comment -%}
+  AEONAE page body: the text written in Online Store > Pages, set in a readable editorial column.
+  Used under aeonae-page-hero on generic pages (shipping and returns, privacy choices, any new page),
+  so the page title is the hero's H1 and is not repeated here.
+{%- endcomment -%}
+
+{{ 'aeonae-pages.css' | asset_url | stylesheet_tag }}
+
+<div
+  class="aeo-pg aeo-page-content aeo-section color-{{ section.settings.color_scheme }} gradient"
+  style="--aeo-pt: {{ section.settings.padding_top }}; --aeo-pb: {{ section.settings.padding_bottom }};"
+>
+  <div class="aeo-wrap">
+    <div class="aeo-page-content__body aeo-rte rte">
+      {%- if page.content != blank -%}
+        {{ page.content }}
+      {%- elsif request.design_mode -%}
+        <p>Add this page's text in Online Store &gt; Pages.</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_support and settings.aeo_support_email != blank -%}
+      <aside class="aeo-page-content__support" aria-label="{{ section.settings.support_heading | escape }}">
+        <p class="aeo-page-content__support-heading">{{ section.settings.support_heading | escape }}</p>
+        <p>
+          <a href="mailto:{{ settings.aeo_support_email | strip | escape }}">
+            {{- settings.aeo_support_email | strip | escape -}}
+          </a>
+          {%- if settings.aeo_support_note != blank %}
+            <span class="aeo-page-content__note">{{ settings.aeo_support_note | escape }}</span>
+          {%- endif -%}
+        </p>
+      </aside>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "AEONAE page text",
+  "class": "aeo-section-page-content",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows the text written for this page in Online Store > Pages."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_support",
+      "label": "Show support email",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "support_heading",
+      "label": "Support heading",
+      "default": "Still have a question?"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 104
+    }
+  ],
+  "presets": [
+    {
+      "name": "AEONAE page text"
+    }
+  ]
+}
+{% endschema %}

@@ -15,7 +15,7 @@
         "message-2": {
           "type": "message",
           "settings": {
-            "text": "10% off your first order",
+            "text": "Every ingredient disclosed",
             "link": ""
           }
         },
@@ -29,7 +29,7 @@
         "message-4": {
           "type": "message",
           "settings": {
-            "text": "Every ingredient disclosed",
+            "text": "One serum, done properly",
             "link": ""
           }
         },
@@ -75,7 +75,7 @@
         "wordmark": "AEONAE",
         "show_shop_link": true,
         "shop_label": "Shop",
-        "shop_link": "/products/copper-peptide-serum",
+        "shop_link": "/products/ghk-cu-copper-peptide-serum",
         "show_search": false,
         "show_account": true,
         "cart_style": "text",

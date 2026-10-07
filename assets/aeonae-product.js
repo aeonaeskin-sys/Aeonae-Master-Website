@@ -59,6 +59,91 @@
 
   if (hasPubSub()) subscribe(PUB_SUB_EVENTS.variantChange, syncEditions);
 
+  /* ---------- Total in the Add to cart button ----------
+     Unit price (variant, or the chosen selling plan) times quantity. Dawn rewrites only the
+     button's first <span> (the label), so this sibling survives variant changes; it is
+     hidden whenever the button is disabled (sold out or unavailable). */
+
+  const formatCents = (cents) => {
+    const currency = (window.Shopify && Shopify.currency && Shopify.currency.active) || 'USD';
+    try {
+      return new Intl.NumberFormat(document.documentElement.lang || undefined, { style: 'currency', currency }).format(cents / 100);
+    } catch (e) {
+      return (cents / 100).toFixed(2);
+    }
+  };
+
+  const atcParts = (info) => {
+    const price = info.querySelector('[data-aeo-atc-price]');
+    if (!price) return null;
+    return {
+      price,
+      button: price.closest('button'),
+      qty: info.querySelector('.quantity__input'),
+    };
+  };
+
+  function renderAtcTotal(info) {
+    const parts = atcParts(info);
+    if (!parts) return;
+    const unit = Number(parts.price.dataset.planCents || parts.price.dataset.unitCents);
+    const qty = Math.max(1, parseInt(parts.qty ? parts.qty.value : '1', 10) || 1);
+    const disabled = parts.button && parts.button.disabled;
+    parts.price.hidden = disabled || !Number.isFinite(unit);
+    if (!parts.price.hidden) parts.price.textContent = formatCents(unit * qty);
+  }
+
+  function applyPlan(info, planId) {
+    const parts = atcParts(info);
+    if (!parts) return;
+    const planInput = planId ? info.querySelector(`[data-aeo-plan][value="${CSS.escape(planId)}"]`) : null;
+    if (planInput && planInput.dataset.priceCents) parts.price.dataset.planCents = planInput.dataset.priceCents;
+    else delete parts.price.dataset.planCents;
+    renderAtcTotal(info);
+  }
+
+  /* Delegated, so quick add copies of the product form work too. */
+  const infoFor = (target) => (target && target.closest ? target.closest('product-info') : null);
+  const onQuantity = (event) => {
+    if (!event.target.matches || !event.target.matches('.quantity__input')) return;
+    const info = infoFor(event.target);
+    if (info) renderAtcTotal(info);
+  };
+  document.addEventListener('change', onQuantity);
+  document.addEventListener('input', onQuantity);
+  document.addEventListener('click', (event) => {
+    const info = event.target.closest && event.target.closest('.quantity__button') ? infoFor(event.target) : null;
+    if (info) window.setTimeout(() => renderAtcTotal(info));
+  });
+  document.addEventListener('aeo:plan-change', (event) => {
+    const info = infoFor(event.target);
+    if (info) applyPlan(info, event.detail.planId);
+  });
+
+  function initAtcTotals() {
+    document.querySelectorAll('product-info').forEach((info) => {
+      const planInput = info.querySelector('[data-aeo-plan-input]');
+      applyPlan(info, planInput ? planInput.value : '');
+    });
+  }
+
+  if (hasPubSub()) {
+    subscribe(PUB_SUB_EVENTS.variantChange, ({ data }) => {
+      if (!data || !data.html || !data.sectionId) return;
+      const source = data.html.querySelector(`#ProductSubmitButton-${data.sectionId} [data-aeo-atc-price]`);
+      document.querySelectorAll('product-info').forEach((info) => {
+        const parts = atcParts(info);
+        if (!parts || sourceSectionId(parts.price) !== data.sectionId || !isPublisher(parts.price, data)) return;
+        if (source) parts.price.dataset.unitCents = source.dataset.unitCents;
+        // Dawn toggles the button's disabled state after publishing; read it on the next frame.
+        window.requestAnimationFrame(() => renderAtcTotal(info));
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAtcTotals);
+  else initAtcTotals();
+
   /* ---------- Purchase options ---------- */
 
   if (customElements.get('aeo-purchase-options')) return;

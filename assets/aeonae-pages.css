@@ -1144,10 +1144,92 @@ aeo-tabs:not([data-enhanced]) .aeo-tabs__panel + .aeo-tabs__panel {
   }
 }
 
+/* ---------- Page text (generic pages: shipping and returns, privacy choices) ---------- */
+
+.aeo-page-content__body {
+  max-width: 68rem;
+  margin: 0 auto;
+  font-size: 1.7rem;
+  line-height: 1.75;
+  color: rgba(var(--color-foreground), 0.82);
+}
+
+.aeo-page-content__body h2,
+.aeo-page-content__body h3 {
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  color: rgb(var(--color-foreground));
+  line-height: 1.2;
+  margin: 4.8rem 0 1.2rem;
+}
+
+.aeo-page-content__body h2 {
+  font-size: clamp(2.4rem, 2.6vw, 3rem);
+  padding-top: 3.2rem;
+  border-top: 1px solid var(--aeo-line);
+}
+
+.aeo-page-content__body h3 {
+  font-size: 2rem;
+}
+
+.aeo-page-content__body ul,
+.aeo-page-content__body ol {
+  padding-left: 2rem;
+}
+
+.aeo-page-content__body li + li {
+  margin-top: 0.6rem;
+}
+
+.aeo-page-content__body a {
+  color: rgb(var(--color-foreground));
+  text-underline-offset: 0.3rem;
+}
+
+.aeo-page-content__support {
+  max-width: 68rem;
+  margin: 6.4rem auto 0;
+  padding: 2.8rem 3.2rem;
+  border: 1px solid var(--aeo-line);
+  border-radius: 1.6rem;
+  background: rgba(var(--color-foreground), 0.025);
+}
+
+.aeo-page-content__support p {
+  margin: 0;
+}
+
+.aeo-page-content__support-heading {
+  font-family: var(--font-heading-family);
+  font-size: 2.2rem;
+  color: rgb(var(--color-foreground));
+  margin-bottom: 0.6rem !important;
+}
+
+.aeo-page-content__support a {
+  color: rgb(var(--color-foreground));
+  font-weight: 600;
+  text-underline-offset: 0.3rem;
+}
+
+.aeo-page-content__note {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.68);
+}
+
 /* ---------- Reduced motion: no hover lift transitions on these cards ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   .aeo-pg .aeo-card--lift {
     transition: none;
   }
+}
+
+.aeo-page-content__body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }

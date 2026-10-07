@@ -103,3 +103,30 @@
   letter-spacing: 0;
   color: rgba(var(--color-foreground), 0.8);
 }
+
+/* Free-shipping confirmation at the top of the drawer (Theme settings > AEONAE brand > Cart drawer banner) */
+.aeo-cart-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.2rem 0 0.4rem;
+  padding: 1rem 1.4rem;
+  border-radius: 1rem;
+  background: rgba(var(--aeo-accent-rgb), 0.1);
+  color: rgb(var(--color-foreground));
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+
+.aeo-cart-banner__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--aeo-accent);
+  color: #fff;
+  font-size: 1.1rem;
+}

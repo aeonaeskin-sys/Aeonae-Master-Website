@@ -92,8 +92,16 @@
         </div>
       </div>
     {%- elsif app_blocks.size == 0 -%}
-      <div class="aeo-reviews__summary">
+      <div class="aeo-reviews__summary aeo-reviews__empty">
+        <span class="aeo-reviews__stars" aria-hidden="true" style="--aeo-rating: 0%;"></span>
         <p class="aeo-reviews__none">{{ section.settings.empty_text | escape }}</p>
+        {%- assign support_email = settings.aeo_support_email | strip -%}
+        {%- if support_email != blank -%}
+          <p class="aeo-reviews__ask">
+            Questions before you try it?
+            <a href="mailto:{{ support_email | escape }}">Email us</a>
+          </p>
+        {%- endif -%}
       </div>
     {%- endif -%}
 
@@ -154,13 +162,13 @@
       "id": "empty_text",
       "label": "Empty state text",
       "info": "Shown only when there is no rating and no review app block.",
-      "default": "No reviews yet. Be the first to share how the serum looks and feels for you."
+      "default": "No reviews yet. As customers try the First Edition, their reviews will appear here."
     },
     {
       "type": "text",
       "id": "anchor_id",
       "label": "Anchor id",
-      "info": "Links like /products/copper-peptide-serum#reviews scroll here.",
+      "info": "Links like /products/ghk-cu-copper-peptide-serum#reviews scroll here.",
       "default": "reviews"
     },
     {

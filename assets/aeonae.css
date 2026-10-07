@@ -619,6 +619,8 @@ details[open] > .aeo-acc__summary .aeo-acc__icon {
 @media screen and (min-width: 750px) {
   .collection .product-grid:has(> .grid__item:only-child) {
     max-width: 52rem;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* Dawn sizes each item to a third of the row; a lone item takes the whole (capped) row. */
@@ -626,4 +628,31 @@ details[open] > .aeo-acc__summary .aeo-acc__icon {
     width: 100%;
     max-width: 100%;
   }
+}
+
+/* ---------- Collection banner: editorial, centered title (all collections) ---------- */
+
+.collection-hero .collection-hero__inner {
+  justify-content: center;
+  text-align: center;
+}
+
+.collection-hero .collection-hero__text-wrapper {
+  flex-basis: 100%;
+  padding-top: clamp(2.4rem, 5vw, 5.6rem);
+}
+
+.collection-hero .collection-hero__title {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: 400;
+  font-size: clamp(3.6rem, 5vw, 5.6rem);
+  letter-spacing: -0.015em;
+  line-height: 1.06;
+}
+
+.collection-hero .collection-hero__description {
+  max-width: 56ch;
+  margin: 1.6rem auto 0;
+  color: rgba(var(--color-foreground), 0.78);
 }

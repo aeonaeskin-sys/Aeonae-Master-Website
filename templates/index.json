@@ -34,7 +34,7 @@
         "heading": "A serum with nothing to hide.",
         "text": "Formulated for the look of firmer, smoother, more even skin, with every ingredient and every amount printed on the label.",
         "button_label": "Shop the serum",
-        "button_link": "/products/copper-peptide-serum",
+        "button_link": "/products/ghk-cu-copper-peptide-serum",
         "link_label": "Read Our Story",
         "link_url": "/pages/our-story",
         "media_style": "photo",
@@ -135,7 +135,8 @@
         "price_note": "Free US shipping",
         "button_label": "Shop the serum",
         "padding_top": 124,
-        "padding_bottom": 124
+        "padding_bottom": 124,
+        "product": "ghk-cu-copper-peptide-serum"
       }
     },
     "explore": {
@@ -230,7 +231,8 @@
           "settings": {
             "question": "Can I cancel my subscription?",
             "answer": "<p>Yes, any time. Change your delivery schedule or cancel from your account whenever you like.</p>"
-          }
+          },
+          "disabled": true
         }
       },
       "block_order": [
@@ -259,8 +261,8 @@
       "settings": {
         "color_scheme": "scheme-5",
         "eyebrow": "Join the list",
-        "heading": "Take 10% off your first bottle.",
-        "text": "<p>Join the list for a code, plus early access to new editions. No noise, leave any time.</p>",
+        "heading": "First to know when the next edition opens.",
+        "text": "<p>One email when a new edition is ready, plus notes on the formula. No noise, leave any time.</p>",
         "provider": "shopify",
         "placeholder": "name@email.com",
         "button_label": "Join",

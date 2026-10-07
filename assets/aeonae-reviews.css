@@ -102,3 +102,28 @@
     background: none;
   }
 }
+
+/* Empty state: a quiet card rather than a bare sentence */
+.aeo-reviews__empty {
+  display: grid;
+  justify-items: start;
+  gap: 1.2rem;
+  max-width: 56rem;
+  margin-top: 2.8rem;
+  padding: 3.2rem;
+  border: 1px solid var(--aeo-line);
+  border-radius: 1.6rem;
+  background: rgba(var(--color-foreground), 0.02);
+}
+
+.aeo-reviews__ask {
+  margin: 0;
+  font-size: 1.4rem;
+  color: rgba(var(--color-foreground), 0.72);
+}
+
+.aeo-reviews__ask a {
+  color: rgb(var(--color-foreground));
+  font-weight: 600;
+  text-underline-offset: 0.3rem;
+}

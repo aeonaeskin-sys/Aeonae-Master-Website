@@ -91,6 +91,19 @@
                 {{ 'products.product.add_to_cart' | t }}
               {%- endif -%}
             </span>
+            {%- if block.settings.aeo_price_in_button -%}
+              {%- comment -%} AEONAE: live total next to the label, kept current by aeonae-product.js. {%- endcomment -%}
+              <span
+                class="aeo-atc-price"
+                data-aeo-atc-price
+                data-unit-cents="{{ product.selected_or_first_available_variant.price }}"
+                {% unless product.selected_or_first_available_variant.available %}
+                  hidden
+                {% endunless %}
+              >
+                {{- product.selected_or_first_available_variant.price | money -}}
+              </span>
+            {%- endif -%}
             {%- render 'loading-spinner' -%}
           </button>
           {%- if show_dynamic_checkout -%}
