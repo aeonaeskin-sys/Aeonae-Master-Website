@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -11,13 +20,16 @@
           }
         },
         "title": {
-          "type": "title"
+          "type": "title",
+          "settings": {}
         },
         "rating": {
-          "type": "rating"
+          "type": "rating",
+          "settings": {}
         },
         "price": {
-          "type": "price"
+          "type": "price",
+          "settings": {}
         },
         "edition": {
           "type": "aeo_edition",
@@ -67,7 +79,8 @@
           }
         },
         "quantity_selector": {
-          "type": "quantity_selector"
+          "type": "quantity_selector",
+          "settings": {}
         },
         "buy_buttons": {
           "type": "buy_buttons",
@@ -114,6 +127,7 @@
             "heading": "What is inside",
             "icon": "none",
             "content": "<p><strong>Copper Tripeptide-1 (GHK-Cu)</strong>: The hero peptide, for the look of firmer, smoother skin.<br><strong>Niacinamide</strong>: Supports the appearance of a more even complexion.<br><strong>Sodium Hyaluronate</strong>: Draws in moisture for a plumper, more hydrated look.<br><strong>Aloe Vera</strong>: Helps skin look calm and comfortable.</p><p><strong>Full list (INCI):</strong> Aqua (Water), Niacinamide, Aloe barbadensis (Aloe Vera) Leaf Juice, Glycerin, Lactobacillus/Ganoderma Lucidum (Reishi Mushroom) Extract /Lentinus Edodes (Shiitake Mushroom) Extract Ferment Filtrate, Lactobacillus Ferment Lysate, Lactococcus Ferment Lysate, Copper Tripeptide-1, Saccharomyces/Capsicum Annuum Fruit Ferment Filtrate, Royal Jelly, Sodium Hyaluronate, Chamomilla Recutita (Matricaria) Flower Extract, Citrus Aurantium Dulcis Callus Culture Extract, Fructooligosaccharides, Beta Vulgaris (Beet) Root Extract, Centella Asiatica Extract, Hydrolyzed Ganoderma (Mushroom) Lucidum Extract, Leuconostoc Ferment Filtrate, Palmitoyl Tripeptide-5, Acetyl Hexapeptide-8, Xanthan Gum, Beta Glucan, Phenoxyethanol, Sodium Hydroxide.</p>",
+            "page": "",
             "open": true
           }
         },
@@ -122,7 +136,9 @@
           "settings": {
             "heading": "How to use",
             "icon": "none",
-            "content": "<p>On clean, dry skin morning or evening, press three to four drops over face and neck. Follow with moisturizer, and use sunscreen during the day.</p>"
+            "content": "<p>On clean, dry skin morning or evening, press three to four drops over face and neck. Follow with moisturizer, and use sunscreen during the day.</p>",
+            "page": "",
+            "open": false
           }
         },
         "tab_shipping": {
@@ -130,7 +146,9 @@
           "settings": {
             "heading": "Shipping and Returns",
             "icon": "none",
-            "content": "<p>Free US shipping on every order. First Edition orders ship within one to three business days, tracked. Unopened bottles can be returned within 14 days of delivery. For hygiene and safety, opened or used bottles cannot be returned.</p>"
+            "content": "<p>Free US shipping on every order. First Edition orders ship within one to three business days, tracked. Unopened bottles can be returned within 14 days of delivery. For hygiene and safety, opened or used bottles cannot be returned.</p>",
+            "page": "",
+            "open": false
           }
         }
       },
@@ -173,6 +191,10 @@
     "disclosures": {
       "type": "disclosures",
       "settings": {
+        "heading": "Disclosures",
+        "heading_size": "h2",
+        "open_by_default": false,
+        "color_scheme": "",
         "padding_top": 36,
         "padding_bottom": 0
       }
@@ -259,6 +281,7 @@
       "settings": {
         "color_scheme": "scheme-2",
         "anchor_id": "ritual",
+        "eyebrow": "",
         "heading": "A quiet daily ritual.",
         "text": "<p>One considered step, repeated. With consistent use, many people find their skin looks smoother and more radiant over time.</p>",
         "padding_top": 104,
@@ -318,11 +341,11 @@
         },
         "faq-6": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "question": "Can I cancel my subscription?",
             "answer": "<p>Yes, any time. Change your delivery schedule or cancel from your account whenever you like.</p>"
-          },
-          "disabled": true
+          }
         }
       },
       "block_order": [
@@ -345,6 +368,26 @@
         "padding_top": 104,
         "padding_bottom": 104
       }
+    },
+    "17914018938a3ca425": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_erBfqU": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "sample_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_erBfqU"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
@@ -353,6 +396,7 @@
     "ingredients",
     "ritual",
     "reviews",
-    "faq"
+    "faq",
+    "17914018938a3ca425"
   ]
 }
