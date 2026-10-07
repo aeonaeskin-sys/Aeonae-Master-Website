@@ -1,68 +1,29 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "logo_width": 90,
-    "customer_account_menu": "customer-account-main-menu",
-    "color_schemes": {
-      "scheme-1": {
-        "settings": {
-          "background": "#F4EDE1",
-          "background_gradient": "",
-          "text": "#2B2620",
-          "button": "#4F5E38",
-          "button_label": "#FFFFFF",
-          "secondary_button_label": "#2A241D",
-          "shadow": "#2A241D"
-        }
-      },
-      "scheme-2": {
-        "settings": {
-          "background": "#FCF8F1",
-          "background_gradient": "",
-          "text": "#2B2620",
-          "button": "#4F5E38",
-          "button_label": "#FFFFFF",
-          "secondary_button_label": "#2A241D",
-          "shadow": "#2A241D"
-        }
-      },
-      "scheme-3": {
-        "settings": {
-          "background": "#EFE7D8",
-          "background_gradient": "",
-          "text": "#2B2620",
-          "button": "#4F5E38",
-          "button_label": "#FFFFFF",
-          "secondary_button_label": "#2A241D",
-          "shadow": "#2A241D"
-        }
-      },
-      "scheme-4": {
-        "settings": {
-          "background": "#2A241D",
-          "background_gradient": "",
-          "text": "#ECE4D6",
-          "button": "#4F5E38",
-          "button_label": "#FFFFFF",
-          "secondary_button_label": "#FFFFFF",
-          "shadow": "#000000"
-        }
-      },
-      "scheme-5": {
-        "settings": {
-          "background": "#E7DDCC",
-          "background_gradient": "",
-          "text": "#2B2620",
-          "button": "#4F5E38",
-          "button_label": "#FFFFFF",
-          "secondary_button_label": "#2A241D",
-          "shadow": "#2A241D"
-        }
-      }
-    },
     "type_header_font": "assistant_n4",
     "heading_scale": 100,
     "type_body_font": "assistant_n4",
     "body_scale": 100,
+    "aeo_brand_fonts": true,
+    "aeo_accent": "#4F5E38",
+    "aeo_copper": "#AE6A3E",
+    "aeo_line": "#E7DFCF",
+    "aeo_halo": "#A8B888",
+    "aeo_ambient_motion": true,
+    "aeo_support_email": "support@aeonae.com",
+    "aeo_support_note": "A real person replies, usually the same day",
+    "aeo_cart_banner": "Free US shipping on this order",
+    "aeo_cart_note": "Free US shipping. Secure checkout.",
     "page_width": 1200,
     "spacing_sections": 0,
     "spacing_grid_horizontal": 8,
@@ -157,14 +118,14 @@
     "brand_headline": "",
     "brand_description": "<p></p>",
     "brand_image_width": 100,
-    "social_twitter_link": "",
     "social_facebook_link": "",
-    "social_pinterest_link": "",
     "social_instagram_link": "",
-    "social_tiktok_link": "",
-    "social_tumblr_link": "",
-    "social_snapchat_link": "",
     "social_youtube_link": "",
+    "social_tiktok_link": "",
+    "social_twitter_link": "",
+    "social_snapchat_link": "",
+    "social_pinterest_link": "",
+    "social_tumblr_link": "",
     "social_vimeo_link": "",
     "predictive_search_enabled": true,
     "predictive_search_show_vendor": false,
@@ -175,6 +136,7 @@
     "show_cart_note": false,
     "cart_drawer_collection": "",
     "cart_color_scheme": "scheme-2",
+    "customer_account_menu": "customer-account-main-menu",
     "sections": {
       "main-password-header": {
         "type": "main-password-header",
@@ -189,16 +151,71 @@
         }
       }
     },
-    "aeo_brand_fonts": true,
-    "aeo_accent": "#4F5E38",
-    "aeo_copper": "#AE6A3E",
-    "aeo_line": "#E7DFCF",
-    "aeo_halo": "#A8B888",
-    "aeo_ambient_motion": true,
-    "aeo_support_email": "support@aeonae.com",
-    "aeo_support_note": "A real person replies, usually the same day",
-    "aeo_cart_note": "Free US shipping. Secure checkout.",
-    "aeo_cart_banner": "Free US shipping on this order"
+    "content_for_index": [],
+    "blocks": {
+      "14060646107696862457": {
+        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": false,
+        "settings": {}
+      }
+    },
+    "color_schemes": {
+      "scheme-1": {
+        "settings": {
+          "background": "#f4ede1",
+          "background_gradient": "",
+          "text": "#2b2620",
+          "button": "#4f5e38",
+          "button_label": "#ffffff",
+          "secondary_button_label": "#2a241d",
+          "shadow": "#2a241d"
+        }
+      },
+      "scheme-2": {
+        "settings": {
+          "background": "#fcf8f1",
+          "background_gradient": "",
+          "text": "#2b2620",
+          "button": "#4f5e38",
+          "button_label": "#ffffff",
+          "secondary_button_label": "#2a241d",
+          "shadow": "#2a241d"
+        }
+      },
+      "scheme-3": {
+        "settings": {
+          "background": "#efe7d8",
+          "background_gradient": "",
+          "text": "#2b2620",
+          "button": "#4f5e38",
+          "button_label": "#ffffff",
+          "secondary_button_label": "#2a241d",
+          "shadow": "#2a241d"
+        }
+      },
+      "scheme-4": {
+        "settings": {
+          "background": "#2a241d",
+          "background_gradient": "",
+          "text": "#ece4d6",
+          "button": "#4f5e38",
+          "button_label": "#ffffff",
+          "secondary_button_label": "#ffffff",
+          "shadow": "#000000"
+        }
+      },
+      "scheme-5": {
+        "settings": {
+          "background": "#e7ddcc",
+          "background_gradient": "",
+          "text": "#2b2620",
+          "button": "#4f5e38",
+          "button_label": "#ffffff",
+          "secondary_button_label": "#2a241d",
+          "shadow": "#2a241d"
+        }
+      }
+    }
   },
   "presets": {
     "AEONAE": {
